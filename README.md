@@ -14,6 +14,9 @@ Nginx Proxy Manager.
 Ein frisch installierter VPS steht damit in **ca. 20-30 Minuten** (Schaetzung:
 dominiert von `apt` und Image-Pulls); ein zweiter Lauf gegen denselben Host braucht
 **101 Sekunden** (gemessen am 08.11.2026).
+Der Plattform-Teil (`base`, `tailscale`, `ssh`, `ufw`, `fail2ban`) laeuft auf einer
+frischen Ubuntu-24.04-VM in **82 Sekunden**, der zweite Lauf in **34 Sekunden ohne
+Aenderung** - reproduzierbar mit `scripts/test-vm.sh`.
 Ausdruecklich **nicht** abgedeckt: Hochverfuegbarkeit/Failover, zentrale Logs und
 Metriken, Multi-Host-Orchestrierung, automatisierte Backup-Restore-Tests und die
 DNS-/Domain-Verwaltung.
