@@ -11,14 +11,12 @@ Dieses Repository provisioniert einen VPS (Webtropia, Ubuntu 24.04.5 LTS) per An
 von null auf produktiv: Hardening (ufw, SSH, Fail2ban, unattended-upgrades),
 Tailscale-Zugang, Docker und 15 Container in fuenf Compose-Projekten hinter einem
 Nginx Proxy Manager.
-Ein frisch installierter VPS steht damit in **ca. 20-30 Minuten** (unbeaufsichtigt,
-abhaengig von Bandbreite und Image-Downloads; der Grossteil davon ist Wartezeit auf
-`apt` und Registry-Pulls).
+Ein frisch installierter VPS steht damit in **ca. 20-30 Minuten** (Schaetzung:
+dominiert von `apt` und Image-Pulls); ein zweiter Lauf gegen denselben Host braucht
+**101 Sekunden** (gemessen am 08.11.2026).
 Ausdruecklich **nicht** abgedeckt: Hochverfuegbarkeit/Failover, zentrale Logs und
 Metriken, Multi-Host-Orchestrierung, automatisierte Backup-Restore-Tests und die
 DNS-/Domain-Verwaltung.
-
-<!-- TODO: Zeitmessung mit `time ansible-playbook ...` belegen und hier einsetzen. -->
 
 ## 2. Architektur
 
@@ -270,7 +268,10 @@ provisioniert nur die Compose-Stacks neu, `--tags hardening` nur SSH/ufw/Fail2ba
 - **Monitoring ist ein Skript, kein Stack:** `health-check.sh` prueft stuendlich
   Zertifikatslaufzeiten, Container-Health, Reboot-Bedarf und Disk-Auslastung. Alarmiert
   wird nach dem Dead-Man-Prinzip: der taegliche Restore-Test pingt healthchecks.io,
-  bleibt der Ping aus, kommt die Mail. Keine Metriken, keine Dashboards, kein Verlauf.
+  bleibt der Ping aus, kommt die Mail. Dazu ein Boot-Check, der nach einem Neustart
+  zaehlt, ob alle Container zurueckkommen, und ein **deaktiviertes** Reboot-Fenster
+  (`reboot-window.sh`) - die Entscheidung, wann neu gestartet wird, bleibt manuell.
+  Keine Metriken, keine Dashboards, kein Verlauf.
 - **NPM braucht root fuer 80/443:** Privilegierte Ports. Die Alternative
   (`CAP_NET_BIND_SERVICE` plus Socket-Activation) wuerde Certbot-Hooks und das
   Container-Setup mit Sonderfaellen belasten - bewusst nicht umgesetzt.

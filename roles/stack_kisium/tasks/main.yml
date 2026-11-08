@@ -37,6 +37,9 @@
     state: absent
   notify: Kisium neu starten
 
+# Hinweis: docker_compose_v2 meldet auch bei unveraendertem Zustand
+# "changed" (Waiting-Aktionen fuer depends_on). Gegengeprueft mit
+# `docker compose --dry-run`: dort steht jeder Container auf "Running".
 - name: Stack starten
   community.docker.docker_compose_v2:
     project_src: "{{ kisium_dir }}"
