@@ -2,8 +2,8 @@
 
 Ein-Host-Provisionierung fuer einen Ubuntu-24.04-VPS (Webtropia): Hardening, Docker,
 17 Container in sechs Compose-Projekten, Tailscale, Fail2ban, unattended-upgrades.
-Lizenz: [MIT](LICENSE) · Pruefungen: `.github/workflows/ci.yml`
-(ansible-lint, yamllint, shellcheck).
+Lizenz: [MIT](LICENSE) · CI: Lint und Syntax-Check (`.github/workflows/ci.yml`,
+ansible-lint, yamllint, shellcheck) - **kein Rollen-Test**, dafuer `scripts/test-vm.sh`.
 
 ## 1. Was das hier ist
 
@@ -21,6 +21,8 @@ Aenderung** - reproduzierbar mit `scripts/test-vm.sh`.
 Ausdruecklich **nicht** abgedeckt: Hochverfuegbarkeit/Failover, zentrale Logs und
 Metriken, Multi-Host-Orchestrierung, automatisierte Backup-Restore-Tests und die
 DNS-/Domain-Verwaltung.
+Die Wiederherstellungszeit ist die Zeit fuer einen Neuaufbau aus diesem Repo - genau
+dafuer ist es da.
 
 ## 2. Architektur
 
@@ -110,6 +112,10 @@ DERP-Relais auf; eine Portfreigabe ist fuer NAT-Traversal nicht erforderlich
 | sshd | 2222 | `0.0.0.0`, ufw nur `tailscale0` | Tailnet |
 
 ## 3. Quickstart
+
+Wenn du nur den Code sehen willst: `roles/ufw/tasks/main.yml` (Firewall-Regeln mit
+Begruendung), `roles/stack_homeserver/templates/docker-compose.yml.j2` (Stack-Vorlage)
+und die Reihenfolge in `site.yml`. Die laengste Begruendung steht in Abschnitt 5.
 
 ```bash
 pipx install ansible-core && ansible-galaxy collection install -r requirements.yml

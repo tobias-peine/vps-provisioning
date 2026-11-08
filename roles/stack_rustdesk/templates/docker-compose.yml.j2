@@ -17,6 +17,8 @@ services:
       ENCRYPTED_ONLY: "1"
     security_opt:
       - no-new-privileges:true
+    cap_drop:
+      - ALL
     restart: unless-stopped
     depends_on:
       - hbbr
@@ -37,6 +39,8 @@ services:
       ENCRYPTED_ONLY: "1"
     security_opt:
       - no-new-privileges:true
+    cap_drop:
+      - ALL
     restart: unless-stopped
     logging:
       driver: json-file
