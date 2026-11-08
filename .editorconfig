@@ -1,0 +1,23 @@
+# Editor- und Whitespace-Regeln, damit Diffs nicht aus Leerzeichen bestehen.
+# Git normalisiert Zeilenenden; EditorConfig tut dasselbe vor dem Speichern.
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+
+# Makefile verlangt echte Tabs; Spaces brechen jedes Target.
+[Makefile]
+indent_style = tab
+
+# Markdown nutzt zwei Leerzeichen am Zeilenende als Zeilenumbruch - nicht trimmen.
+[*.md]
+trim_trailing_whitespace = false
+
+# Shell-Skripte: 4 Spaces ist hier die verbreitete Konvention.
+[*.sh]
+indent_size = 4

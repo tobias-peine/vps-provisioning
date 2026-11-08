@@ -1,0 +1,48 @@
+---
+- name: Tailscale-Signaturschluessel holen
+  ansible.builtin.get_url:
+    url: "https://pkgs.tailscale.com/stable/ubuntu/{{ ansible_distribution_release }}.noarmor.gpg"
+    dest: /usr/share/keyrings/tailscale-archive-keyring.gpg
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Paketquelle fuer Tailscale eintragen
+  ansible.builtin.copy:
+    dest: /etc/apt/sources.list.d/tailscale.list
+    content: "deb [signed-by=/usr/share/keyrings/tailscale-archive-keyring.gpg]
+      https://pkgs.tailscale.com/stable/ubuntu {{ ansible_distribution_release }} main\n"
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Tailscale installieren
+  ansible.builtin.apt:
+    name: tailscale
+    state: present
+    update_cache: true
+
+- name: Tailscaled starten und aktivieren
+  ansible.builtin.systemd_service:
+    name: tailscaled
+    state: started
+    enabled: true
+
+# Der Status entscheidet, ob "up" noetig ist - so bleibt der Task idempotent,
+# ohne den Authkey bei jedem Lauf zu benutzen.
+- name: Tailnet-Status abfragen
+  ansible.builtin.command:
+    cmd: tailscale status --json
+  register: tailscale_status
+  changed_when: false
+  failed_when: false
+
+- name: Tailnet beitreten
+  ansible.builtin.command:
+    cmd: >-
+      tailscale up
+      --authkey={{ vault_tailscale_authkey }}
+      --hostname={{ tailscale_hostname }}
+  when: (tailscale_status.stdout | default('{}', true) | from_json).BackendState | default('') != 'Running'
+  no_log: true
+  changed_when: true

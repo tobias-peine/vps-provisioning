@@ -1,0 +1,20 @@
+---
+homepage_dir: /opt/homepage
+homepage_port: 3000
+
+# Digest statt "latest": der naechste Pull zieht sonst ungeprueft eine neue Version.
+homepage_image: "ghcr.io/gethomepage/homepage@sha256:19c5c09184458a41b7b5915e71463a39f36cd33540f41bdbed008791b8182d5f"
+
+homepage_env:
+  DASH_HOST: "https://home.{{ base_domain }}"
+
+# Zugangsdaten fuer Dashboard-Login, NPM und die API-Kacheln.
+homepage_secrets:
+  DASH_USER: "{{ vault_homepage_dash_user }}"
+  DASH_PASS: "{{ vault_homepage_dash_password }}"
+  NPM_URL: "http://npm:81"
+  NPM_USER: "{{ vault_npm_admin_user }}"
+  NPM_PASS: "{{ vault_npm_admin_password }}"
+  HOMEPAGE_VAR_GHOST_KEY: "{{ vault_homepage_ghost_key }}"
+  HOMEPAGE_VAR_N8N_KEY: "{{ vault_homepage_n8n_key }}"
+  HOMEPAGE_VAR_PAPERLESS_TOKEN: "{{ vault_homepage_paperless_token }}"

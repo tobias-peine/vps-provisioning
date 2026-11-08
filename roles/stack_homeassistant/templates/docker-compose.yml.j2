@@ -1,0 +1,50 @@
+---
+# Verwaltet von Ansible (Rolle stack_homeassistant).
+name: homeassistant
+
+services:
+  homeassistant:
+    image: {{ hass_image }}
+    container_name: homeassistant
+    restart: unless-stopped
+    environment:
+      TZ: "{{ timezone }}"
+      # Kein Supervisor auf diesem Host - ohne HASSIO=false sucht HA beim Start danach.
+      HASSIO: "false"
+    volumes:
+      - "{{ hass_dir }}/config:/config"
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "127.0.0.1:8123:8123"
+{% if hass_tailscale_ip is defined %}
+      - "{{ hass_tailscale_ip }}:8123:8123"
+{% endif %}
+    networks:
+      - default
+      - homeserver_default
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+      - FOWNER
+      - SETGID
+      - SETUID
+    mem_limit: 1536m
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8123/manifest.json', timeout=5)"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 180s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  homeserver_default:
+    external: true

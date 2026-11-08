@@ -1,0 +1,69 @@
+---
+# Basis "default" (2 Spaces, Kommentare an, 80 Zeichen). Abgewichen wird nur,
+# wo die Abweichung einen Grund hat - nicht, um Meldungen loszuwerden.
+extends: default
+
+rules:
+  # 120 statt 80: Compose-Bloecke und Jinja-Ausdruecke werden bei 80 Zeichen
+  # unlesbar, und umgebrochene Jinja-Ausdruecke sind fehleranfaelliger als
+  # lange Zeilen. Warning statt Error, damit ein einzelner langer Satz in der
+  # Doku die CI nicht rot macht.
+  line-length:
+    max: 120
+    level: warning
+
+  # Wahrheitswerte nur als true/false: YAML 1.1 liest "yes"/"on" als Boolean -
+  # eine der haeufigsten stillen Fehlerquellen in Ansible-Vars.
+  truthy:
+    allowed-values: ["true", "false"]
+    # "on:" ist in GitHub Actions ein Schluessel, kein Boolean.
+    check-keys: false
+
+  # Jede YAML-Datei beginnt mit "---": macht Diffs und Patch-Hunks eindeutig.
+  document-start:
+    present: true
+    level: error
+
+  # Ansible-Standard: 2 Spaces, Sequenzen konsistent eingerueckt.
+  indentation:
+    spaces: 2
+    indent-sequences: consistent
+    # Mehrzeilige Strings (z. B. Compose-Inhalte) nicht erzwingen.
+    check-multi-line-strings: false
+
+  # Maximal eine Leerzeile am Stueck; keine Leerzeilen am Dateianfang.
+  empty-lines:
+    max: 1
+    max-start: 0
+    max-end: 1
+
+  # Eine Leerstelle vor "#", damit Kommentare nicht wie Code aussehen.
+  comments:
+    min-spaces-from-content: 1
+  # Auskommentierte Bloecke sind bei Deployments legitim und sollen nicht rot
+  # werden - die Einrueckungspruefung fuer Kommentare bringt hier nichts.
+  comments-indentation: false
+
+  # Flow-Mappings duerfen ein Space innen haben: { key: value } statt {key: value}
+  braces:
+    min-spaces-inside: 0
+    max-spaces-inside: 1
+
+  # Datei endet mit Newline: verhindert "No newline at end of file"-Diffs.
+  new-line-at-end-of-file:
+    level: error
+
+  # Oktalwerte muessen gequotet sein ("0644" statt 0644): YAML 1.1 liest 0644
+  # als 420, 0o644 als Fehler. ansible-lint verlangt beide Schalter auf true,
+  # und ohne die Regel entstehen genau die stillen Mode-Fehler, die man bei
+  # file/copy-Tasks erst am Ergebnis sieht.
+  octal-values:
+    forbid-implicit-octal: true
+    forbid-explicit-octal: true
+
+# Nicht linter-relevant: installierte Dependencies und Tool-Caches.
+ignore: |
+  .git/
+  .venv/
+  .cache/
+  collections/

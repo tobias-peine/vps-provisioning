@@ -1,0 +1,110 @@
+---
+# Verwaltet von Ansible (Rolle stack_kisium_tv).
+# Die Build-Kontexte (stream-proxy/, catalog-sync/) liegen im Projektverzeichnis.
+name: kisium-tv
+
+services:
+  catalog-sync:
+    build:
+      context: ./catalog-sync
+      target: runtime
+    container_name: kisium-catalog-sync
+    user: "${KISIUM_UID:-1000}:${KISIUM_GID:-1000}"
+    env_file: .env
+    environment:
+      OUTPUT_DIR: /data
+    volumes:
+      - ./data:/data
+    restart: unless-stopped
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp:size=32m,noexec,nosuid
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    healthcheck:
+      test: ["CMD", "python", "-m", "catalog_sync", "--healthcheck"]
+      interval: 5m
+      timeout: 10s
+      start_period: 2m
+      retries: 3
+    stop_grace_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  stream-proxy:
+    build:
+      context: ./stream-proxy
+      target: runtime
+    container_name: kisium-stream-proxy
+    user: "${KISIUM_UID:-1000}:${KISIUM_GID:-1000}"
+    env_file: .env
+    environment:
+      PROXY_HOST: 0.0.0.0
+      SQLITE_DB_PATH: /data/catalog.sqlite
+      CATALOG_JSON_PATH: /data/catalog.json
+      CATALOG_CACHE_SECONDS: ${CATALOG_CACHE_SECONDS:-60}
+    volumes:
+      - ./data:/data
+    ports:
+      - "${PROXY_BIND}:${PROXY_PORT}:${PROXY_PORT}"
+    depends_on:
+      catalog-sync:
+        condition: service_started
+    restart: unless-stopped
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,noexec,nosuid
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    healthcheck:
+      test: ["CMD", "python", "-c", "import os,urllib.request; urllib.request.urlopen(f'http://127.0.0.1:{os.getenv(\"PROXY_PORT\",\"5000\")}/healthz', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+    stop_grace_period: 20s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  kisium-tls:
+    image: {{ kisium_tv_image_nginx }}
+    container_name: kisium-tls
+    # Host-Netz ist Absicht: der Container terminiert TLS auf Port 8443 selbst,
+    # damit NPM nicht als zweiter Proxy vor dem Videostream sitzt.
+    network_mode: host
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+      - CHOWN
+      - DAC_OVERRIDE
+      - SETGID
+      - SETUID
+    restart: unless-stopped
+    volumes:
+      - "{{ kisium_tv_cert_dir }}:/etc/letsencrypt:ro"
+      - "{{ kisium_tv_dir }}/tls/nginx.conf:/etc/nginx/conf.d/default.conf:ro"
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z 127.0.0.1 {{ kisium_tv_tls_port }} || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

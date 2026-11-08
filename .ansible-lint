@@ -1,0 +1,27 @@
+---
+# Profil "production" = strengste Stufe. Bewusst nicht "basic": fuer ein
+# Portfolio-Repo ist "laeuft unter production-Regeln" die staerkere Aussage.
+# Jeder Skip unten ist begruendet - Regeln, die ich nicht erfuellen kann,
+# werden nicht heimlich abgeschaltet, sondern erklaert.
+profile: production
+
+# Kein von uns geschriebener Code oder automatisch installiertes Material.
+exclude_paths:
+  - .cache/
+  - .github/
+  - collections/
+  - .venv/
+
+# Keine warn_list: was nicht blockiert, wird im Alltag ignoriert.
+skip_list:
+  # Zeilenlaenge regelt .yamllint (max 120). Zwei Tools fuer dieselbe Zeile
+  # erzeugen nur doppelte Meldungen.
+  - yaml[line-length]
+  # Die Rollen sind playbook-lokal und werden nicht auf Galaxy veroeffentlicht.
+  # Version, Changelog und galaxy_info waeren Pflichtfelder ohne Adressat.
+  - galaxy[version-incorrect]
+  - galaxy[no-changelog]
+  - meta-no-info
+  # group_vars/all/*.yml sind Host-Variablen, keine Rollen-Variablen. Ein
+  # Rollen-Prefix (z. B. "docker_") waere hier irrefuehrend statt klar.
+  - var-naming[no-role-prefix]

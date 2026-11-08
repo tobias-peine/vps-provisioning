@@ -1,0 +1,47 @@
+---
+homeserver_dir: /opt/stack
+
+# Wurzel der Host-Verzeichnisse, die als Bind-Mounts in die Container gehen.
+homeserver_data_root: /opt
+
+# Images mit Digest gepinnt, wo ein Registry-Digest existiert. Ein beweglicher
+# Tag wie "latest" wuerde beim naechsten Pull unbemerkt eine andere Version ziehen.
+homeserver_image_ollama: >-
+  ollama/ollama@sha256:265409e1d931028a8f7d5a32bcbafddd7bffbc6cc629d77efe9560adf692a5e7
+homeserver_image_paperless: >-
+  ghcr.io/paperless-ngx/paperless-ngx@sha256:9bc6e8248891bcfa6f52fffe8b81e4ea8cae75790c3ec1b9906961a7ba55c969
+homeserver_image_npm: "jc21/nginx-proxy-manager@sha256:4393e642e233e5efd5adeb7f10918d4aaea71c9ed875b94190273fc8e87f9594"
+homeserver_image_n8n: "docker.n8n.io/n8nio/n8n@sha256:a18edcf018198b33b5488fb47ededafe11e0b10d28f65b9535b7c447c9ce3b2c"
+homeserver_image_searxng: "searxng/searxng@sha256:d81e14a4328ba7a57f297dff0472be629d30bf29580406c0d5b3bdab563c9bed"
+homeserver_image_postgres: "postgres:16"
+homeserver_image_redis: "redis:7"
+# Lokal gebaut (nonroot-Variante) - TODO: nach ghcr.io pushen und per Digest pinnen.
+homeserver_image_openwebui: "open-webui:nonroot-20261103"
+
+# Host-Ports. Alle bis auf NPM und den TLS-Terminator haengen an 127.0.0.1.
+homeserver_webui_port: 8080
+homeserver_searxng_port: 8888
+homeserver_n8n_port: 5678
+homeserver_npm_admin_port: 81
+
+# Nicht-geheime Werte der .env. Secrets stehen in homeserver_secrets und kommen
+# aus dem Vault.
+homeserver_env:
+  PAPERLESS_URL: "https://paperless.{{ base_domain }}"
+  PAPERLESS_TIME_ZONE: "{{ timezone }}"
+  PAPERLESS_OCR_LANGUAGE: deu+eng
+  PAPERLESS_ADMIN_USER: paperless
+  PAPERLESS_ADMIN_MAIL: "admin@{{ base_domain }}"
+  WEBUI_URL: "https://chat.{{ base_domain }}"
+  N8N_HOST: "n8n.{{ base_domain }}"
+  N8N_PROTOCOL: https
+  SEARXNG_BASE_URL: "https://search.{{ base_domain }}"
+
+# Diese Werte werden aus group_vars/all/vault.yml aufgeloest. Fehlt der Vault,
+# bricht der Lauf beim Schreiben der .env ab - lieber laut als mit leerem Passwort.
+homeserver_secrets:
+  N8N_ENCRYPTION_KEY: "{{ vault_n8n_encryption_key }}"
+  PAPERLESS_DB_PASSWORD: "{{ vault_paperless_db_password }}"
+  PAPERLESS_SECRET_KEY: "{{ vault_paperless_secret_key }}"
+  PAPERLESS_ADMIN_PASSWORD: "{{ vault_paperless_admin_password }}"
+  WEBUI_SECRET_KEY: "{{ vault_webui_secret_key }}"

@@ -1,0 +1,52 @@
+---
+- name: Keyring-Verzeichnis fuer Paketquellen anlegen
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Docker-Signaturschluessel holen
+  ansible.builtin.get_url:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    dest: /etc/apt/keyrings/docker.asc
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Docker-Paketquelle eintragen
+  ansible.builtin.copy:
+    dest: /etc/apt/sources.list.d/docker.list
+    content: "deb [arch={{ docker_arch }} signed-by=/etc/apt/keyrings/docker.asc]
+      https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable\n"
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Docker installieren
+  ansible.builtin.apt:
+    name: "{{ docker_packages }}"
+    state: present
+    update_cache: true
+
+- name: Daemon-Konfiguration schreiben
+  ansible.builtin.template:
+    src: daemon.json.j2
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Docker neu starten
+
+- name: Admin-Account in die docker-Gruppe aufnehmen
+  ansible.builtin.user:
+    name: "{{ admin_user }}"
+    groups: docker
+    append: true
+
+- name: Docker starten und aktivieren
+  ansible.builtin.systemd_service:
+    name: docker
+    state: started
+    enabled: true

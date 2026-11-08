@@ -1,0 +1,36 @@
+---
+- name: Projektverzeichnis anlegen
+  ansible.builtin.file:
+    path: "{{ homepage_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: .env schreiben
+  ansible.builtin.template:
+    src: env.j2
+    dest: "{{ homepage_dir }}/.env"
+    owner: root
+    group: root
+    mode: "0600"
+  no_log: true
+  vars:
+    stack_env: "{{ homepage_env | combine(homepage_secrets) }}"
+  notify: Homepage neu starten
+
+- name: Compose-Datei schreiben
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: "{{ homepage_dir }}/docker-compose.yml"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Homepage neu starten
+
+- name: Stack starten
+  community.docker.docker_compose_v2:
+    project_src: "{{ homepage_dir }}"
+    state: present
+    pull: missing
+    remove_orphans: true

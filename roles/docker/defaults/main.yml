@@ -1,0 +1,11 @@
+---
+# Architektur fuer die Docker-Paketquelle.
+docker_arch: "{{ 'amd64' if ansible_architecture == 'x86_64' else 'arm64' }}"
+
+# Compose-Plugin und buildx sind Pflicht - ohne sie startet keiner der Stacks.
+docker_packages:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-buildx-plugin
+  - docker-compose-plugin

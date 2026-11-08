@@ -1,0 +1,11 @@
+---
+galaxy_info:
+  author: Tobi
+  description: Kisium-TV - Stream-Proxy, Catalog-Sync und TLS-Terminator
+  license: MIT
+  min_ansible_version: "2.15"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - noble
+dependencies: []

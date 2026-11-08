@@ -1,0 +1,26 @@
+---
+- name: Drop-in-Verzeichnis fuer sshd sicherstellen
+  ansible.builtin.file:
+    path: /etc/ssh/sshd_config.d
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+# validate prueft die Datei mit sshd, bevor sie aktiv wird: eine kaputte
+# Konfiguration laesst den Lauf scheitern, statt die Session zu killen.
+- name: SSH-Hardening schreiben
+  ansible.builtin.template:
+    src: 99-hardening.conf.j2
+    dest: /etc/ssh/sshd_config.d/99-hardening.conf
+    owner: root
+    group: root
+    mode: "0644"
+    validate: sshd -t -f %s
+  notify: SSH neu laden
+
+- name: SSH-Dienst aktiviert halten
+  ansible.builtin.systemd_service:
+    name: ssh
+    state: started
+    enabled: true

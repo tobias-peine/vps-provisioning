@@ -1,0 +1,11 @@
+---
+galaxy_info:
+  author: Tobi
+  description: Home Assistant Container mit Loopback- und Tailscale-Binding
+  license: MIT
+  min_ansible_version: "2.15"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - noble
+dependencies: []

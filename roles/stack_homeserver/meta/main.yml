@@ -1,0 +1,11 @@
+---
+galaxy_info:
+  author: Tobi
+  description: Kern-Stack - NPM, Open WebUI, Ollama, SearXNG, n8n, Paperless
+  license: MIT
+  min_ansible_version: "2.15"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - noble
+dependencies: []

@@ -1,0 +1,33 @@
+---
+# Reihenfolge ist nicht kosmetisch:
+#   - tailscale vor ssh/ufw: sonst gibt es nach dem Umschalten keinen zweiten
+#     Weg mehr auf den Host.
+#   - stack_kisium vor stack_homeserver: der homeserver haengt sich an das
+#     externe Netz kisium-net, das der kisium-Stack erzeugt.
+#   - stack_homeserver vor homepage/homeassistant: beide nutzen homeserver_default.
+- name: Webtropia-VPS provisionieren
+  hosts: prod
+  become: true
+  roles:
+    - role: base
+      tags: [base, packages, updates]
+    - role: tailscale
+      tags: [tailscale, vpn]
+    - role: ssh
+      tags: [ssh, hardening]
+    - role: ufw
+      tags: [ufw, firewall, hardening]
+    - role: fail2ban
+      tags: [fail2ban, hardening]
+    - role: docker
+      tags: [docker]
+    - role: stack_kisium
+      tags: [kisium, stacks]
+    - role: stack_homeserver
+      tags: [homeserver, stacks]
+    - role: stack_homepage
+      tags: [homepage, stacks]
+    - role: stack_homeassistant
+      tags: [homeassistant, stacks]
+    - role: stack_kisium_tv
+      tags: [kisium_tv, stacks]

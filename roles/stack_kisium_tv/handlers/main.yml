@@ -1,0 +1,7 @@
+---
+- name: Kisium-TV neu starten
+  community.docker.docker_compose_v2:
+    project_src: "{{ kisium_tv_dir }}"
+    state: present
+    build: policy
+    recreate: changed

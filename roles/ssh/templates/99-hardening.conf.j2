@@ -1,0 +1,7 @@
+# Verwaltet von Ansible (Rolle ssh) - manuelle Aenderungen werden ueberschrieben.
+Port {{ ssh_port }}
+PermitRootLogin no
+PasswordAuthentication no
+PubkeyAuthentication yes
+PermitEmptyPasswords no
+AllowUsers {{ admin_user }}

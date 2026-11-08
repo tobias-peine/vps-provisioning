@@ -1,0 +1,8 @@
+---
+hass_dir: /opt/homeassistant
+hass_image: "ghcr.io/home-assistant/home-assistant:stable"
+
+# Optionales zweites Binding auf die Tailscale-Adresse. Bewusst nicht im Repo:
+# die Adresse identifiziert das Tailnet. Setzen in group_vars/all/vault.yml:
+#   hass_tailscale_ip: "100.x.y.z"
+# Ohne die Variable wird nur an 127.0.0.1 gebunden.

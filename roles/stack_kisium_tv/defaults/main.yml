@@ -1,0 +1,29 @@
+---
+kisium_tv_dir: /home/admin/kisium-tv
+kisium_tv_uid: 1000
+kisium_tv_gid: 1000
+
+# Der Stream-Proxy hoert nur auf Loopback; nach aussen geht es ueber kisium-tls.
+kisium_tv_proxy_port: 5000
+kisium_tv_proxy_bind: "127.0.0.1"
+
+# Zertifikate kommen aus dem NPM-Volume - der TLS-Terminator liest nur mit.
+kisium_tv_cert_dir: /opt/npm/letsencrypt
+kisium_tv_tls_port: 8443
+kisium_tv_image_nginx: "nginx@sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11"
+
+kisium_tv_env:
+  PROXY_BIND: "{{ kisium_tv_proxy_bind }}"
+  PROXY_PORT: "{{ kisium_tv_proxy_port }}"
+  PROXY_HOST: 0.0.0.0
+  OUTPUT_DIR: /data
+  KISIUM_UID: "{{ kisium_tv_uid }}"
+  KISIUM_GID: "{{ kisium_tv_gid }}"
+  CATALOG_CACHE_SECONDS: "60"
+  UVICORN_LOG_LEVEL: info
+
+# App-spezifische Einstellungen (Feed-URL, User-Agents, Timeouts) bleiben in der
+# bestehenden .env auf dem Host - sie gehoeren zum Projekt, nicht zur Provisionierung.
+kisium_tv_secrets:
+  ADMIN_PASSWORD: "{{ vault_kisium_tv_admin_password }}"
+  PROXY_PASSWORD: "{{ vault_kisium_tv_proxy_password }}"

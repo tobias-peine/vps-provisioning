@@ -1,0 +1,31 @@
+# hosts.ini.example - Vorlage fuer das echte Inventory.
+# Benutzung:  cp hosts.ini.example hosts.ini   und dann die TODOs fuellen.
+# Die echte hosts.ini ist per .gitignore ausgeschlossen: sie enthaelt
+# Tailscale-Adresse und Key-Pfad, also Infrastruktur-Details, die nicht
+# in ein oeffentliches Portfolio-Repo gehoeren.
+#
+# Die drei Variablen und warum sie genau so gesetzt sind:
+#
+#   ansible_host  Adresse, die Ansible anspricht. Hier die Tailscale-IP aus
+#                 100.64.0.0/10 - NICHT die oeffentliche IPv4. Grund: 2222/tcp
+#                 ist in ufw ausschliesslich auf dem Interface tailscale0
+#                 erlaubt; ueber die oeffentliche IP waere der Port zu.
+#   ansible_port  2222, weil sshd nicht auf 22 lauscht. Muss zur ufw-Regel
+#                 "allow in on tailscale0 to any port 2222 proto tcp" passen.
+#   ansible_user  admin, nicht root: PermitRootLogin ist deaktiviert,
+#                 privilegierte Tasks laufen ueber become (siehe ansible.cfg).
+#
+# TODO: echte Werte ausschliesslich in hosts.ini eintragen, nie in dieser Datei.
+
+[prod]
+# Name frei waehlbar; er landet in Logs und Tags, deshalb neutral "vps01".
+vps01 ansible_host=100.64.0.1 ansible_port=2222 ansible_user=admin
+
+[prod:vars]
+# Ubuntu 24.04 liefert Python 3.12 unter /usr/bin/python3. Fest setzen spart die
+# Interpreter-Discovery und die Warnung, die sonst pro Task im Log steht.
+ansible_python_interpreter=/usr/bin/python3
+
+# Privater Key pro Host statt ssh-agent: kein Agent-Forwarding auf den VPS.
+# TODO: auf den tatsaechlichen Key-Dateinamen anpassen.
+ansible_ssh_private_key_file=~/.ssh/id_ed25519_todo

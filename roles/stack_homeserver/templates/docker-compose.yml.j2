@@ -1,0 +1,281 @@
+---
+# Verwaltet von Ansible (Rolle stack_homeserver).
+# Ersetzt docker-compose.yml + docker-compose.override.yml des alten Setups.
+name: homeserver
+
+x-log: &log
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+volumes:
+  webui:
+  ollama:
+  n8n:
+  searxng_cache:
+  paperless_data:
+  paperless_media:
+  paperless_pgdata:
+  paperless_redisdata:
+
+services:
+  npm:
+    image: {{ homeserver_image_npm }}
+    container_name: npm
+    networks:
+      - default
+      - kisium-net
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+      - CHOWN
+      - DAC_OVERRIDE
+      - SETGID
+      - SETUID
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "127.0.0.1:{{ homeserver_npm_admin_port }}:81"
+    volumes:
+      - "{{ homeserver_data_root }}/npm/data:/data"
+      - "{{ homeserver_data_root }}/npm/letsencrypt:/etc/letsencrypt"
+    mem_limit: 250m
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "-o", "/dev/null", "http://127.0.0.1:81/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    logging: *log
+
+  n8n:
+    image: {{ homeserver_image_n8n }}
+    container_name: n8n
+    # kisium-net ist Absicht: Workflows greifen auf die Ghost-Datenbank zu.
+    networks:
+      - default
+      - kisium-net
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped
+    environment:
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY}
+      N8N_HOST: ${N8N_HOST}
+      N8N_PROTOCOL: ${N8N_PROTOCOL}
+      WEBHOOK_URL: https://${N8N_HOST}/
+      N8N_EDITOR_BASE_URL: https://${N8N_HOST}/
+      N8N_PROXY_HOPS: "1"
+      GENERIC_TIMEZONE: "{{ timezone }}"
+      N8N_DIAGNOSTICS_ENABLED: "false"
+    volumes:
+      - n8n:/home/node/.n8n
+    ports:
+      - "127.0.0.1:{{ homeserver_n8n_port }}:5678"
+    mem_limit: 600m
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:5678/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    logging: *log
+
+  searxng:
+    image: {{ homeserver_image_searxng }}
+    container_name: searxng
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+      - SETGID
+      - SETUID
+    restart: unless-stopped
+    environment:
+      SEARXNG_BASE_URL: ${SEARXNG_BASE_URL}
+    volumes:
+      - "{{ homeserver_data_root }}/searxng/searxng:/etc/searxng"
+      - searxng_cache:/var/cache/searxng
+    ports:
+      - "127.0.0.1:{{ homeserver_searxng_port }}:8080"
+    mem_limit: 500m
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    logging: *log
+
+  ollama:
+    image: {{ homeserver_image_ollama }}
+    container_name: ollama
+    user: "1000:1000"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped
+    environment:
+      HOME: /tmp
+      OLLAMA_MODELS: /models/models
+      OLLAMA_KEEP_ALIVE: 5m
+      OLLAMA_MAX_LOADED_MODELS: 1
+    volumes:
+      - ollama:/models
+    mem_limit: 1500m
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    logging: *log
+
+  open-webui:
+    image: {{ homeserver_image_openwebui }}
+    container_name: open-webui
+    user: "1000:1000"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      WEBUI_SECRET_KEY: ${WEBUI_SECRET_KEY}
+      OLLAMA_BASE_URL: http://ollama:11434
+      ENABLE_OLLAMA_API: "true"
+      RAG_EMBEDDING_ENGINE: ollama
+      RAG_EMBEDDING_MODEL: nomic-embed-text
+      RAG_OLLAMA_BASE_URL: http://ollama:11434
+      FORWARDED_ALLOW_IPS: "*"
+      ENABLE_SIGNUP: "false"
+      CORS_ALLOW_ORIGIN: "${WEBUI_URL}"
+    volumes:
+      - webui:/app/backend/data
+    ports:
+      - "127.0.0.1:{{ homeserver_webui_port }}:8080"
+    mem_limit: 2g
+    logging: *log
+
+  paperless-db:
+    image: {{ homeserver_image_postgres }}
+    container_name: paperless-db
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+      - FOWNER
+      - SETGID
+      - SETUID
+    restart: unless-stopped
+    # Nur im internen Netz: NPM und die uebrigen Apps kommen hier nicht hin.
+    networks:
+      - paperless-internal
+    volumes:
+      - paperless_pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: paperless
+      POSTGRES_USER: paperless
+      POSTGRES_PASSWORD: ${PAPERLESS_DB_PASSWORD}
+    mem_limit: 500m
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "paperless"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+    logging: *log
+
+  paperless-broker:
+    image: {{ homeserver_image_redis }}
+    container_name: paperless-broker
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+      - SETGID
+      - SETUID
+    restart: unless-stopped
+    networks:
+      - paperless-internal
+    volumes:
+      - paperless_redisdata:/data
+    mem_limit: 150m
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+    logging: *log
+
+  paperless:
+    image: {{ homeserver_image_paperless }}
+    container_name: paperless
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+      - FOWNER
+      - SETGID
+      - SETUID
+    restart: unless-stopped
+    depends_on:
+      paperless-db:
+        condition: service_healthy
+      paperless-broker:
+        condition: service_healthy
+    # Zwei Netze: default fuer NPM, paperless-internal fuer DB und Redis.
+    networks:
+      - default
+      - paperless-internal
+    volumes:
+      - paperless_data:/usr/src/paperless/data
+      - paperless_media:/usr/src/paperless/media
+      - "{{ homeserver_data_root }}/paperless/consume:/usr/src/paperless/consume"
+      - "{{ homeserver_data_root }}/paperless/export:/usr/src/paperless/export"
+    environment:
+      PAPERLESS_REDIS: redis://paperless-broker:6379
+      PAPERLESS_DBHOST: paperless-db
+      PAPERLESS_DBENGINE: postgresql
+      PAPERLESS_DBNAME: paperless
+      PAPERLESS_DBUSER: paperless
+      PAPERLESS_DBPASS: ${PAPERLESS_DB_PASSWORD}
+      PAPERLESS_SECRET_KEY: ${PAPERLESS_SECRET_KEY}
+      PAPERLESS_URL: ${PAPERLESS_URL}
+      PAPERLESS_TIME_ZONE: ${PAPERLESS_TIME_ZONE}
+      PAPERLESS_OCR_LANGUAGE: ${PAPERLESS_OCR_LANGUAGE}
+      PAPERLESS_ADMIN_USER: ${PAPERLESS_ADMIN_USER}
+      PAPERLESS_ADMIN_PASSWORD: ${PAPERLESS_ADMIN_PASSWORD}
+      PAPERLESS_ADMIN_MAIL: ${PAPERLESS_ADMIN_MAIL}
+      PAPERLESS_UID: "1000"
+      PAPERLESS_GID: "1000"
+    mem_limit: 1g
+    logging: *log
+
+networks:
+  # Wird vom kisium-Stack erzeugt und hier nur mitbenutzt.
+  kisium-net:
+    external: true
+  # Kein Weg nach draussen: nur Paperless, Postgres und Redis haengen hier.
+  paperless-internal:
+    internal: true

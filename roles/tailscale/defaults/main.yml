@@ -1,0 +1,7 @@
+---
+# Name des Nodes im Tailnet. Die Tailscale-Adresse bleibt ueber Reboots stabil,
+# der Name ist der einzige Wert, den man spaeter noch erkennt.
+tailscale_hostname: "{{ inventory_hostname }}"
+
+# Authkey kommt aus dem Vault - niemals in group_vars/all/main.yml.
+# TODO: vault_tailscale_authkey in group_vars/all/vault.yml hinterlegen.

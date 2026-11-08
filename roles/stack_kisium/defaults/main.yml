@@ -1,0 +1,20 @@
+---
+kisium_dir: /opt/kisium
+kisium_port: 2368
+kisium_image_ghost: "ghost:6-alpine"
+kisium_image_mysql: "mysql:8.4"
+
+# Nicht-geheime Werte. Der Mail-Relay-Host ist ein Platzhalter - TODO: eigenen
+# Anbieter eintragen (Port 587, STARTTLS).
+kisium_env:
+  GHOST_URL: "https://{{ base_domain }}"
+  MAIL_HOST: "smtp.example.com"
+  MAIL_PORT: "587"
+  MAIL_SECURE: "false"
+  MAIL_USER: "smtp-user"
+  MAIL_FROM: "Kisium <hallo@{{ base_domain }}>"
+
+kisium_secrets:
+  MYSQL_ROOT_PASSWORD: "{{ vault_mysql_root_password }}"
+  MYSQL_PASSWORD: "{{ vault_mysql_password }}"
+  MAIL_PASSWORD: "{{ vault_mail_password }}"

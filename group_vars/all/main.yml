@@ -1,0 +1,16 @@
+---
+# Host-weite Variablen. Tragen keine Secrets - die stehen in
+# group_vars/all/vault.yml (gitignored, per ansible-vault verschluesselt).
+
+# Der einzige Account mit SSH-Zugang und docker-Gruppe.
+admin_user: admin
+
+# sshd-Port; die ufw-Regel erlaubt ihn nur auf tailscale0.
+ssh_port: 2222
+
+# Basis-Domain der oeffentlichen Dienste (chat., n8n., search. ...).
+# TODO: auf die eigene Domain setzen - Platzhalter, damit nichts Echtes im Repo landet.
+base_domain: example.com
+
+# Zeitzone des Hosts: Logs, Cron und Zertifikate laufen in derselben Zeit.
+timezone: Europe/Berlin

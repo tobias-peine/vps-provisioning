@@ -1,0 +1,7 @@
+---
+- name: Homeserver neu starten
+  community.docker.docker_compose_v2:
+    project_src: "{{ homeserver_dir }}"
+    state: present
+    pull: missing
+    recreate: changed

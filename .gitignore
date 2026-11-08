@@ -1,0 +1,90 @@
+# ---------------------------------------------------------------------------
+# Secrets zuerst. Grund: eine committete Datei ist ein verbrauchtes Credential -
+# Rotation ist teurer als jeder .gitignore-Eintrag.
+# ---------------------------------------------------------------------------
+
+# Vault-Passwortdateien: entsperren alles, was in vault.yml liegt
+.vault_pass
+.vault_pass.txt
+*vault*pass*
+vault_password_file
+
+# Vault-Inhalte liegen absichtlich ausserhalb des Repos (siehe README, Abschnitt 6)
+**/vault.yml
+**/vault.yaml
+**/vault/*.yml
+
+# .env-Dateien: DB-Passwoerter, API-Tokens, Session-Keys der Compose-Stacks
+.env
+.env.*
+# Ausnahme: die dokumentierte Vorlage ohne Werte
+!.env.example
+
+# Private Schluessel und Zertifikats-Bundles mit Key-Anteil
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.kdbx
+id_rsa*
+id_ed25519*
+id_ecdsa*
+
+# Tailscale-Authkeys (tskey-...): erlauben Tailnet-Beitritt, kurzlebig aber gueltig
+*.tskey
+*.authkey
+
+# SSH-/Tailscale-Material, das nie ins Repo gehoert
+.ssh/
+
+# Weitere Secret-Ablagen, die Compose/Ansible einlesen
+secrets/
+*.secrets.yml
+credentials*
+
+# Echte Inventory-Datei: enthaelt Tailscale-IP, Key-Pfad und Hostnamen
+hosts.ini
+# Ausnahme: die Vorlage ist versioniert und wird von der CI benutzt
+!hosts.ini.example
+
+# Von ansible-galaxy installierte Fremd-Rollen/-Collections (requirements.yml ist die Quelle)
+collections/
+roles/galaxy/
+
+# Ansible-Artefakte: Retry-Files und Logs enthalten Host-/Task-Details
+*.retry
+*.log
+
+# Ansible-Cache: Zwischenstaende, nicht reproduzierbar, kein Review-Wert
+.ansible/
+.cache/
+
+# Python venv + Tooling-Caches (Lint laeuft in CI, nicht aus dem Repo)
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Editor-/OS-Metadaten: lokal, kein Mehrwert im Repo
+.idea/
+.vscode/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Dumps und Backups: enthalten Nutzdaten und oft Klartext-Credentials
+*.sql
+*.sql.gz
+*.dump
+backups/
+*.tar.gz
+
+# Patch-Reste aus Konflikten/Merges
+*.orig
+*.rej

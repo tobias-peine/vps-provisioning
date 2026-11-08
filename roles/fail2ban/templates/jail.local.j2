@@ -1,0 +1,12 @@
+# Verwaltet von Ansible (Rolle fail2ban) - manuelle Aenderungen werden ueberschrieben.
+# backend = systemd: der Filter liest das Journal statt einer Logdatei. Damit
+# funktioniert der Jail unabhaengig davon, ob sshd in eine Datei schreibt.
+[DEFAULT]
+bantime  = {{ fail2ban_bantime }}
+findtime = {{ fail2ban_findtime }}
+maxretry = {{ fail2ban_maxretry }}
+
+[sshd]
+enabled = true
+port    = {{ ssh_port }}
+backend = systemd

@@ -1,0 +1,8 @@
+---
+# Ports, die aus dem Internet erreichbar sein muessen.
+# 80/443: Nginx Proxy Manager, 8443: TLS-Terminator der Kisium-Streams.
+# Alles andere bleibt zu - auch 41641/udp (Tailscale nutzt DERP, siehe README).
+ufw_public_ports:
+  - 80
+  - 443
+  - 8443

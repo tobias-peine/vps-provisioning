@@ -1,0 +1,100 @@
+---
+# CI fuer ein Ein-Host-Ansible-Repo: linten, nicht deployen.
+#
+# Bewusst KEIN Deploy-Job:
+#   1. Der Zielhost haengt nur an Tailscale. Ein GitHub-Runner kaeme ohne
+#      Tailscale-Authkey nicht hin - und ein Authkey im Repo/Secret ist genau
+#      das Credential, das dieser Workflow nie brauchen soll.
+#   2. Ein selbstgehosteter Runner auf dem VPS wuerde den Host, der
+#      provisioniert wird, zum Deployment-Werkzeug machen (Henne/Ei): bricht
+#      die Provisionierung, ist auch der Runner weg.
+#   3. Deploy bleibt ein bewusster, manueller Schritt vom Admin-Laptop:
+#      ansible-playbook site.yml --ask-vault-pass
+# Deshalb: keine secrets.*-Referenzen, kein Environment, kein Matrix-Build.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Minimalrechte: Lint braucht nur lesen.
+permissions:
+  contents: read
+
+# Push-Serien abbrechen: drei Jobs pro Push, sonst Queue-Rauschen.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  ansible-lint:
+    name: ansible-lint + syntax-check
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      # TODO: Versionen pinnen, sobald der Lauf gruen ist (Dependabot/Renovate).
+      - name: Install ansible-core + ansible-lint
+        run: |
+          python -m pip install --upgrade pip
+          pip install ansible-core ansible-lint
+          ansible --version
+          ansible-lint --version
+      - name: Install collections (nur wenn requirements.yml existiert)
+        run: |
+          if [ -f requirements.yml ]; then
+            ansible-galaxy collection install -r requirements.yml
+          else
+            echo "kein requirements.yml - Schritt uebersprungen"
+          fi
+      - name: Testinventar + Vault-Platzhalter vorbereiten
+        run: |
+          cp hosts.ini.example hosts.ini
+          # Der echte Vault liegt bewusst nicht im Repo (.gitignore). Fuer den
+          # Syntax-Check genuegt ein leerer Platzhalter: Tasks werden geparst,
+          # nicht ausgefuehrt - es werden keine Secrets gebraucht.
+          mkdir -p group_vars/all
+          if [ ! -f group_vars/all/vault.yml ]; then
+            printf -- '---\n# CI-Platzhalter, keine Secrets\n' > group_vars/all/vault.yml
+          fi
+      - name: ansible-lint (Konfiguration aus .ansible-lint)
+        run: ansible-lint
+      - name: syntax-check gegen hosts.ini.example
+        run: ansible-playbook site.yml --syntax-check -i hosts.ini
+
+  yamllint:
+    name: yamllint
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install yamllint
+        run: pip install yamllint
+      - name: yamllint (Konfiguration aus .yamllint)
+        run: yamllint .
+
+  shellcheck:
+    name: shellcheck
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      # shellcheck ist auf ubuntu-24.04 vorinstalliert - kein Install-Schritt,
+      # keine zusaetzliche Supply-Chain.
+      - name: shellcheck aller *.sh (auch in roles/*/files)
+        run: |
+          mapfile -d '' scripts < <(find . -path ./.git -prune -o -name '*.sh' -print0)
+          if [ "${#scripts[@]}" -eq 0 ]; then
+            echo "keine *.sh im Repo - Job ist bewusst gruen"
+            exit 0
+          fi
+          shellcheck --version
+          shellcheck --severity=warning --external-sources --source-path=SCRIPTDIR "${scripts[@]}"

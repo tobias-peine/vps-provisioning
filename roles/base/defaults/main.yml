@@ -1,0 +1,16 @@
+---
+# Bewusst schlank: alles weitere kommt aus den spezialisierten Rollen.
+# jq/curl brauchen die Deploy-Skripte, rsync den Backup-Abgleich.
+base_packages:
+  - ca-certificates
+  - curl
+  - gnupg
+  - htop
+  - jq
+  - rsync
+  - unattended-upgrades
+
+# Sicherheitsupdates automatisch, Reboot nie automatisch: ein unerwarteter
+# Neustart mit 15 Containern ist schlimmer als ein Reboot im Wartungsfenster.
+base_unattended_reboot: false
+base_unattended_reboot_time: "04:00"

@@ -1,0 +1,36 @@
+---
+- name: Paketlisten aktualisieren
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Basispakete installieren
+  ansible.builtin.apt:
+    name: "{{ base_packages }}"
+    state: present
+
+- name: Zeitzone setzen
+  community.general.timezone:
+    name: "{{ timezone }}"
+
+- name: Automatische Update-Laeufe aktivieren
+  ansible.builtin.template:
+    src: 20auto-upgrades.j2
+    dest: /etc/apt/apt.conf.d/20auto-upgrades
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Upgrade-Richtlinie schreiben
+  ansible.builtin.template:
+    src: 51unattended-upgrades.j2
+    dest: /etc/apt/apt.conf.d/51unattended-upgrades
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Unattended-upgrades starten und aktivieren
+  ansible.builtin.systemd_service:
+    name: unattended-upgrades
+    state: started
+    enabled: true

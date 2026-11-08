@@ -1,0 +1,96 @@
+---
+# Verwaltet von Ansible (Rolle stack_kisium).
+name: kisium
+
+services:
+  ghost:
+    image: {{ kisium_image_ghost }}
+    container_name: kisium-ghost
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+      - FOWNER
+      - SETGID
+      - SETUID
+    init: true
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      url: ${GHOST_URL}
+      NODE_ENV: production
+      database__client: mysql
+      database__connection__host: mysql
+      database__connection__port: 3306
+      database__connection__user: ghost
+      database__connection__password: ${MYSQL_PASSWORD}
+      database__connection__database: ghost
+      mail__transport: SMTP
+      mail__options__host: ${MAIL_HOST}
+      mail__options__port: ${MAIL_PORT}
+      mail__options__secure: ${MAIL_SECURE}
+      mail__options__auth__user: ${MAIL_USER}
+      mail__options__auth__pass: ${MAIL_PASSWORD}
+      mail__from: ${MAIL_FROM}
+      privacy__useGravatar: "false"
+      privacy__useRpcPing: "false"
+      privacy__useUpdateCheck: "false"
+    volumes:
+      - ghost_content:/var/lib/ghost/content
+    networks:
+      - kisium
+    ports:
+      - "127.0.0.1:{{ kisium_port }}:2368"
+    healthcheck:
+      test: ["CMD", "nc", "-z", "127.0.0.1", "2368"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  mysql:
+    image: {{ kisium_image_mysql }}
+    container_name: kisium-mysql
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+      - FOWNER
+      - SETGID
+      - SETUID
+    restart: unless-stopped
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ghost
+      MYSQL_USER: ghost
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - kisium
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 40s
+
+networks:
+  # Fester Name: der homeserver-Stack haengt sich als externes Netz daran.
+  kisium:
+    name: kisium-net
+
+volumes:
+  ghost_content:
+  mysql_data:

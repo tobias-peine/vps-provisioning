@@ -1,0 +1,15 @@
+---
+# Dependabot haelt die Actions aktuell. Ohne das veralten checkout und
+# setup-python still, und ein Pin auf eine unsichere Major-Version faellt
+# niemandem auf.
+# Kein pip-Ecosystem: die Abhaengigkeiten liegen in requirements.yml und
+# werden von ansible-galaxy verwaltet, nicht von pip.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: ci

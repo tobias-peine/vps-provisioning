@@ -1,0 +1,13 @@
+---
+# Collections, ohne die dieses Repo nicht laeuft.
+# Versionen sind Untergrenzen, keine Pins: exakte Versionen erst festnageln,
+# wenn der erste CI-Lauf gruen ist (TODO), sonst ist die Angabe geraten.
+collections:
+  # community.general.yaml liefert stdout_callback = yaml (ansible.cfg)
+  # und community.general.ufw die Firewall-Regeln.
+  - name: community.general
+    version: ">=8.0.0"
+
+  # community.docker.docker_compose_v2 fuer die fuenf Compose-Projekte.
+  - name: community.docker
+    version: ">=3.4.0"

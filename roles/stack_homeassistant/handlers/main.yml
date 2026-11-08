@@ -1,0 +1,9 @@
+---
+- name: Home Assistant neu starten
+  community.docker.docker_compose_v2:
+    project_src: "{{ hass_dir }}"
+    files:
+      - compose.yaml
+    state: present
+    pull: missing
+    recreate: changed

@@ -1,0 +1,7 @@
+---
+- name: Kisium neu starten
+  community.docker.docker_compose_v2:
+    project_src: "{{ kisium_dir }}"
+    state: present
+    pull: missing
+    recreate: changed

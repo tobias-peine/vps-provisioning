@@ -1,0 +1,37 @@
+---
+# Verwaltet von Ansible (Rolle stack_homepage).
+name: homepage
+
+services:
+  homepage:
+    image: {{ homepage_image }}
+    container_name: homepage
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    mem_limit: 300m
+    env_file: .env
+    environment:
+      # Eigene Kachel fragt sich selbst ab; ohne den Host-Eintrag antwortet
+      # Homepage mit 400.
+      HOMEPAGE_ALLOWED_HOSTS: "${DASH_HOST},homepage:3000,127.0.0.1:3000,localhost:3000"
+    ports:
+      - "127.0.0.1:{{ homepage_port }}:3000"
+    volumes:
+      - "{{ homepage_dir }}/config:/app/config"
+      # Lesend: das Dashboard zeigt Container-Status, steuert aber nichts.
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - homeserver
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  homeserver:
+    external: true
+    name: homeserver_default

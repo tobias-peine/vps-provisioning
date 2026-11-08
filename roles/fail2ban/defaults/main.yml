@@ -1,0 +1,6 @@
+---
+# Kurze Sperre, wenige Fehlversuche: SSH ist ohnehin nur im Tailnet erreichbar,
+# der Jail faengt den Rest ab (z. B. falsch konfigurierte Clients).
+fail2ban_bantime: 1h
+fail2ban_findtime: 10m
+fail2ban_maxretry: 5

@@ -1,0 +1,17 @@
+// Verwaltet von Ansible (Rolle base).
+// Nur Sicherheits- und ESM-Updates - kein automatisches Major-Upgrade.
+Unattended-Upgrade::Allowed-Origins {
+    "${distro_id}:${distro_codename}";
+    "${distro_id}:${distro_codename}-security";
+    "${distro_id}ESMApps:${distro_codename}-apps-security";
+    "${distro_id}ESM:${distro_codename}-infra-security";
+};
+
+// Kein automatischer Reboot: 15 Container kommen nicht von selbst sauber zurueck,
+// wenn der Neustart mitten in einer Migration liegt.
+Unattended-Upgrade::Automatic-Reboot "{{ 'true' if base_unattended_reboot else 'false' }}";
+Unattended-Upgrade::Automatic-Reboot-Time "{{ base_unattended_reboot_time }}";
+
+Unattended-Upgrade::Remove-Unused-Kernel-Packages "true";
+Unattended-Upgrade::Remove-Unused-Dependencies "true";
+Unattended-Upgrade::SyslogEnable "true";

@@ -1,0 +1,37 @@
+---
+# Vorlage fuer group_vars/all/vault.yml.
+#   cp group_vars/all/vault.yml.example group_vars/all/vault.yml
+#   ansible-vault encrypt group_vars/all/vault.yml
+# Die echte Datei ist per .gitignore ausgeschlossen und wird nie committet.
+# Diese Vorlage enthaelt nur Platzhalter - keine echten Werte.
+
+# Tailscale
+vault_tailscale_authkey: "TODO-tskey-auth-..."
+
+# homeserver (NPM, Open WebUI, n8n, Paperless)
+vault_n8n_encryption_key: "TODO"
+vault_paperless_db_password: "TODO"
+vault_paperless_secret_key: "TODO"
+vault_paperless_admin_password: "TODO"
+vault_webui_secret_key: "TODO"
+
+# kisium (Ghost, MySQL, Mail-Relay)
+vault_mysql_root_password: "TODO"
+vault_mysql_password: "TODO"
+vault_mail_password: "TODO"
+
+# homepage (Dashboard-Login, NPM-API, Kachel-Tokens)
+vault_homepage_dash_user: "TODO"
+vault_homepage_dash_password: "TODO"
+vault_npm_admin_user: "TODO"
+vault_npm_admin_password: "TODO"
+vault_homepage_ghost_key: "TODO"
+vault_homepage_n8n_key: "TODO"
+vault_homepage_paperless_token: "TODO"
+
+# kisium-tv
+vault_kisium_tv_admin_password: "TODO"
+vault_kisium_tv_proxy_password: "TODO"
+
+# Optional: zweites Binding fuer Home Assistant auf die Tailscale-Adresse.
+# hass_tailscale_ip: "100.x.y.z"

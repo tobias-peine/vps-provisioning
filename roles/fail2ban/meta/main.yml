@@ -1,0 +1,11 @@
+---
+galaxy_info:
+  author: Tobi
+  description: fail2ban-Jail fuer sshd auf dem Tailscale-Port
+  license: MIT
+  min_ansible_version: "2.15"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - noble
+dependencies: []
