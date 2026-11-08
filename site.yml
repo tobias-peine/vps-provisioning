@@ -4,9 +4,16 @@
 #     Weg mehr auf den Host.
 #   - stack_kisium vor stack_homeserver: der homeserver haengt sich an das
 #     externe Netz kisium-net, das der kisium-Stack erzeugt.
+#   - docker nach dem Hardening: die Stacks starten erst, wenn die Firewall
+#     steht - sonst oeffnen ihre Ports kurz ins Leere.
 #   - stack_homeserver vor homepage/homeassistant: beide nutzen homeserver_default.
+#
+# ssh und ufw duerfen nicht im selben Lauf wie der erste become-Wechsel auf einen
+# unbekannten Host laufen: wer sich dabei aussperrt, kommt nur ueber die Konsole
+# zurueck. Ablauf und Rettung stehen in README Abschnitt 7.
 - name: Webtropia-VPS provisionieren
-  hosts: prod
+  # all statt prod, damit -i vm.ini/-i test.ini nicht still ohne Hosts durchlaeuft.
+  hosts: all
   become: true
   roles:
     - role: base

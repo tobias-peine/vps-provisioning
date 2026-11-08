@@ -284,9 +284,7 @@ provisioniert nur die Compose-Stacks neu, `--tags hardening` nur SSH/ufw/Fail2ba
   (Rollenteil bis zum Stack-Pull) getestet - auf Debian 12 nicht.
 - **Single-Host:** Ein VPS, kein zweiter Node. Deploys sind alles-oder-nichts, kein
   Rolling Update; ein Reboot bedeutet Downtime.
-- **Kein HA:** NPM, die Datenbanken und Tailscale sind Single Points of Failure. Die
-  Wiederherstellungszeit ist die Zeit fuer einen Neuaufbau aus diesem Repo - genau
-  dafuer ist es da.
+- **Kein HA:** NPM, die Datenbanken und Tailscale sind Single Points of Failure.
 - **Kein zentrales Logging:** Logs bleiben in journald und in den Containern
   (`journalctl`, `docker logs`). Keine Suche ueber Zeit, keine Historie, Forensik nach
   einem Incident ist muehsam.
