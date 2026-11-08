@@ -300,6 +300,10 @@ provisioniert nur die Compose-Stacks neu, `--tags hardening` nur SSH/ufw/Fail2ba
 - **Secrets nur per Vault:** keine Anbindung an einen externen Secret-Store (kein
   SOPS, kein Vault-Server). Das Vault-Passwort liegt im Password-Manager, Rotation ist
   ein manueller Schritt.
+- **Open WebUI kommt aus keiner Registry:** Auf dem Bestandshost laeuft ein lokal
+  gebautes nonroot-Image. Ein Neuaufbau braucht entweder ein gepushtes Image oder
+  `-e homeserver_image_openwebui=ghcr.io/open-webui/open-webui:main` - sonst
+  scheitert der Pull.
 - **Keine Molecule-Tests:** Rollen werden nicht in Containern getestet. Die CI prueft
   Syntax und Lint, nicht das Verhalten der Rollen - ein Rollen-Regressionscheck fehlt
   damit komplett.

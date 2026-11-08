@@ -22,6 +22,34 @@
     - "{{ homeserver_data_root }}/paperless/consume"
     - "{{ homeserver_data_root }}/paperless/export"
 
+# Ollama und Open WebUI laufen als uid 1000. Ein frisch erzeugtes Docker-Volume
+# gehoert root - der Container kann dann weder Modelle noch Datenbank anlegen
+# und faellt durch den Healthcheck. Auf dem Bestandshost faellt das nie auf,
+# weil die Volumes dort schon gehoeren.
+# Ollama und Open WebUI laufen als uid 1000. Ein frisch erzeugtes Docker-Volume
+# gehoert root - der Container kann dann weder Modelle noch Datenbank anlegen
+# und faellt durch den Healthcheck. Auf dem Bestandshost faellt das nie auf,
+# weil die Volumes dort schon gehoeren.
+#
+# Bewusst ueber die CLI statt ueber community.docker: die Module scheitern auf
+# Systemen mit urllib3>=2 an "Not supported URL scheme http+docker", die
+# Compose-Rolle laeuft dort aber einwandfrei.
+- name: Volumes fuer nicht-root-Container anlegen
+  ansible.builtin.command:
+    cmd: docker volume create {{ item }}
+    creates: /var/lib/docker/volumes/{{ item }}/_data
+  loop:
+    - homeserver_ollama
+    - homeserver_webui
+
+- name: Rechte in den Volumes setzen
+  ansible.builtin.command:
+    cmd: docker run --rm -v {{ item }}:/m alpine:3.20 chown -R 1000:1000 /m
+  loop:
+    - homeserver_ollama
+    - homeserver_webui
+  changed_when: true
+
 # no_log: die .env enthaelt Passwoerter und Keys; ohne das landen sie im Log.
 - name: .env schreiben
   ansible.builtin.template:
