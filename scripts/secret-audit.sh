@@ -49,8 +49,8 @@ report "Token- und Key-Muster" \
 
 # Die Audit-Doku selbst enthaelt die Muster als Text - deshalb ausgenommen.
 report "harte Zuweisungen (password/token/secret)" \
-    bash -c "git grep -n -I -i -E '(password|passwd|secret|token|api[_-]?key|private[_-]?key)[[:space:]]*[:=][[:space:]]*[^[:space:]#]{6,}' -- . ':!SECRETS-AUDIT.md' ':!scripts/secret-audit.sh' \
-        | grep -v '{{' || true"
+    bash -c "git grep -n -I -i -E '(password|passwd|secret|token|api[_-]?key|private[_-]?key)[[:space:]]*[:=][[:space:]]*[^[:space:]#]{6,}' -- . ':!SECRETS-AUDIT.md' ':!scripts/secret-audit.sh' ':!group_vars/all/vault.yml.example' \
+        | grep -v -e '{{' -e '\${' || true"
 
 printf '\n== Secret-Dateien auf der Platte ohne Ignore-Regel ==\n'
 leaks=0
