@@ -1,7 +1,7 @@
 # Ubuntu-24.04-VPS mit Ansible provisionieren
 
 Ein-Host-Provisionierung fuer einen Ubuntu-24.04-VPS (Webtropia): Hardening, Docker,
-15 Container in fuenf Compose-Projekten, Tailscale, Fail2ban, unattended-upgrades.
+17 Container in sechs Compose-Projekten, Tailscale, Fail2ban, unattended-upgrades.
 Lizenz: [MIT](LICENSE) · Pruefungen: `.github/workflows/ci.yml`
 (ansible-lint, yamllint, shellcheck).
 
@@ -9,7 +9,7 @@ Lizenz: [MIT](LICENSE) · Pruefungen: `.github/workflows/ci.yml`
 
 Dieses Repository provisioniert einen VPS (Webtropia, Ubuntu 24.04.5 LTS) per Ansible
 von null auf produktiv: Hardening (ufw, SSH, Fail2ban, unattended-upgrades),
-Tailscale-Zugang, Docker und 15 Container in fuenf Compose-Projekten hinter einem
+Tailscale-Zugang, Docker und 17 Container in sechs Compose-Projekten hinter einem
 Nginx Proxy Manager.
 Ein frisch installierter VPS steht damit in **ca. 20-30 Minuten** (Schaetzung:
 dominiert von `apt` und Image-Pulls); ein zweiter Lauf gegen denselben Host braucht
@@ -104,6 +104,8 @@ DERP-Relais auf; eine Portfreigabe ist fuer NAT-Traversal nicht erforderlich
 | Paperless-ngx | 8000 | Compose-Netz | NPM (intern) |
 | Ollama | 11434 | Compose-Netz | Open WebUI |
 | MySQL / Postgres / Redis | 3306 / 5432 / 6379 | Compose-Netz | nur eigener Stack |
+| RustDesk hbbs | 21115, 21116, 21118 | `0.0.0.0` (host-Netz) | Internet |
+| RustDesk hbbr | 21117, 21119 | `0.0.0.0` (host-Netz) | Internet |
 | sshd | 2222 | `0.0.0.0`, ufw nur `tailscale0` | Tailnet |
 
 ## 3. Quickstart
@@ -142,6 +144,7 @@ so als Kommentar in `site.yml`.
 | `stack_homepage` | Homepage-Dashboard | `homepage`, `stacks` |
 | `stack_homeassistant` | Home Assistant, 8123 auf Loopback und `tailscale0` | `homeassistant`, `stacks` |
 | `stack_kisium_tv` | Stream-Proxy, Catalog-Sync, TLS-Terminator auf 8443 | `kisium_tv`, `stacks` |
+| `stack_rustdesk` | RustDesk-ID- und Relay-Server (hbbs/hbbr) | `rustdesk`, `stacks` |
 
 Warum diese Reihenfolge:
 
@@ -174,9 +177,9 @@ provisioniert nur die Compose-Stacks neu, `--tags hardening` nur SSH/ufw/Fail2ba
 
 ### ufw default deny incoming
 
-- **Was:** `default deny incoming`, `default allow outgoing`. Oeffentlich sind genau
-  drei Ports: 80/443/tcp (NPM), 8443/tcp (`kisium-tls`) und 2222/tcp nur auf
-  `tailscale0`.
+- **Was:** `default deny incoming`, `default allow outgoing`. Oeffentlich sind
+  80/443/tcp (NPM), 8443/tcp (`kisium-tls`) und 21115-21119/tcp + 21116/udp
+  (RustDesk). 2222/tcp nur auf `tailscale0`.
 - **Warum:** Whitelist statt Blacklist. Ein neuer Dienst ist erst einmal zu, auch wenn
   er versehentlich startet.
 - **Was ich dafuer aufgegeben habe:** Jeder neue Port braucht eine Regel und einen
@@ -243,6 +246,18 @@ provisioniert nur die Compose-Stacks neu, `--tags hardening` nur SSH/ufw/Fail2ba
   Freigabe und ohne NPM-Route. Der Port ist im Internet nicht erreichbar.
 - **Was ich dafuer aufgegeben habe:** Jedes Geraet im Tailnet erreicht Home Assistant
   ohne vorgelagerte Authentifizierung; Zugriffslogs und TLS liegen nicht beim NPM.
+
+### RustDesk-Ports oeffentlich
+
+- **Was:** hbbs und hbbr laufen im Host-Netz und brauchen 21115-21119/tcp sowie
+  21116/udp direkt aus dem Internet. Das sind die einzigen Ports, die nicht ueber
+  den NPM laufen.
+- **Warum:** Ein selbstgehosteter RustDesk-Server ist der Vermittler fuer
+  Fernzugriffe. Ohne diese Ports finden sich die Clients nicht; ein Proxy davor
+  wuerde UDP und den Relay-Verkehr brechen.
+- **Was ich dafuer aufgegeben habe:** Vier zusaetzliche oeffentliche Ports auf
+  einem Host, dessen Prinzip "so wenig Angriffsflaeche wie moeglich" ist. Sie
+  sind auf die beiden Container beschraenkt, aber sie sind sichtbar.
 
 ### `no-new-privileges` + `cap_drop: ALL`
 

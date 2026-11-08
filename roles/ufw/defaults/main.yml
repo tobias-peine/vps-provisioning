@@ -1,13 +1,13 @@
 ---
-# Ports, die aus dem Internet erreichbar sein muessen.
-# 80/443: Nginx Proxy Manager, 8443: TLS-Terminator der Kisium-Streams.
-# Alles andere bleibt zu - auch 41641/udp (Tailscale nutzt DERP, siehe README).
-ufw_public_ports:
-  - 80
-  - 443
-  - 8443
+# Die konkreten Portlisten stehen in group_vars/all/main.yml - das ist
+# Host-Politik, nicht Rollenlogik. Hier nur die Fallbacks und Schalter.
 
 # Optionales Wartungsnetz: erlaubt SSH zusaetzlich aus diesem CIDR.
 # Fuer Umbauten und Testlaeufe, bei denen das Tailnet (noch) nicht steht.
-# Leer lassen = keine Ausnahme. Beispiel: "10.0.2.0/24" fuer eine Test-VM.
 ufw_maintenance_cidr: ""
+
+ufw_public_ports:
+  - 80
+  - 443
+
+ufw_public_udp_ports: []

@@ -1,0 +1,22 @@
+---
+rustdesk_dir: /opt/rustdesk
+rustdesk_image: "rustdesk/rustdesk-server:latest"
+
+# Name, unter dem Clients den Server erreichen. Muss auf die oeffentliche
+# Adresse dieses Hosts zeigen. Bewusst nicht im Repo - pro Host setzen.
+rustdesk_hostname: "rustdesk.example.com"
+
+# Ports, die hbbs/hbbr brauchen (host-Netz, deshalb oeffnet ufw sie):
+#   21115/tcp  NAT-Test
+#   21116/tcp+udp  ID/Rendezvous
+#   21117/tcp  Relay
+#   21118/tcp  Web-Client (hbbs)
+#   21119/tcp  Web-Client (hbbr)
+rustdesk_tcp_ports:
+  - 21115
+  - 21116
+  - 21117
+  - 21118
+  - 21119
+rustdesk_udp_ports:
+  - 21116

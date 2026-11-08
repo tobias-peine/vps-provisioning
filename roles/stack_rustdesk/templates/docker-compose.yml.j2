@@ -1,0 +1,45 @@
+---
+# Verwaltet von Ansible (Rolle stack_rustdesk).
+# host-Netz ist Absicht: hbbs/hbbr brauchen 21115-21119 direkt, ein
+# Port-Mapping wuerde fuer den UDP-Teil und den Relay zusaetzliche Hops bauen.
+name: rustdesk
+
+services:
+  hbbs:
+    image: {{ rustdesk_image }}
+    container_name: rustdesk-hbbs
+    command: hbbs -r {{ rustdesk_hostname }}:21117
+    network_mode: host
+    volumes:
+      - "{{ rustdesk_dir }}/data:/root"
+    environment:
+      # Nur verschluesselte Verbindungen annehmen.
+      ENCRYPTED_ONLY: "1"
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    depends_on:
+      - hbbr
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  hbbr:
+    image: {{ rustdesk_image }}
+    container_name: rustdesk-hbbr
+    command: hbbr
+    network_mode: host
+    volumes:
+      - "{{ rustdesk_dir }}/data:/root"
+    environment:
+      ENCRYPTED_ONLY: "1"
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

@@ -31,3 +31,5 @@
       tags: [homeassistant, stacks]
     - role: stack_kisium_tv
       tags: [kisium_tv, stacks]
+    - role: stack_rustdesk
+      tags: [rustdesk, stacks]

@@ -14,3 +14,18 @@ base_domain: example.com
 
 # Zeitzone des Hosts: Logs, Cron und Zertifikate laufen in derselben Zeit.
 timezone: Europe/Berlin
+
+# Oeffentliche Ports. Nur was von aussen erreichbar sein muss.
+# 80/443: Nginx Proxy Manager, 8443: TLS-Terminator Kisium,
+# 21115-21119: RustDesk (hbbs/hbbr), davon 21116 auch UDP.
+ufw_public_ports:
+  - 80
+  - 443
+  - 8443
+  - 21115
+  - 21116
+  - 21117
+  - 21118
+  - 21119
+ufw_public_udp_ports:
+  - 21116

@@ -1,0 +1,35 @@
+---
+- name: Projektverzeichnis anlegen
+  ansible.builtin.file:
+    path: "{{ rustdesk_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+# Das Keypair liegt in ./data. Es darf nicht neu erzeugt werden, wenn Clients
+# schon darauf zeigen: ein neuer Schluessel macht jede bestehende Installation
+# unbrauchbar, bis alle Clients umgestellt sind.
+- name: Datenverzeichnis fuer das Keypair anlegen
+  ansible.builtin.file:
+    path: "{{ rustdesk_dir }}/data"
+    state: directory
+    owner: root
+    group: root
+    mode: "0700"
+
+- name: Compose-Datei schreiben
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: "{{ rustdesk_dir }}/docker-compose.yml"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: RustDesk neu starten
+
+- name: Stack starten
+  community.docker.docker_compose_v2:
+    project_src: "{{ rustdesk_dir }}"
+    state: present
+    pull: missing
+    remove_orphans: true
