@@ -11,9 +11,10 @@ Dieses Repository provisioniert einen VPS (Webtropia, Ubuntu 24.04.5 LTS) per An
 von null auf produktiv: Hardening (ufw, SSH, Fail2ban, unattended-upgrades),
 Tailscale-Zugang, Docker und 17 Container in sechs Compose-Projekten hinter einem
 Nginx Proxy Manager.
-Ein frisch installierter VPS steht damit in **ca. 20-30 Minuten** (Schaetzung:
-dominiert von `apt` und Image-Pulls); ein zweiter Lauf gegen denselben Host braucht
-**101 Sekunden** (gemessen am 08.11.2026).
+Ein frisch installierter VPS ist damit in **knapp sechs Minuten** provisioniert -
+gemessen am 08.11.2026 auf einer frischen CPX32 mit Ubuntu 22.04: **356 Sekunden**
+fuer Base, Hardening, Docker, Tailscale und drei Compose-Stacks.
+Ein zweiter Lauf gegen denselben Host braucht **101 Sekunden**.
 Der Plattform-Teil (`base`, `tailscale`, `ssh`, `ufw`, `fail2ban`) laeuft auf einer
 frischen Ubuntu-24.04-VM in **82 Sekunden**, der zweite Lauf in **34 Sekunden ohne
 Aenderung** - reproduzierbar mit `scripts/test-vm.sh`.
@@ -272,9 +273,9 @@ provisioniert nur die Compose-Stacks neu, `--tags hardening` nur SSH/ufw/Fail2ba
 
 ## 6. Bewusste Einschraenkungen
 
-- **Plattform ist Ubuntu 24.04 LTS, nicht Debian 12:** Das Webtropia-Image ist Ubuntu
-  24.04.5. Die Rollen nutzen nur `apt` und `systemd` und sollten auf Debian 12
-  laufen - getestet ist das nicht.
+- **Plattform ist Ubuntu, nicht Debian 12:** Das Webtropia-Image ist Ubuntu 24.04.5.
+  Die Rollen wurden zusaetzlich auf 22.04 (vollstaendiger Lauf) und 26.04
+  (Rollenteil bis zum Stack-Pull) getestet - auf Debian 12 nicht.
 - **Single-Host:** Ein VPS, kein zweiter Node. Deploys sind alles-oder-nichts, kein
   Rolling Update; ein Reboot bedeutet Downtime.
 - **Kein HA:** NPM, die Datenbanken und Tailscale sind Single Points of Failure. Die
