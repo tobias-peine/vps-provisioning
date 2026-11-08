@@ -45,6 +45,12 @@ credentials*
 
 # Echte Inventory-Datei: enthaelt Tailscale-IP, Key-Pfad und Hostnamen
 hosts.ini
+
+# Lokale Test-Inventories: enthalten echte Adressen (Tailscale, gemietete Kisten).
+# Nur hosts.ini.example ist versioniert.
+test.ini
+vm.ini
+*.local.ini
 # Ausnahme: die Vorlage ist versioniert und wird von der CI benutzt
 !hosts.ini.example
 
