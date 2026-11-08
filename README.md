@@ -294,10 +294,12 @@ provisioniert nur die Compose-Stacks neu, `--tags hardening` nur SSH/ufw/Fail2ba
 - **NPM braucht root fuer 80/443:** Privilegierte Ports. Die Alternative
   (`CAP_NET_BIND_SERVICE` plus Socket-Activation) wuerde Certbot-Hooks und das
   Container-Setup mit Sonderfaellen belasten - bewusst nicht umgesetzt.
-- **Backups liegen lokal:** taeglich nach `/opt/backups` (paperless 03:30, n8n/HA/
-  Konfiguration 02:45, kisium 03:00, Restore-Test 04:00). Ein Offsite-Ziel ist
-  vorbereitet (`restic-offsite.sh`), aber noch nicht konfiguriert - stirbt die Disk,
-  ist alles weg. TODO: `RESTIC_REPOSITORY` setzen.
+- **Backups: lokal und offsite.** Taeglich nach `/opt/backups` (paperless 03:30,
+  n8n/HA/Konfiguration 02:45, kisium 03:00, Restore-Test 04:00) und um 05:30
+  verschluesselt per restic auf einen zweiten Server (rest-server, nur im Tailnet).
+  Der Restore aus dem Offsite-Repo ist geprueft: `restic check` ohne Fehler,
+  wiederhergestellte Datei SHA256-identisch. Grenzen: 19 GB Platz, kein
+  Append-Only (Retention braucht Loeschrechte).
 - **Secrets nur per Vault:** keine Anbindung an einen externen Secret-Store (kein
   SOPS, kein Vault-Server). Das Vault-Passwort liegt im Password-Manager, Rotation ist
   ein manueller Schritt.
