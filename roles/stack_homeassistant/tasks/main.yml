@@ -3,16 +3,12 @@
   ansible.builtin.file:
     path: "{{ hass_dir }}"
     state: directory
-    owner: root
-    group: root
     mode: "0755"
 
 - name: Konfigurationsverzeichnis anlegen
   ansible.builtin.file:
     path: "{{ hass_dir }}/config"
     state: directory
-    owner: root
-    group: root
     mode: "0755"
 
 - name: Compose-Datei schreiben

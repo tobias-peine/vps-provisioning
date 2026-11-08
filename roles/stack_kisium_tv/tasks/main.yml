@@ -26,13 +26,18 @@
       | list | length == 2
     fail_msg: "stream-proxy/ und catalog-sync/ muessen unter {{ kisium_tv_dir }} liegen."
 
-- name: .env schreiben
+# force: false - die .env dieser App hat rund 35 Schluessel (Feed-URL,
+# User-Agents, Timeouts), die zum Projekt gehoeren und nicht in dieses Repo.
+# Ein Template wuerde sie beim ersten Lauf loeschen. Die Datei wird nur
+# angelegt, wenn sie fehlt (frischer Host).
+- name: .env anlegen, falls nicht vorhanden
   ansible.builtin.template:
     src: env.j2
     dest: "{{ kisium_tv_dir }}/.env"
     owner: root
     group: root
     mode: "0600"
+    force: false
   no_log: true
   vars:
     stack_env: "{{ kisium_tv_env | combine(kisium_tv_secrets) }}"

@@ -6,4 +6,4 @@
       - compose.yaml
     state: present
     pull: missing
-    recreate: changed
+    recreate: auto

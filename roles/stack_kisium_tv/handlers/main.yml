@@ -4,4 +4,4 @@
     project_src: "{{ kisium_tv_dir }}"
     state: present
     build: policy
-    recreate: changed
+    recreate: auto

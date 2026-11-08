@@ -29,6 +29,7 @@
     rule: allow
     port: "{{ ssh_port }}"
     proto: tcp
+    direction: in
     interface: tailscale0
 
 - name: UFW aktivieren

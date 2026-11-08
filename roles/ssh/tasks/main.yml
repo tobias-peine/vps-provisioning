@@ -19,6 +19,15 @@
     validate: sshd -t -f %s
   notify: SSH neu laden
 
+# Der Drop-in war ein manueller Zwischenschritt, bevor es diese Rolle gab.
+# AllowUsers steht jetzt in 99-hardening.conf - zwei Dateien mit derselben
+# Direktive sind eine Fehlerquelle, nicht eine Reserve.
+- name: Alten AllowUsers-Drop-in entfernen
+  ansible.builtin.file:
+    path: /etc/ssh/sshd_config.d/98-allowusers.conf
+    state: absent
+  notify: SSH neu laden
+
 - name: SSH-Dienst aktiviert halten
   ansible.builtin.systemd_service:
     name: ssh

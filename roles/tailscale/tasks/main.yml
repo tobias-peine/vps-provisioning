@@ -37,12 +37,21 @@
   changed_when: false
   failed_when: false
 
+# Der Key wird ueber vars mit Default aufgeloest: ohne diesen Umweg bricht
+# Ansible schon beim Templen der Task-Argumente ab, bevor "when" greift.
 - name: Tailnet beitreten
   ansible.builtin.command:
     cmd: >-
       tailscale up
-      --authkey={{ vault_tailscale_authkey }}
+      --authkey={{ ts_authkey }}
       --hostname={{ tailscale_hostname }}
-  when: (tailscale_status.stdout | default('{}', true) | from_json).BackendState | default('') != 'Running'
+  vars:
+    ts_authkey: "{{ vault_tailscale_authkey | default('') }}"
+  # Einzelausdruck statt when-Liste: Jinja wertet "and" kurzschliessend aus,
+  # eine Liste wuerde den zweiten Teil auch bei fehlendem stdout pruefen.
+  when: >-
+    tailscale_status.stdout is defined
+    and (tailscale_status.stdout | default('{}', true) | from_json).BackendState | default('') != 'Running'
+    and ts_authkey | length > 0
   no_log: true
   changed_when: true

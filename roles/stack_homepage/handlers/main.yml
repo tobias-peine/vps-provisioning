@@ -4,4 +4,4 @@
     project_src: "{{ homepage_dir }}"
     state: present
     pull: missing
-    recreate: changed
+    recreate: auto

@@ -64,6 +64,7 @@ rules:
 # Nicht linter-relevant: installierte Dependencies und Tool-Caches.
 ignore: |
   .git/
+  group_vars/all/vault.yml
   .venv/
   .cache/
   collections/

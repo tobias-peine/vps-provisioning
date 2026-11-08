@@ -4,4 +4,4 @@
     project_src: "{{ kisium_dir }}"
     state: present
     pull: missing
-    recreate: changed
+    recreate: auto
