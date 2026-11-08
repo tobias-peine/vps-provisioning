@@ -33,7 +33,10 @@ syntax: $(INVENTORY) ## Playbook parsen, ohne Verbindung zum Host
 	ansible-playbook $(PLAYBOOK) --syntax-check -i $(INVENTORY)
 
 # hosts.ini ist gitignored; fuer Lint und Syntax-Check genuegt die Vorlage.
-$(INVENTORY): hosts.ini.example
+# Order-only (|): kopiert wird nur, wenn hosts.ini fehlt - nicht, wenn die
+# Vorlage neuer ist. Sonst wuerde ein Edit an hosts.ini.example die echte
+# Inventory-Datei mit Platzhaltern ueberschreiben.
+$(INVENTORY): | hosts.ini.example
 	cp hosts.ini.example $(INVENTORY)
 	@echo "hosts.ini aus der Vorlage erzeugt - Tailscale-IP und Key-Pfad eintragen"
 
