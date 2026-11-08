@@ -7,12 +7,13 @@
     group: root
     mode: "0755"
 
+# Kein owner/group erzwingen: die Container legen ihre Verzeichnisse mit ihrer
+# eigenen UID an (z. B. searxng mit 977). Ein erzwungener Wechsel wuerde bei
+# jedem Lauf hin- und herspringen.
 - name: Verzeichnisse fuer Bind-Mounts anlegen
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    owner: root
-    group: root
     mode: "0755"
   loop:
     - "{{ homeserver_data_root }}/npm/data"

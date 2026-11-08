@@ -28,6 +28,15 @@
     mode: "0644"
   notify: Kisium neu starten
 
+# Der frueher handgepflegte Override (SMTP-Zugang) ist in die Vorlage
+# uebernommen. Bliebe er liegen, wuerde Compose beide Dateien mischen und
+# die Mail-Zugangsdaten aus einer nicht mehr gesetzten Variable lesen.
+- name: Alten Override entfernen
+  ansible.builtin.file:
+    path: "{{ kisium_dir }}/docker-compose.override.yml"
+    state: absent
+  notify: Kisium neu starten
+
 - name: Stack starten
   community.docker.docker_compose_v2:
     project_src: "{{ kisium_dir }}"
