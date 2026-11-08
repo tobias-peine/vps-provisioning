@@ -11,6 +11,8 @@ exclude_paths:
   - .github/
   - collections/
   - .venv/
+  # Verschluesselt und nur lokal vorhanden - ohne Vault-Passwort nicht parsebar.
+  - group_vars/all/vault.yml
 
 # Keine warn_list: was nicht blockiert, wird im Alltag ignoriert.
 skip_list:
