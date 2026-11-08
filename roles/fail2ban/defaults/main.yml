@@ -4,3 +4,8 @@
 fail2ban_bantime: 1h
 fail2ban_findtime: 10m
 fail2ban_maxretry: 5
+
+# Nie sperren: localhost und - falls gesetzt - das Wartungsnetz.
+# Ohne das ist die ufw-Ausnahme wertlos: fail2ban sperrt nach fuenf
+# Fehlversuchen selbst dann, wenn ufw den Port erlaubt.
+fail2ban_ignoreip: "127.0.0.1/8 ::1"

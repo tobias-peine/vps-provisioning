@@ -6,3 +6,8 @@ ufw_public_ports:
   - 80
   - 443
   - 8443
+
+# Optionales Wartungsnetz: erlaubt SSH zusaetzlich aus diesem CIDR.
+# Fuer Umbauten und Testlaeufe, bei denen das Tailnet (noch) nicht steht.
+# Leer lassen = keine Ausnahme. Beispiel: "10.0.2.0/24" fuer eine Test-VM.
+ufw_maintenance_cidr: ""

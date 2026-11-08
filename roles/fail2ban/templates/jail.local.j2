@@ -2,6 +2,7 @@
 # backend = systemd: der Filter liest das Journal statt einer Logdatei. Damit
 # funktioniert der Jail unabhaengig davon, ob sshd in eine Datei schreibt.
 [DEFAULT]
+ignoreip = {{ fail2ban_ignoreip }}
 bantime  = {{ fail2ban_bantime }}
 findtime = {{ fail2ban_findtime }}
 maxretry = {{ fail2ban_maxretry }}
