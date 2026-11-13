@@ -2,9 +2,12 @@
 rustdesk_dir: /opt/rustdesk
 rustdesk_image: "rustdesk/rustdesk-server:latest"
 
-# Name, unter dem Clients den Server erreichen. Muss auf die oeffentliche
-# Adresse dieses Hosts zeigen. Bewusst nicht im Repo - pro Host setzen.
-rustdesk_hostname: "rustdesk.example.com"
+# Name, unter dem Clients den Server erreichen (Relay-Adresse, die hbbs ihnen
+# mitgibt). Muss auf die oeffentliche Adresse dieses Hosts zeigen.
+# Standard: rustdesk.<base_domain> - seit 13.11.2026 so auf dem Bestandshost,
+# vorher ein DuckDNS-Name. Wer einen anderen Namen braucht, ueberschreibt die
+# Variable pro Host (z. B. -e rustdesk_hostname=...).
+rustdesk_hostname: "rustdesk.{{ base_domain }}"
 
 # Ports, die hbbs/hbbr brauchen (host-Netz, deshalb oeffnet ufw sie):
 #   21115/tcp  NAT-Test
