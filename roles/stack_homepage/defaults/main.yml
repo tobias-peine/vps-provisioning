@@ -10,8 +10,14 @@ homepage_image: "ghcr.io/gethomepage/homepage@sha256:019d8f063a7299e7c1c51ee4a70
 socket_proxy_image: >-
   tecnativa/docker-socket-proxy@sha256:1f5038b54f06c3e18422902cf00ba21803d1c97805aae032e5e6673d532d3459
 
+# Hostname, unter dem das Dashboard erreichbar ist (NPM-Vhost). Steht getrennt
+# von der URL, weil Homepage den Host-Header ohne Schema und ohne Port prueft:
+# ein "https://..." in HOMEPAGE_ALLOWED_HOSTS matcht nie und jede Anfrage
+# landet auf 400. Genau das war bis 13.11.2026 der Fall (home. statt dash.).
+homepage_hostname: "dash.{{ base_domain }}"
+
 homepage_env:
-  DASH_HOST: "https://home.{{ base_domain }}"
+  DASH_HOST: "https://{{ homepage_hostname }}"
 
 # Zugangsdaten fuer Dashboard-Login, NPM und die API-Kacheln.
 homepage_secrets:

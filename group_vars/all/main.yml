@@ -9,8 +9,10 @@ admin_user: admin
 ssh_port: 2222
 
 # Basis-Domain der oeffentlichen Dienste (chat., n8n., search. ...).
-# TODO: auf die eigene Domain setzen - Platzhalter, damit nichts Echtes im Repo landet.
-base_domain: example.com
+# Seit 13.11.2026 die echte Domain des Hosts, nicht mehr der Platzhalter
+# example.com: sonst muesste jeder Lauf base_domain per -e ueberschreiben, und
+# ein vergessenes -e haette die Container-URLs auf example.com gedreht.
+base_domain: kisium.de
 
 # Zeitzone des Hosts: Logs, Cron und Zertifikate laufen in derselben Zeit.
 timezone: Europe/Berlin

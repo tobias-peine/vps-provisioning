@@ -16,7 +16,8 @@ services:
     environment:
       # Eigene Kachel fragt sich selbst ab; ohne den Host-Eintrag antwortet
       # Homepage mit 400.
-      HOMEPAGE_ALLOWED_HOSTS: "${DASH_HOST},homepage:3000,127.0.0.1:3000,localhost:3000"
+      # Nur Hostnames, kein Schema: Homepage vergleicht den Host-Header.
+      HOMEPAGE_ALLOWED_HOSTS: "{{ homepage_hostname }},homepage:3000,127.0.0.1:3000,localhost:3000"
       # Container-Status kommt ueber den Socket-Proxy. Der Proxy sitzt im selben
       # Netz und reicht nur lesende Abfragen durch.
       DOCKER_HOST: tcp://socket-proxy:2375
