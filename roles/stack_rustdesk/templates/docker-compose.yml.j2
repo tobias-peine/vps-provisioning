@@ -2,6 +2,10 @@
 # Verwaltet von Ansible (Rolle stack_rustdesk).
 # host-Netz ist Absicht: hbbs/hbbr brauchen 21115-21119 direkt, ein
 # Port-Mapping wuerde fuer den UDP-Teil und den Relay zusaetzliche Hops bauen.
+#
+# Bewusst KEIN Docker-Healthcheck: das Image hat weder Shell noch curl/nc
+# (distroless), ein `test:` koennte also nie laufen. Die Erreichbarkeit prueft
+# stattdessen die Uptime-Wache (Rolle monitoring) per TCP auf 21115/21116/21117.
 name: rustdesk
 
 services:

@@ -1,0 +1,37 @@
+---
+# Die Wache prueft nur und meldet - sie greift nicht ein. Deshalb bewusst kein
+# Eingriff in die Stacks: laeuft ein Container noch nicht, ist das ein Befund
+# und kein Grund, den Provisionierungslauf abzubrechen.
+
+- name: Uptime-Wache installieren
+  ansible.builtin.copy:
+    src: uptime-check.sh
+    dest: /usr/local/sbin/uptime-check.sh
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Uptime-Wache als Service installieren
+  ansible.builtin.template:
+    src: uptime-check.service.j2
+    dest: /etc/systemd/system/uptime-check.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Systemd neu laden
+
+- name: Uptime-Wache als Timer installieren
+  ansible.builtin.template:
+    src: uptime-check.timer.j2
+    dest: /etc/systemd/system/uptime-check.timer
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Systemd neu laden
+
+- name: Timer aktivieren und starten
+  ansible.builtin.systemd_service:
+    name: uptime-check.timer
+    enabled: true
+    state: started
+    daemon_reload: true

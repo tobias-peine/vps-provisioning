@@ -5,3 +5,16 @@ PasswordAuthentication no
 PubkeyAuthentication yes
 PermitEmptyPasswords no
 AllowUsers {{ admin_user }}
+
+# Kein X11, kein Agent-Forwarding, kein TUN: nichts davon wird gebraucht, und
+# jede dieser Funktionen ist ein zusaetzlicher Weg in den Host.
+X11Forwarding no
+AllowAgentForwarding no
+PermitTunnel no
+
+# Drei Versuche reichen bei Schluessellogin. Die Sitzung faellt nach ~10 min
+# ohne Lebenszeichen weg (300 s x 2), damit vergessene Terminals nicht ewig
+# offen bleiben.
+MaxAuthTries 3
+ClientAliveInterval 300
+ClientAliveCountMax 2

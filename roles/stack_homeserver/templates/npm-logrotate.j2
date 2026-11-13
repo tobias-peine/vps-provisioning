@@ -1,0 +1,19 @@
+# Ersetzt die Wochen-Rotation des Images (weekly, rotate 4): bei ~100 MB pro
+# Woche pro Vhost ist das zu grob. Taeglich + Deckel 50 MB haelt die Dateien
+# klein, ohne dass etwas verloren geht.
+/data/logs/*_access.log
+/data/logs/*/access.log {
+    su npm npm
+    create 0644
+    daily
+    maxsize 50M
+    rotate 7
+    missingok
+    notifempty
+    compress
+    delaycompress
+    sharedscripts
+    postrotate
+    kill -USR1 `cat /run/nginx/nginx.pid 2>/dev/null` 2>/dev/null || true
+    endscript
+}

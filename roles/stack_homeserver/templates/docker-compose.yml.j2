@@ -44,6 +44,10 @@ services:
     volumes:
       - "{{ homeserver_data_root }}/npm/data:/data"
       - "{{ homeserver_data_root }}/npm/letsencrypt:/etc/letsencrypt"
+      # Ersetzt die Wochen-Rotation des Images durch taeglich + 50-MB-Deckel.
+      # Ohne ":ro" - NPMs Prepare-Skript macht beim Start ein chmod darauf und
+      # bricht sonst ab.
+      - "{{ homeserver_data_root }}/npm/logrotate/nginx-proxy-manager:/etc/logrotate.d/nginx-proxy-manager"
     mem_limit: 250m
     healthcheck:
       test: ["CMD", "curl", "-fsS", "-o", "/dev/null", "http://127.0.0.1:81/"]

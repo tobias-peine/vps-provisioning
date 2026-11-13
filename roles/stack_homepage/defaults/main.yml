@@ -3,7 +3,12 @@ homepage_dir: /opt/homepage
 homepage_port: 3000
 
 # Digest statt "latest": der naechste Pull zieht sonst ungeprueft eine neue Version.
-homepage_image: "ghcr.io/gethomepage/homepage@sha256:19c5c09184458a41b7b5915e71463a39f36cd33540f41bdbed008791b8182d5f"
+homepage_image: "ghcr.io/gethomepage/homepage@sha256:019d8f063a7299e7c1c51ee4a70b692291809af3244894fbec2c2ac7d1f71b18"
+
+# Statt den Docker-Socket ins Dashboard zu haengen (root-aequivalent), laeuft ein
+# Proxy davor, der nur lesende Abfragen durchlaesst.
+socket_proxy_image: >-
+  tecnativa/docker-socket-proxy@sha256:1f5038b54f06c3e18422902cf00ba21803d1c97805aae032e5e6673d532d3459
 
 homepage_env:
   DASH_HOST: "https://home.{{ base_domain }}"

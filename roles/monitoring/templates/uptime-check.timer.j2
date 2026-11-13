@@ -1,0 +1,11 @@
+[Unit]
+Description=Uptime-Wache alle {{ monitoring_interval_min }} Minuten
+Documentation=file:/usr/local/sbin/uptime-check.sh
+
+[Timer]
+OnBootSec=3min
+OnUnitActiveSec={{ monitoring_interval_min }}min
+AccuracySec=30s
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,4 @@
+---
+# Wie oft die Wache laeuft. Fuenf Minuten sind fuer ein Ein-Host-Setup
+# ausreichend schnell und erzeugen kaum Last.
+monitoring_interval_min: 5

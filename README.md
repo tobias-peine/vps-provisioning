@@ -277,6 +277,21 @@ provisioniert nur die Compose-Stacks neu, `--tags hardening` nur SSH/ufw/Fail2ba
   (z. B. `NET_BIND_SERVICE`, `CHOWN`) und brechen ohne sie still - das kostet
   Debug-Zeit pro Stack.
 
+### `docker.sock` nur ueber einen Socket-Proxy
+
+- **Was:** Homepage bekommt keinen direkten Zugriff auf `/var/run/docker.sock`
+  mehr, sondern spricht `tcp://socket-proxy:2375`. Der Proxy
+  (`tecnativa/docker-socket-proxy`) laesst nur `GET /containers`,
+  `/version` und `/_ping` durch.
+- **Warum:** Der Socket ist root-aequivalent - auch als `:ro`-Mount, weil die
+  Docker-API darueber trotzdem Container starten kann (neuer Container mit
+  `-v /:/host` = Host-Root). Ein kompromittiertes Dashboard war damit ein
+  vollstaendiger Host-Zugriff. Jetzt kann es lesen, nicht steuern: `POST` auf
+  `/containers/json` bekommt 403 (im Test nachgewiesen).
+- **Was ich dafuer aufgegeben habe:** Starten/Stoppen von Containern aus dem
+  Dashboard ist nicht mehr moeglich. Wird es gebraucht, muessen `POST` und
+  `ALLOW_START` im Proxy bewusst freigeschaltet werden.
+
 ## 6. Bewusste Einschraenkungen
 
 - **Plattform ist Ubuntu, nicht Debian 12:** Das Webtropia-Image ist Ubuntu 24.04.5.
@@ -289,11 +304,16 @@ provisioniert nur die Compose-Stacks neu, `--tags hardening` nur SSH/ufw/Fail2ba
   (`journalctl`, `docker logs`). Keine Suche ueber Zeit, keine Historie, Forensik nach
   einem Incident ist muehsam.
 - **Monitoring ist ein Skript, kein Stack:** `health-check.sh` prueft stuendlich
-  Zertifikatslaufzeiten, Container-Health, Reboot-Bedarf und Disk-Auslastung. Alarmiert
-  wird nach dem Dead-Man-Prinzip: der taegliche Restore-Test pingt healthchecks.io,
-  bleibt der Ping aus, kommt die Mail. Dazu ein Boot-Check, der nach einem Neustart
-  zaehlt, ob alle Container zurueckkommen, und ein **deaktiviertes** Reboot-Fenster
-  (`reboot-window.sh`) - die Entscheidung, wann neu gestartet wird, bleibt manuell.
+  Zertifikatslaufzeiten, Container-Health, Reboot-Bedarf und Disk-Auslastung.
+  Dazu seit 13.11.2026 die **Uptime-Wache** (`uptime-check.sh`, Rolle `monitoring`,
+  alle 5 Minuten): acht oeffentliche Hosts per HTTPS, die RustDesk-Ports
+  21115/21116/21117 per TCP, unhealthy Container und Disk ab 90 %. Sie meldet nur
+  **Zustandswechsel** per ntfy (Stoerung und Entwarnung), damit nicht alle fuenf
+  Minuten dieselbe Nachricht kommt. Alarmiert wird nach dem Dead-Man-Prinzip: der
+  taegliche Restore-Test pingt healthchecks.io, bleibt der Ping aus, kommt die Mail.
+  Dazu ein Boot-Check, der nach einem Neustart zaehlt, ob alle Container
+  zurueckkommen, und ein **deaktiviertes** Reboot-Fenster (`reboot-window.sh`) - die
+  Entscheidung, wann neu gestartet wird, bleibt manuell.
   Keine Metriken, keine Dashboards, kein Verlauf.
 - **NPM braucht root fuer 80/443:** Privilegierte Ports. Die Alternative
   (`CAP_NET_BIND_SERVICE` plus Socket-Activation) wuerde Certbot-Hooks und das
@@ -301,6 +321,8 @@ provisioniert nur die Compose-Stacks neu, `--tags hardening` nur SSH/ufw/Fail2ba
 - **Backups: lokal und offsite.** Taeglich nach `/opt/backups` (paperless 03:30,
   n8n/HA/Konfiguration 02:45, kisium 03:00, Restore-Test 04:00) und um 05:30
   verschluesselt per restic auf einen zweiten Server (rest-server, nur im Tailnet).
+  Seit 13.11.2026 liegen auch die Ghost-Dumps aus `/opt/kisium/backups` im
+  Offsite-Set - vorher waren sie nur lokal.
   Der Restore aus dem Offsite-Repo ist geprueft: `restic check` ohne Fehler,
   wiederhergestellte Datei SHA256-identisch. Grenzen: 19 GB Platz, kein
   Append-Only (Retention braucht Loeschrechte).

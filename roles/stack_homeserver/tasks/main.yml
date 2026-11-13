@@ -72,6 +72,25 @@
     mode: "0644"
   notify: Homeserver neu starten
 
+# NPM bringt eine Wochen-Rotation mit (rotate 4). Bei ~100 MB pro Woche und
+# Vhost ist das zu grob, deshalb wird die Datei per Bind-Mount ersetzt.
+- name: Logrotate-Verzeichnis fuer NPM anlegen
+  ansible.builtin.file:
+    path: "{{ homeserver_data_root }}/npm/logrotate"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: NPM-Logrotate-Konfiguration schreiben
+  ansible.builtin.template:
+    src: npm-logrotate.j2
+    dest: "{{ homeserver_data_root }}/npm/logrotate/nginx-proxy-manager"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Homeserver neu starten
+
 # Der frueher handgepflegte Override ist vollstaendig in die Vorlage uebernommen.
 # Er muss weg, sonst wuerde Compose beide Dateien mischen.
 - name: Alten Override entfernen

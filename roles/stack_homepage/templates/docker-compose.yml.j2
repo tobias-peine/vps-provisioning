@@ -17,12 +17,39 @@ services:
       # Eigene Kachel fragt sich selbst ab; ohne den Host-Eintrag antwortet
       # Homepage mit 400.
       HOMEPAGE_ALLOWED_HOSTS: "${DASH_HOST},homepage:3000,127.0.0.1:3000,localhost:3000"
+      # Container-Status kommt ueber den Socket-Proxy. Der Proxy sitzt im selben
+      # Netz und reicht nur lesende Abfragen durch.
+      DOCKER_HOST: tcp://socket-proxy:2375
     ports:
       - "127.0.0.1:{{ homepage_port }}:3000"
     volumes:
       - "{{ homepage_dir }}/config:/app/config"
-      # Lesend: das Dashboard zeigt Container-Status, steuert aber nichts.
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - homeserver
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Der Docker-Socket ist root-aequivalent - auch read-only gemountet. Statt ihn
+  # ins Dashboard zu haengen, laeuft hier ein Proxy, der nur /containers, /version
+  # und /_ping durchlaesst. Alles andere (start, stop, exec, images) ist zu.
+  socket-proxy:
+    image: {{ socket_proxy_image }}
+    container_name: socket-proxy
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    mem_limit: 64m
+    environment:
+      CONTAINERS: "1"
+      VERSION: "1"
+      PING: "1"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
     networks:
       - homeserver
     logging:
