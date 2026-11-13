@@ -4,14 +4,19 @@ kisium_port: 2368
 kisium_image_ghost: "ghost:6-alpine"
 kisium_image_mysql: "mysql:8.4"
 
-# Nicht-geheime Werte. Der Mail-Relay-Host ist ein Platzhalter - TODO: eigenen
-# Anbieter eintragen (Port 587, STARTTLS).
+# Nicht-geheime Werte. Mailversand laeuft ueber Brevo (Port 587, STARTTLS).
+# Wichtig: der SMTP-Login ist NICHT die Konto-Adresse, sondern die
+# Relay-Kennung aus dem Brevo-Konto ("c0ff36001@smtp-brevo.com"). Mit der
+# Konto-E-Mail scheitert die Anmeldung mit 535. Das Passwort ist ein eigener
+# SMTP-Key (xsmtpsib-...) und steht im Vault.
+# DNS fuer die Domain: SPF include:spf.brevo.com, DKIM als zwei CNAMEs
+# (brevo1/brevo2._domainkey), DMARC p=none - alles bei ntdns gepflegt.
 kisium_env:
   GHOST_URL: "https://{{ base_domain }}"
-  MAIL_HOST: "smtp.example.com"
+  MAIL_HOST: "smtp-relay.brevo.com"
   MAIL_PORT: "587"
   MAIL_SECURE: "false"
-  MAIL_USER: "smtp-user"
+  MAIL_USER: "c0ff36001@smtp-brevo.com"
   MAIL_FROM: "Kisium <hallo@{{ base_domain }}>"
 
 kisium_secrets:
