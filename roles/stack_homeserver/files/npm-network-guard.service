@@ -1,0 +1,14 @@
+[Unit]
+Description=NPM an das Compose-Netz homeserver_default binden
+Documentation=file:/usr/local/sbin/npm-network-guard.sh
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+TimeoutStartSec=300
+ExecStart=/usr/local/sbin/npm-network-guard.sh
+
+[Install]
+WantedBy=multi-user.target

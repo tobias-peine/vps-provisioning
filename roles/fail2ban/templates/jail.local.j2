@@ -11,3 +11,9 @@ maxretry = {{ fail2ban_maxretry }}
 enabled = true
 port    = {{ ssh_port }}
 backend = systemd
+# Ubuntu startet sshd als ssh.service; "sshd.service" ist nur ein systemd-Alias
+# und steht so nicht im Journal. Ohne diese Zeile matcht der Debian-Default
+# (_SYSTEMD_UNIT=sshd.service) nichts: der Jail zaehlt dann 0 Fehlversuche und
+# sperrt nie. Nachgeprueft am 13.11.2026: 790 Journal-Zeilen in 24 h auf
+# ssh.service, 1 auf sshd.service.
+journalmatch = _SYSTEMD_UNIT=ssh.service + _COMM=sshd

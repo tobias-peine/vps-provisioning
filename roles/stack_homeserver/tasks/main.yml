@@ -88,3 +88,31 @@
     state: present
     pull: missing
     remove_orphans: true
+
+# NPM haengt in zwei Netzen (homeserver_default und kisium-net) und ist damit die
+# einzige Bruecke zwischen den Compose-Projekten. Am 13.11.2026 kam der Container
+# nach einem Reboot nur mit kisium-net hoch - alle homeserver-Domains antworteten
+# mit 502, bis der Anschluss von Hand nachgezogen wurde. Der Guard macht das
+# idempotent beim Boot; er laeuft erst, wenn der Stack steht.
+- name: Netz-Guard-Skript fuer NPM installieren
+  ansible.builtin.copy:
+    src: npm-network-guard.sh
+    dest: /usr/local/sbin/npm-network-guard.sh
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Netz-Guard-Unit fuer NPM installieren
+  ansible.builtin.copy:
+    src: npm-network-guard.service
+    dest: /etc/systemd/system/npm-network-guard.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Systemd neu laden
+
+- name: Netz-Guard aktivieren und starten
+  ansible.builtin.systemd_service:
+    name: npm-network-guard.service
+    enabled: true
+    state: started

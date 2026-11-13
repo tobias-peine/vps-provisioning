@@ -351,6 +351,22 @@ Fix: Netzzugehoerigkeit deklarativ in `docker-compose.override.yml` eingetragen 
 nach jedem Recreate mit `docker inspect -f '{{range $k,$v := .NetworkSettings.Networks}}{{$k}} {{end}}'`
 gegengeprueft.
 
+**5. Nach dem Reboot fehlte NPM ein Netz - und der Funnel blockierte die Ports.**
+Fehler: Nach dem Kernel-Reboot am 13.11.2026 antworteten alle Domains mit 502, die
+NPM-Admin-Oberflaeche war unerreichbar. Zusaetzlich kam `kisium-tls` in eine
+Restart-Schleife (`bind() to 0.0.0.0:8443 failed`).
+Ursache: Der NPM-Container kam nur mit `kisium-net` hoch; der Anschluss an
+`homeserver_default` war weg, weil `docker network connect` Laufzeitzustand ist und
+der Container beim Boot nicht neu erstellt wird. Auf 443/8443 hatte ausserdem
+`tailscaled` zuerst gebunden: ein `tailscale serve`-Eintrag (Funnel auf 443 ->
+Stream-Proxy, 8443 -> Home Assistant) war noch aktiv. Er hatte vorher nie
+funktioniert, weil die Container die Ports zuerst hatten - beim Reboot drehte sich
+die Reihenfolge um.
+Fix: `tailscale serve reset` (Funnel war ohnehin wirkungslos und kollidiert auf 443
+mit NPM) und ein idempotenter Boot-Guard (`npm-network-guard.service`), der NPM
+nach dem Start an `homeserver_default` haengt und nginx neu laedt. Test: Netz
+getrennt, Guard laufen lassen, `chat.kisium.de` wieder 200.
+
 ## 8. Vor dem Umschalten auf public
 
 - [ ] **Historie:** `make audit` und `gitleaks`/`trufflehog` ohne Findings, kein
