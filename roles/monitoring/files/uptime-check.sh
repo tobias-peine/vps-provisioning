@@ -61,6 +61,19 @@ elif [ "$now" = ok ] && [ "$prev" = fail ]; then
   notify "Homelab: wieder ok" "Alle Pruefungen laufen wieder."
 fi
 
+# Liveness-Ping an healthchecks.io: meldet, dass die Wache selbst laeuft. Faellt
+# der Host aus, bleibt der Ping aus und der externe Dienst alarmiert - das kann
+# ntfy nicht, weil es auf demselben Host laeuft. Bewusst auch bei Befunden:
+# dieser Check misst "Wache lebt", nicht "alles gesund".
+MON_ENV="${MON_ENV:-/opt/backups/.uptime-check-monitor.env}"
+if [ -r "$MON_ENV" ]; then
+  # shellcheck disable=SC1090
+  . "$MON_ENV"
+  if [ -n "${UPTIME_PING_URL:-}" ]; then
+    curl -fsS -m 5 -o /dev/null "$UPTIME_PING_URL" || true
+  fi
+fi
+
 if [ "$now" = ok ]; then
   echo "OK"
 else

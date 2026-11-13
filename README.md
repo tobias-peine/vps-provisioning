@@ -309,8 +309,12 @@ provisioniert nur die Compose-Stacks neu, `--tags hardening` nur SSH/ufw/Fail2ba
   alle 5 Minuten): acht oeffentliche Hosts per HTTPS, die RustDesk-Ports
   21115/21116/21117 per TCP, unhealthy Container und Disk ab 90 %. Sie meldet nur
   **Zustandswechsel** per ntfy (Stoerung und Entwarnung), damit nicht alle fuenf
-  Minuten dieselbe Nachricht kommt. Alarmiert wird nach dem Dead-Man-Prinzip: der
-  taegliche Restore-Test pingt healthchecks.io, bleibt der Ping aus, kommt die Mail.
+  Minuten dieselbe Nachricht kommt. Alarmiert wird nach dem Dead-Man-Prinzip ueber
+  healthchecks.io; drei Checks, alle per API angelegt:
+  `health-check` (stuendlich, Grace 30 min), `uptime-check` (Liveness der Wache,
+  5 min) und `paperless-restore-test` (taeglich). Der Liveness-Ping ist der
+  wichtige Teil: faellt der Host aus, kann ntfy nichts mehr melden, weil es auf
+  demselben Host laeuft - healthchecks.io merkt es am ausbleibenden Ping.
   Dazu ein Boot-Check, der nach einem Neustart zaehlt, ob alle Container
   zurueckkommen, und ein **deaktiviertes** Reboot-Fenster (`reboot-window.sh`) - die
   Entscheidung, wann neu gestartet wird, bleibt manuell.
