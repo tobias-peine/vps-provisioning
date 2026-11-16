@@ -1,0 +1,20 @@
+# .gitattributes - Zeilenenden und Sprachstatistik.
+
+# Zeilenenden: alles LF. Das Repo laeuft nur auf Linux; CRLF in einer Vorlage
+# bricht nichts, erzeugt aber bei jedem Editor- oder Windows-Umweg unsinnige
+# Diffs. "text=auto" normalisiert nur Dateien, die Git als Text erkennt.
+* text=auto eol=lf
+
+# Shell-Skripte explizit: sie laufen unter bash, ein CR vor dem Zeilenende
+# macht aus "#!/bin/bash" ein "bash\r" und den Aufruf unbrauchbar.
+*.sh text eol=lf
+
+# Sprachstatistik: bewusst NICHT manipuliert.
+# GitHub/linguist zaehlt YAML als Datentyp ("data") nicht mit und ordnet .j2
+# der Sprache "Jinja" zu; einen Sprachtyp "Ansible" kennt linguist nicht.
+# Deshalb steht oben "Jinja" statt "Ansible" - kein Fehler im Repo, sondern
+# eine Eigenschaft des Zaehlers.
+# "*.j2 linguist-detectable=false" wuerde den Balken auf "Shell" drehen und
+# tauscht damit ein Etikett gegen ein anderes: der Inhalt sind 1283 Zeilen
+# YAML und 785 Zeilen Jinja, nicht die 314 Zeilen Shell. Die Einordnung
+# leistet die Description; der Balken bleibt unangetastet.
