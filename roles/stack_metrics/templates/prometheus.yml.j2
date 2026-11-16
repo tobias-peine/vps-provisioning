@@ -1,8 +1,7 @@
 ---
 # Verwaltet von Ansible (Rolle stack_metrics).
-# Phase 1 der Observability: nur sammeln. Dashboards (Grafana) und Alarme
-# (Alertmanager) folgen in Phase 2 und 3 - ein Schritt pro Ausbau, damit man
-# jeden einzeln versteht und einzeln zurueckrollen kann.
+# Die Sammler (node-exporter, cAdvisor) laufen ueber die Rolle metrics_exporters
+# auf jedem Host; hier werden sie nur abgefragt.
 global:
   scrape_interval: 30s
   evaluation_interval: 30s
@@ -27,37 +26,33 @@ scrape_configs:
         labels:
           host: monitor
 
-  # Host-Metriken: CPU, RAM, Swap, Disk, Netzwerk, Load.
-  - job_name: node
+  # Beide Hosts werden ueber ihre Tailscale-Adresse abgefragt. Das ist
+  # gleichzeitig die Trennung: faellt der App-Host aus, laeuft die Ueberwachung
+  # hier weiter und der Ausfall ist als "down" sichtbar.
+  - job_name: node-monitor
     static_configs:
       - targets:
-          - node-exporter:9100
+          - "{{ metrics_monitor_host }}:9100"
         labels:
           host: monitor
 
-  # Container-Metriken: CPU und RAM je Container, Restarts, Image-Groessen.
-  - job_name: cadvisor
+  - job_name: cadvisor-monitor
     static_configs:
       - targets:
-          - cadvisor:8080
+          - "{{ metrics_monitor_host }}:8080"
         labels:
           host: monitor
 
-{% if metrics_remote_host | default('') | length > 0 %}
-  # Zweite Maschine ueber Tailscale. Auf dem App-Host laufen dann nur noch die
-  # Exporter, waehrend Prometheus hier liegt - faellt der App-Host aus, laeuft
-  # die Ueberwachung weiter und kann es melden.
-  - job_name: remote-node
+  - job_name: node-app
     static_configs:
       - targets:
-          - "{{ metrics_remote_host }}:9100"
+          - "{{ metrics_app_host }}:9100"
         labels:
           host: app
 
-  - job_name: remote-cadvisor
+  - job_name: cadvisor-app
     static_configs:
       - targets:
-          - "{{ metrics_remote_host }}:8080"
+          - "{{ metrics_app_host }}:8080"
         labels:
           host: app
-{% endif %}

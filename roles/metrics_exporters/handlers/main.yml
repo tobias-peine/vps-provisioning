@@ -1,0 +1,9 @@
+---
+- name: Exporter neu starten
+  community.docker.docker_compose_v2:
+    project_src: "{{ metrics_exporters_dir }}"
+    files:
+      - compose.yaml
+    state: present
+    pull: missing
+    recreate: auto

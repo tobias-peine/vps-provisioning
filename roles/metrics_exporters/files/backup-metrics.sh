@@ -6,7 +6,7 @@
 set -euo pipefail
 export HOME=/root
 
-OUT_DIR=/opt/metrics/textfile
+OUT_DIR=/opt/metrics-exporters/textfile
 OUT="$OUT_DIR/restic.prom"
 
 mkdir -p "$OUT_DIR"

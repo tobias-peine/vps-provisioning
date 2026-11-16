@@ -1,15 +1,17 @@
 ---
 # Verwaltet von Ansible (Rolle stack_metrics).
 #
-# Empfaenger ist ein Home-Assistant-Webhook: Alertmanager laeuft auf demselben
-# Host wie HA, kann also keinen Alarm melden, wenn der ganze Host steht - dafuer
-# bleibt der Dead-Man-Ping an healthchecks.io zustaendig. Fuer alles, was den
-# Host am Leben laesst (Disk, Swap, Backups), ist der Weg ueber HA richtig.
+# Zwei Wege, absichtlich parallel:
+#   1. Home Assistant (Webhook) - der gewohnte Kanal, landet bei der Familie.
+#   2. ntfy ueber alertbridge - unabhaengig von HA. Faellt der App-Host aus,
+#      kann HA nichts mehr melden; ntfy laeuft ueber das Internet und kommt an.
+# Der Alertmanager selbst laeuft auf dem Monitoring-Host und ueberlebt den
+# Ausfall des App-Hosts.
 global:
   resolve_timeout: 5m
 
 route:
-  receiver: home-assistant
+  receiver: alerts
   # Nach Alarmname gruppieren: ein voller Swap erzeugt sonst eine Nachricht pro
   # betroffenem Container.
   group_by:
@@ -20,8 +22,11 @@ route:
   repeat_interval: 12h
 
 receivers:
-  - name: home-assistant
+  - name: alerts
     webhook_configs:
       - url: "http://{{ metrics_ha_host }}:8123/api/webhook/{{ metrics_ha_webhook_id }}"
+        send_resolved: true
+        max_alerts: 5
+      - url: "http://alertbridge:8080/alert"
         send_resolved: true
         max_alerts: 5

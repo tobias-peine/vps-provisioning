@@ -1,0 +1,81 @@
+---
+# Verwaltet von Ansible (Rolle metrics_exporters).
+# Nur Sammler: node-exporter fuer den Host, cAdvisor fuer die Container.
+name: metrics_exporters
+
+services:
+  node-exporter:
+    image: {{ metrics_node_exporter_image }}
+    container_name: metrics-node-exporter
+    restart: unless-stopped
+    command:
+      - --path.procfs=/host/proc
+      - --path.sysfs=/host/sys
+      - --path.rootfs=/rootfs
+      # Pseudo-Dateisysteme nicht mitzaehlen: sonst verfaelschen sie die
+      # Disk-Auslastung, weil sie bei jedem Scrape ihre Groesse aendern.
+      - --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)
+      # Textfile-Collector: liest die von backup-metrics.sh geschriebene Datei,
+      # damit die Backup-Frische als Metrik und nicht nur im Log steht.
+      - --collector.textfile.directory=/textfile
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+      - ./textfile:/textfile:ro
+    # PID-Namespace des Hosts: sonst sieht der Exporter nur seine eigene
+    # Prozessliste und liefert keine Prozess-Metriken.
+    pid: host
+    # Prometheus laeuft auf einer anderen Maschine, deshalb muss der Exporter
+    # ueber Tailscale erreichbar sein - nie ueber die oeffentliche IP.
+    ports:
+      - "{{ metrics_bind_ip }}:9100:9100"
+    networks:
+      - metrics
+    mem_limit: {{ metrics_node_exporter_mem }}
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  cadvisor:
+    image: {{ metrics_cadvisor_image }}
+    container_name: metrics-cadvisor
+    restart: unless-stopped
+    command:
+      # Standard ist 1 s Housekeeping - bei vielen Containern kostet das
+      # dauerhaft CPU, ohne dass Prometheus (30 s Scrape) etwas davon sieht.
+      - --housekeeping_interval=30s
+      - --max_housekeeping_interval=60s
+      # Ohne docker_only laeuft cAdvisor zusaetzlich alle systemd-Cgroups ab.
+      - --docker_only=true
+      # "disk" laesst cAdvisor die Overlay-Verzeichnisse jedes Containers
+      # ablaufen (5-15 s pro Container, reine I/O-Last). Die Host-Disk liefert
+      # node_exporter, die Container-Disk braucht hier niemand.
+      - --disable_metrics=disk,diskIO
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    devices:
+      - /dev/kmsg
+    ports:
+      - "{{ metrics_bind_ip }}:8080:8080"
+    networks:
+      - metrics
+    mem_limit: {{ metrics_cadvisor_mem }}
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  metrics:

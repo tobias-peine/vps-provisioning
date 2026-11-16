@@ -1,0 +1,21 @@
+---
+# Exporter-Rolle: laeuft auf JEDEM Host, der ueberwacht werden soll.
+# Sie sammelt nur und veroeffentlicht an der Tailscale-Adresse; die Auswertung
+# (Prometheus, Grafana, Alertmanager) liegt in stack_metrics auf einer anderen
+# Maschine.
+metrics_exporters_dir: /opt/metrics-exporters
+
+metrics_node_exporter_image: "prom/node-exporter:v1.12.1"
+metrics_cadvisor_image: "ghcr.io/google/cadvisor:v0.60.6"
+
+metrics_node_exporter_mem: 128m
+# cAdvisor liest /var/lib/docker und liegt im ersten Lauf bei ~250 MB inklusive
+# Page-Cache. Bei 256m Deckel wuerde er sich selbst OOM-killen.
+metrics_cadvisor_mem: 512m
+
+# Verzeichnis fuer den textfile-Collector (Backup-Frische).
+metrics_textfile_dir: "{{ metrics_exporters_dir }}/textfile"
+---
+# Adresse, an der die Exporter lauschen. Standard ist die Adresse, ueber die
+# Ansible den Host anspricht - im Normalfall die Tailscale-Adresse.
+metrics_bind_ip: "{{ ansible_host }}"

@@ -1,5 +1,13 @@
 ---
-# Reihenfolge ist nicht kosmetisch:
+# Zwei Hosts, zwei Rollen:
+#   - prod    (Webtropia-VPS): alle Anwendungen + Sammler (metrics_exporters)
+#   - monitor (Hetzner Cloud): Sammler + Auswertung (stack_metrics)
+#
+# Warum getrennt: faellt der App-Host aus, laufen Prometheus und Alertmanager
+# weiter und der Ausfall ist als "down" sichtbar. Vorher stand beides auf
+# derselben Maschine und schwieg im Ernstfall gemeinsam.
+#
+# Reihenfolge auf dem App-Host ist nicht kosmetisch:
 #   - tailscale vor ssh/ufw: sonst gibt es nach dem Umschalten keinen zweiten
 #     Weg mehr auf den Host.
 #   - stack_kisium vor stack_homeserver: der homeserver haengt sich an das
@@ -12,9 +20,8 @@
 # ssh und ufw duerfen nicht im selben Lauf wie der erste become-Wechsel auf einen
 # unbekannten Host laufen: wer sich dabei aussperrt, kommt nur ueber die Konsole
 # zurueck. Ablauf und Rettung stehen in README Abschnitt 7.
-- name: Webtropia-VPS provisionieren
-  # all statt prod, damit -i vm.ini/-i test.ini nicht still ohne Hosts durchlaeuft.
-  hosts: all
+- name: App-Host provisionieren
+  hosts: prod
   become: true
   roles:
     - role: base
@@ -43,9 +50,26 @@
       tags: [kisium_tv, stacks]
     - role: stack_rustdesk
       tags: [rustdesk, stacks]
-    - role: stack_metrics
-      tags: [metrics, monitoring, stacks]
+    - role: metrics_exporters
+      tags: [metrics, monitoring]
     - role: monitoring
       tags: [monitoring]
     - role: backup
       tags: [backup, cron]
+
+# Auf dem Monitoring-Host laufen bewusst NICHT base/ssh/ufw: die Maschine ist
+# bereits eingerichtet (Ubuntu 26.04, Docker vorhanden, root-Zugang ueber
+# Tailscale). Ein Hardening-Lauf dort koennte den Zugang kappen, ohne dass es
+# fuer die Aufgabe noetig waere.
+- name: Monitoring-Host provisionieren
+  hosts: monitor
+  become: true
+  vars:
+    # Der Monitor fragt sich selbst und den App-Host ueber Tailscale ab.
+    metrics_monitor_host: "{{ ansible_host }}"
+    metrics_app_host: "{{ hostvars[groups['prod'][0]]['ansible_host'] }}"
+  roles:
+    - role: metrics_exporters
+      tags: [metrics, monitoring]
+    - role: stack_metrics
+      tags: [metrics, monitoring]

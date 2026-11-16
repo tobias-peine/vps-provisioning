@@ -7,17 +7,20 @@
     group: root
     mode: "0755"
 
-- name: Grafana-Konfigurationsverzeichnisse anlegen
+- name: Unterverzeichnisse anlegen
   ansible.builtin.file:
-    path: "{{ item }}"
+    path: "{{ metrics_dir }}/{{ item }}"
     state: directory
     owner: root
     group: root
     mode: "0755"
   loop:
-    - "{{ metrics_dir }}/grafana/provisioning/datasources"
-    - "{{ metrics_dir }}/grafana/provisioning/dashboards"
-    - "{{ metrics_dir }}/grafana/dashboards"
+    - rules
+    - alertmanager
+    - alertbridge
+    - grafana/provisioning/datasources
+    - grafana/provisioning/dashboards
+    - grafana/dashboards
 
 # Das Adminpasswort wird einmalig zufaellig erzeugt und liegt danach root-only
 # auf dem Host. force: false verhindert, dass ein erneuter Lauf das Passwort
@@ -31,6 +34,26 @@
     mode: "0600"
     force: false
   no_log: true
+
+# Das ntfy-Topic ist die halbe Zugangskontrolle: wer es kennt, kann mitlesen.
+# Es wird einmalig erzeugt und steht danach in dieser Datei.
+- name: ntfy-Thema erzeugen (nur beim ersten Lauf)
+  ansible.builtin.copy:
+    content: "NTFY_TOPIC=kisium-alerts-{{ lookup('password', '/dev/null length=16 chars=ascii_lowercase,digits') }}\n"
+    dest: "{{ metrics_dir }}/alertbridge.env"
+    owner: root
+    group: root
+    mode: "0600"
+    force: false
+  no_log: true
+
+- name: Brueckendienst installieren
+  ansible.builtin.copy:
+    src: alertbridge.py
+    dest: "{{ metrics_dir }}/alertbridge/alertbridge.py"
+    owner: root
+    group: root
+    mode: "0644"
 
 - name: Prometheus als Grafana-Datasource provisionieren
   ansible.builtin.copy:
@@ -63,36 +86,6 @@
     - container-uebersicht.json
     - backup-und-alarme.json
 
-# Die Tailscale-Adresse wird zur Laufzeit ermittelt statt in group_vars zu
-# stehen: die Adresse identifiziert das Tailnet und gehoert nicht in ein
-# oeffentliches Repo. Fehlt das Interface, bleibt die Liste leer und es wird
-# nur auf Loopback gebunden.
-- name: Tailscale-Adresse fuer das optionale Binding ermitteln
-  ansible.builtin.set_fact:
-    metrics_tailscale_ip: >-
-      {{ (ansible_facts['tailscale0'] | default({})).get('ipv4', {}).get('address', '') }}
-
-# Ohne Tailscale gaebe es keinen Weg von Alertmanager zu Home Assistant: HA
-# lauscht nur auf Loopback und auf der Tailscale-Adresse.
-- name: Tailscale-Adresse fuer den Alarmweg sicherstellen
-  ansible.builtin.assert:
-    that:
-      - metrics_tailscale_ip | length > 0
-    fail_msg: "Alertmanager braucht die Tailscale-Adresse fuer den HA-Webhook."
-    quiet: true
-
-- name: Verzeichnisse fuer Regeln, Alertmanager und Textfile-Collector anlegen
-  ansible.builtin.file:
-    path: "{{ metrics_dir }}/{{ item }}"
-    state: directory
-    owner: root
-    group: root
-    mode: "0755"
-  loop:
-    - rules
-    - alertmanager
-    - textfile
-
 - name: Alarmregeln schreiben
   ansible.builtin.copy:
     src: "rules/{{ item }}"
@@ -113,30 +106,6 @@
     group: root
     mode: "0644"
   notify: Alertmanager neu starten
-
-- name: Skript fuer die Backup-Metrik installieren
-  ansible.builtin.copy:
-    src: backup-metrics.sh
-    dest: /usr/local/sbin/backup-metrics.sh
-    owner: root
-    group: root
-    mode: "0700"
-
-- name: Cron-Eintrag fuer die Backup-Metrik installieren
-  ansible.builtin.copy:
-    src: cron.d/backup-metrics
-    dest: /etc/cron.d/backup-metrics
-    owner: root
-    group: root
-    mode: "0644"
-
-# Direkt einmal ausfuehren, damit der textfile-Collector nicht bis zum ersten
-# Cron-Lauf (bis zu 30 Minuten) leer bleibt und BackupMetrikFehlt sofort
-# ausloesen wuerde.
-- name: Backup-Metrik einmalig erzeugen
-  ansible.builtin.command:
-    cmd: /usr/local/sbin/backup-metrics.sh
-    creates: "{{ metrics_dir }}/textfile/restic.prom"
 
 - name: Prometheus-Konfiguration schreiben
   ansible.builtin.template:

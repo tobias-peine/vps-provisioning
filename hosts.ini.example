@@ -29,3 +29,11 @@ ansible_python_interpreter=/usr/bin/python3
 # Privater Key pro Host statt ssh-agent: kein Agent-Forwarding auf den VPS.
 # TODO: auf den tatsaechlichen Key-Dateinamen anpassen.
 ansible_ssh_private_key_file=~/.ssh/id_ed25519_todo
+
+# Monitoring-Host (z. B. eine zweite Cloud-Maschine). Laeuft getrennt vom
+# App-Host, damit Prometheus und Alertmanager den Ausfall des App-Hosts
+# ueberleben. Braucht Docker und SSH-Zugang; die Rolle setzt keinen
+# Hardening-Lauf voraus.
+# TODO: echte Tailscale-Adresse und Key-Pfad eintragen.
+[monitor]
+monitor01 ansible_host=100.64.0.2 ansible_port=22 ansible_user=root

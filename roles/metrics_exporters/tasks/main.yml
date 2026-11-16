@@ -1,0 +1,57 @@
+---
+- name: Projektverzeichnis anlegen
+  ansible.builtin.file:
+    path: "{{ metrics_exporters_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Textfile-Verzeichnis anlegen
+  ansible.builtin.file:
+    path: "{{ metrics_textfile_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Compose-Datei schreiben
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: "{{ metrics_exporters_dir }}/compose.yaml"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Exporter neu starten
+
+- name: Stack starten
+  community.docker.docker_compose_v2:
+    project_src: "{{ metrics_exporters_dir }}"
+    files:
+      - compose.yaml
+    state: present
+    pull: missing
+    remove_orphans: true
+
+- name: Skript fuer die Backup-Metrik installieren
+  ansible.builtin.copy:
+    src: backup-metrics.sh
+    dest: /usr/local/sbin/backup-metrics.sh
+    owner: root
+    group: root
+    mode: "0700"
+
+- name: Cron-Eintrag fuer die Backup-Metrik installieren
+  ansible.builtin.copy:
+    src: cron.d/backup-metrics
+    dest: /etc/cron.d/backup-metrics
+    owner: root
+    group: root
+    mode: "0644"
+
+# Direkt einmal ausfuehren, damit der textfile-Collector nicht bis zum ersten
+# Cron-Lauf (bis zu 30 Minuten) leer bleibt.
+- name: Backup-Metrik einmalig erzeugen
+  ansible.builtin.command:
+    cmd: /usr/local/sbin/backup-metrics.sh
+    creates: "{{ metrics_textfile_dir }}/restic.prom"

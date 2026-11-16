@@ -1,5 +1,7 @@
 ---
 # Verwaltet von Ansible (Rolle stack_metrics).
+# Zentrale Auswertung: Prometheus, Alertmanager, Grafana. Die Sammler laufen
+# ueber die Rolle metrics_exporters auf den jeweiligen Hosts.
 name: metrics
 
 services:
@@ -43,83 +45,6 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  node-exporter:
-    image: {{ metrics_node_exporter_image }}
-    container_name: metrics-node-exporter
-    restart: unless-stopped
-    command:
-      - --path.procfs=/host/proc
-      - --path.sysfs=/host/sys
-      - --path.rootfs=/rootfs
-      # Pseudo-Dateisysteme nicht mitzaehlen: sonst verfaelschen sie die
-      # Disk-Auslastung, weil sie bei jedem Scrape ihre Groesse aendern.
-      - --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)
-      # Textfile-Collector: liest die von backup-metrics.sh geschriebene Datei,
-      # damit die Backup-Frische als Metrik und nicht nur im Log steht.
-      - --collector.textfile.directory=/textfile
-    volumes:
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /:/rootfs:ro
-      - ./textfile:/textfile:ro
-    # PID-Namespace des Hosts: sonst sieht der Exporter nur seine eigene
-    # Prozessliste und liefert keine Prozess-Metriken.
-    pid: host
-{% if metrics_tailscale_ip | length > 0 and metrics_expose_exporters | default(false) %}
-    # Nur wenn Prometheus auf einer anderen Maschine laeuft: der Exporter wird
-    # ueber Tailscale erreichbar, nicht ueber die oeffentliche IP.
-    ports:
-      - "{{ metrics_tailscale_ip }}:9100:9100"
-{% endif %}
-    networks:
-      - metrics
-    mem_limit: {{ metrics_node_exporter_mem }}
-    security_opt:
-      - no-new-privileges:true
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
-
-  cadvisor:
-    image: {{ metrics_cadvisor_image }}
-    container_name: metrics-cadvisor
-    restart: unless-stopped
-    command:
-      # Standard ist 1 s Housekeeping - bei 19 Containern kostet das dauerhaft
-      # CPU, ohne dass Prometheus (30 s Scrape) etwas davon sieht.
-      - --housekeeping_interval=30s
-      - --max_housekeeping_interval=60s
-      # Ohne docker_only laeuft cAdvisor zusaetzlich alle systemd-Cgroups ab.
-      - --docker_only=true
-      # "disk" laesst cAdvisor die Overlay-Verzeichnisse jedes Containers
-      # ablaufen (5-15 s pro Container, reine I/O-Last). Die Host-Disk liefert
-      # node_exporter, die Container-Disk braucht hier niemand.
-      - --disable_metrics=disk,diskIO
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-      - /dev/disk/:/dev/disk:ro
-    devices:
-      - /dev/kmsg
-{% if metrics_tailscale_ip | length > 0 and metrics_expose_exporters | default(false) %}
-    ports:
-      - "{{ metrics_tailscale_ip }}:8080:8080"
-{% endif %}
-    networks:
-      - metrics
-    mem_limit: {{ metrics_cadvisor_mem }}
-    security_opt:
-      - no-new-privileges:true
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
-
   alertmanager:
     image: {{ metrics_alertmanager_image }}
     container_name: metrics-alertmanager
@@ -146,6 +71,31 @@ services:
       timeout: 5s
       retries: 3
       start_period: 20s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Uebersetzt Alertmanager-JSON in lesbare ntfy-Nachrichten. Reiner Textdienst
+  # ohne Abhaengigkeiten: laeuft auch dann, wenn Home Assistant nicht erreichbar
+  # ist - genau dafuer ist er da.
+  alertbridge:
+    image: {{ metrics_alertbridge_image }}
+    container_name: metrics-alertbridge
+    restart: unless-stopped
+    command:
+      - python
+      - /app/alertbridge.py
+    env_file:
+      - ./alertbridge.env
+    volumes:
+      - ./alertbridge:/app:ro
+    networks:
+      - metrics
+    mem_limit: {{ metrics_alertbridge_mem }}
+    security_opt:
+      - no-new-privileges:true
     logging:
       driver: json-file
       options:
