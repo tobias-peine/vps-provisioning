@@ -5,7 +5,11 @@ set -euo pipefail
 
 ENV_FILE=/etc/restic/offsite.env
 [ -r "$ENV_FILE" ] || { echo "FEHLT: $ENV_FILE"; exit 2; }
-set -a; . "$ENV_FILE"; set +a
+# Zielpfad und Passwortdatei stehen in der Env-Datei des Hosts, nicht im Repo.
+set -a
+# shellcheck disable=SC1090
+. "$ENV_FILE"
+set +a
 
 case "${RESTIC_REPOSITORY:-}" in
   ""|*TODO*) echo "ABBRUCH: RESTIC_REPOSITORY ist TODO ($ENV_FILE)"; exit 2;;
