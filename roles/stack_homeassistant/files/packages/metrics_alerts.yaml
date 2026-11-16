@@ -1,0 +1,28 @@
+---
+# Verwaltet von Ansible (Rolle stack_homeassistant).
+# Empfaenger fuer die Alarme von Prometheus/Alertmanager. Der Webhook ist der
+# einzige Weg, ueber den der Monitoring-Host in Home Assistant hineinreicht;
+# die Kennung steht in metrics_ha_webhook_id (Rolle stack_metrics) und ist
+# bewusst kein Geheimnis - HA ist nur ueber Tailscale erreichbar.
+automation:
+  - id: metrics_alerts_webhook
+    alias: "Metriken: Alarm von Alertmanager"
+    description: "Nimmt Alerts von Prometheus/Alertmanager an und leitet sie an die Familie weiter."
+    mode: queued
+    max: 10
+    trigger:
+      - platform: webhook
+        webhook_id: metrics-alerts
+        allowed_methods:
+          - POST
+    action:
+      - action: notify.familie
+        data:
+          title: >-
+            Warnung {{ trigger.json.alerts[0].labels.severity | default('warnung') | upper }}:
+            {{ trigger.json.alerts[0].labels.alertname | default('Server-Alarm') }}
+          message: >-
+            {% set a = trigger.json.alerts[0] %}
+            {{ a.annotations.summary | default('ohne Beschreibung') }}
+
+            Status: {{ trigger.json.status }}, {{ trigger.json.alerts | length }} Alarm(e)

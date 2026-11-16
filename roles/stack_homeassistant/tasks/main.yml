@@ -28,3 +28,23 @@
     state: present
     pull: missing
     remove_orphans: true
+
+# Alarme aus dem Monitoring landen ueber diesen Webhook bei der Familie.
+# Die Datei liegt als Package in config/packages/, weil sie sonst bei einem
+# HA-Neuaufbau aus dem Repo fehlen wuerde.
+- name: Package-Verzeichnis anlegen
+  ansible.builtin.file:
+    path: "{{ hass_dir }}/config/packages"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Alertmanager-Webhook als Package ausliefern
+  ansible.builtin.copy:
+    src: packages/metrics_alerts.yaml
+    dest: "{{ hass_dir }}/config/packages/metrics_alerts.yaml"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Home Assistant neu starten (Package)

@@ -1,26 +1,53 @@
 {
   "uid": "container-uebersicht",
   "title": "Container",
-  "tags": ["container", "phase-2"],
+  "tags": [
+    "container",
+    "phase-2"
+  ],
   "timezone": "browser",
   "schemaVersion": 39,
   "version": 1,
   "refresh": "30s",
   "editable": false,
-  "time": { "from": "now-6h", "to": "now" },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
   "panels": [
     {
       "id": 1,
       "type": "timeseries",
       "title": "RAM je Container (Top 8)",
-      "gridPos": { "h": 9, "w": 12, "x": 0, "y": 0 },
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "fieldConfig": { "defaults": { "unit": "bytes" }, "overrides": [] },
-      "options": { "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull"] } },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
+      },
       "targets": [
         {
           "refId": "A",
-          "expr": "topk(8, container_memory_working_set_bytes{name!=\"\"})",
+          "expr": "topk(8, container_memory_working_set_bytes{name!=\"\",host=~\"$host\"})",
           "legendFormat": "{{name}}"
         }
       ]
@@ -29,14 +56,35 @@
       "id": 2,
       "type": "timeseries",
       "title": "CPU je Container (Top 8)",
-      "gridPos": { "h": 9, "w": 12, "x": 12, "y": 0 },
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "fieldConfig": { "defaults": { "unit": "percentunit" }, "overrides": [] },
-      "options": { "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull"] } },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
+      },
       "targets": [
         {
           "refId": "A",
-          "expr": "topk(8, sum by (name) (rate(container_cpu_usage_seconds_total{name!=\"\"}[5m])))",
+          "expr": "topk(8, sum by (name) (rate(container_cpu_usage_seconds_total{name!=\"\",host=~\"$host\"}[5m])))",
           "legendFormat": "{{name}}"
         }
       ]
@@ -45,17 +93,65 @@
       "id": 3,
       "type": "stat",
       "title": "Laufende Container",
-      "gridPos": { "h": 5, "w": 6, "x": 0, "y": 9 },
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "fieldConfig": { "defaults": { "unit": "short", "decimals": 0 }, "overrides": [] },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "none" },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 0,
+        "y": 9
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "none"
+      },
       "targets": [
         {
           "refId": "A",
-          "expr": "count(container_last_seen{name!=\"\"})",
+          "expr": "count(container_last_seen{name!=\"\",host=~\"$host\"})",
           "legendFormat": "Container"
         }
       ]
     }
-  ]
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "host",
+        "label": "Host",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "query": {
+          "query": "label_values(container_memory_working_set_bytes, host)",
+          "refId": "host"
+        },
+        "refresh": 1,
+        "includeAll": true,
+        "multi": true,
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
+        "sort": 1
+      }
+    ]
+  }
 }

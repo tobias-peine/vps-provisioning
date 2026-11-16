@@ -133,3 +133,23 @@
     state: present
     pull: missing
     remove_orphans: true
+
+# Die auf diesem Host erzeugten Zugangsdaten liegen sonst nur hier. Der
+# App-Host nimmt sie in seinen Restic-Job auf; Voraussetzung ist der Key
+# /root/.ssh/id_ed25519_backup in authorized_keys von admin@<App-Host>
+# (einmalig von Hand, siehe README).
+- name: Skript fuer die Secret-Sicherung installieren
+  ansible.builtin.template:
+    src: push-secrets.sh.j2
+    dest: /usr/local/sbin/push-secrets.sh
+    owner: root
+    group: root
+    mode: "0700"
+
+- name: Cron-Eintrag fuer die Secret-Sicherung installieren
+  ansible.builtin.copy:
+    src: cron.d/monitor-secrets
+    dest: /etc/cron.d/monitor-secrets
+    owner: root
+    group: root
+    mode: "0644"

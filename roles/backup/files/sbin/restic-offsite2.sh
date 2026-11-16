@@ -17,7 +17,7 @@ esac
 [ -r "${RESTIC_PASSWORD_FILE:-/nonexistent}" ] || { echo "ABBRUCH: Passwortdatei fehlt"; exit 2; }
 
 echo "[$(date "+%F %T")] starte Offsite-Backup 2 (Storage Box)"
-restic backup --quiet /opt/backups /opt/kisium/backups /home/admin/kisium-backups
+restic backup --quiet /opt/backups /opt/kisium/backups /home/admin/kisium-backups /home/admin/monitor-secrets
 restic forget --quiet --keep-daily 7 --keep-weekly 4 --keep-monthly 6 --prune
 restic check --quiet
 echo "[$(date "+%F %T")] fertig"

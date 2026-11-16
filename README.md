@@ -471,3 +471,47 @@ getrennt, Guard laufen lassen, `chat.kisium.de` wieder 200.
       Kontaktweg im Profil statt privater Mailadresse im Repo.
 
 <!-- TODO: Screenshot von NPM/Homepage ohne Domain und ohne IP einbetten. -->
+
+## 9. Zwei Hosts: App und Monitoring
+
+Seit dem 16.11.2026 laeuft die Ueberwachung nicht mehr auf dem Anwendungshost.
+Grund: Vorher standen Prometheus, Alertmanager und Home Assistant auf derselben
+Maschine - fiel sie aus, schwieg die Alarmierung genau dann, wenn sie gebraucht
+wird.
+
+| | `prod` (Webtropia-VPS) | `monitor` (Hetzner Cloud) |
+|---|---|---|
+| Rollen | alle `stack_*`, `metrics_exporters`, `monitoring`, `backup` | `metrics_exporters`, `stack_metrics` |
+| Container | Anwendungen + 2 Exporter | Prometheus, Alertmanager, Grafana + 2 Exporter |
+| RAM | 7,8 GB (4,3 GB frei) | 3,7 GB (2,6 GB frei) |
+| Firewall | ufw, SSH nur auf `tailscale0` | ufw, eingehend nur `tailscale0` |
+
+**Datenfluss.** Beide Hosts laufen `metrics_exporters` (node-exporter auf
+`:9100`, cAdvisor auf `:8080`, gebunden an die jeweilige Tailscale-Adresse).
+Prometheus auf `monitor` fragt beide ueber Tailscale ab und labelt die Serien
+mit `host=app` bzw. `host=monitor` - ohne das Label waeren gleichnamige
+Container beider Maschinen nicht unterscheidbar.
+
+**Alarmweg.** Alertmanager schickt jeden Alarm an zwei Empfaenger:
+
+1. Home-Assistant-Webhook (`/api/webhook/metrics-alerts`) → `notify.familie`.
+2. `alertbridge` → ntfy.sh. Der kleine Dienst uebersetzt die
+   Alertmanager-JSON in lesbaren Text. Er ist der Grund, warum die Trennung
+   etwas bringt: faellt `prod` aus, kann HA nichts mehr melden, ntfy schon.
+
+**Zugangsdaten und wo sie liegen.**
+
+| Was | Wo | Im Backup? |
+|---|---|---|
+| Grafana-Adminpasswort | `monitor:/opt/metrics/grafana.env` | ja, ueber `push-secrets.sh` |
+| ntfy-Thema | `monitor:/opt/metrics/alertbridge.env` | ja, ueber `push-secrets.sh` |
+| Restic-Passwoerter | `/etc/restic/*.password` auf `prod` | nein, bewusst getrennt |
+
+`push-secrets.sh` laeuft taeglich um 04:20 auf `monitor` und legt die beiden
+Dateien unter `/home/admin/monitor-secrets/` auf `prod` ab; von dort nimmt sie
+der Restic-Job mit.
+
+**Einmalige Voraussetzung.** Der Key `monitor:/root/.ssh/id_ed25519_backup`
+muss in `authorized_keys` von `admin@prod` stehen (Port 2222). Das ist bewusst
+nicht von Ansible verwaltet: ein Automatismus, der fremde Schluessel auf einem
+Host hinterlegt, ist genau die Art Bequemlichkeit, die man spaeter bereut.

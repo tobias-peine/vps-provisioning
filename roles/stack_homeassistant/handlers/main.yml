@@ -7,3 +7,14 @@
     state: present
     pull: missing
     recreate: auto
+
+# Package-Aenderungen liest HA nur beim Start; ein Compose-Recreate reicht
+# nicht, weil sich die Container-Definition nicht aendert.
+- name: Home Assistant neu starten (Package)
+  community.docker.docker_compose_v2:
+    project_src: "{{ hass_dir }}"
+    files:
+      - compose.yaml
+    services:
+      - homeassistant
+    state: restarted
