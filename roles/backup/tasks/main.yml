@@ -24,6 +24,7 @@
     - health-check.sh
     - reboot-window.sh
     - restic-offsite.sh
+    - restic-offsite2.sh
 
 - name: Backup-Skripte nach /opt/backups installieren
   ansible.builtin.copy:
@@ -64,3 +65,4 @@
     - kisium-tls-renew
     - reboot-window
     - restic-offsite
+    - restic-offsite2

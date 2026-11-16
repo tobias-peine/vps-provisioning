@@ -1,0 +1,4 @@
+# Zweites Offsite-Backup auf die Hetzner Storage Box (unabhaengig vom
+# rest-Server in /etc/restic/offsite.env). Repo und Passwort stehen in
+# /etc/restic/offsite2.env. Erstlauf am 16.11.2026 erfolgreich getestet.
+30 6 * * * root /usr/local/sbin/restic-offsite2.sh >> /var/log/restic-offsite2.log 2>&1

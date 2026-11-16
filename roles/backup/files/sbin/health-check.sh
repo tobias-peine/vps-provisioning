@@ -51,6 +51,33 @@ if [ "$disk" -ge "$DISK_MAX" ]; then
   status=1
 fi
 
+
+# Backup-Frische: letzter Snapshot je Restic-Repo (Warnung ab 36 h)
+for envf in /etc/restic/offsite.env /etc/restic/offsite2.env; do
+  [ -r "$envf" ] || continue
+  age=$( (
+      set -a
+      # shellcheck disable=SC1090
+      . "$envf"
+      set +a
+      restic snapshots --latest 1 --json 2>/dev/null
+    ) | python3 -c '
+import sys, json, datetime
+try:
+    d = json.load(sys.stdin)
+except Exception:
+    print(999); raise SystemExit
+if not d:
+    print(999); raise SystemExit
+t = datetime.datetime.fromisoformat(d[-1]["time"].replace("Z", "+00:00"))
+print(int((datetime.datetime.now(datetime.timezone.utc) - t).total_seconds() // 3600))
+' 2>/dev/null || echo 999)
+  if [ "${age:-999}" -gt 36 ]; then
+    echo "WARN backup $(basename "$envf"): letzter Snapshot ${age}h alt"
+    status=1
+  fi
+done
+
 if [ "$status" -eq 0 ]; then
   echo "ok: zertifikate > ${WARN_DAYS} Tage, container healthy, kein reboot, disk ${disk}%"
   if [ -r "$MON_ENV" ]; then
