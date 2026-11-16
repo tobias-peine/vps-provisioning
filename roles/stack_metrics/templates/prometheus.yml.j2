@@ -7,6 +7,16 @@ global:
   scrape_interval: 30s
   evaluation_interval: 30s
 
+# Alarmregeln liegen im Repo und werden mit den Targets zusammen versioniert.
+rule_files:
+  - /etc/prometheus/rules/*.yml
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - alertmanager:9093
+
 scrape_configs:
   # Prometheus selbst: zeigt, ob der Scrape-Zyklus und die eigene
   # Speichernutzung gesund sind.

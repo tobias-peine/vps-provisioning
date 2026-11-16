@@ -71,6 +71,71 @@
     metrics_tailscale_ip: >-
       {{ (ansible_facts['tailscale0'] | default({})).get('ipv4', {}).get('address', '') }}
 
+# Ohne Tailscale gaebe es keinen Weg von Alertmanager zu Home Assistant: HA
+# lauscht nur auf Loopback und auf der Tailscale-Adresse.
+- name: Tailscale-Adresse fuer den Alarmweg sicherstellen
+  ansible.builtin.assert:
+    that:
+      - metrics_tailscale_ip | length > 0
+    fail_msg: "Alertmanager braucht die Tailscale-Adresse fuer den HA-Webhook."
+    quiet: true
+
+- name: Verzeichnisse fuer Regeln, Alertmanager und Textfile-Collector anlegen
+  ansible.builtin.file:
+    path: "{{ metrics_dir }}/{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  loop:
+    - rules
+    - alertmanager
+    - textfile
+
+- name: Alarmregeln schreiben
+  ansible.builtin.copy:
+    src: "rules/{{ item }}"
+    dest: "{{ metrics_dir }}/rules/{{ item }}"
+    owner: root
+    group: root
+    mode: "0644"
+  loop:
+    - host.yml
+  notify: Prometheus-Konfiguration neu laden
+
+- name: Alertmanager-Konfiguration schreiben
+  ansible.builtin.template:
+    src: alertmanager.yml.j2
+    dest: "{{ metrics_dir }}/alertmanager/alertmanager.yml"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Alertmanager neu starten
+
+- name: Skript fuer die Backup-Metrik installieren
+  ansible.builtin.copy:
+    src: backup-metrics.sh
+    dest: /usr/local/sbin/backup-metrics.sh
+    owner: root
+    group: root
+    mode: "0700"
+
+- name: Cron-Eintrag fuer die Backup-Metrik installieren
+  ansible.builtin.copy:
+    src: cron.d/backup-metrics
+    dest: /etc/cron.d/backup-metrics
+    owner: root
+    group: root
+    mode: "0644"
+
+# Direkt einmal ausfuehren, damit der textfile-Collector nicht bis zum ersten
+# Cron-Lauf (bis zu 30 Minuten) leer bleibt und BackupMetrikFehlt sofort
+# ausloesen wuerde.
+- name: Backup-Metrik einmalig erzeugen
+  ansible.builtin.command:
+    cmd: /usr/local/sbin/backup-metrics.sh
+    creates: "{{ metrics_dir }}/textfile/restic.prom"
+
 - name: Prometheus-Konfiguration schreiben
   ansible.builtin.template:
     src: prometheus.yml.j2

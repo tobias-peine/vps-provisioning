@@ -32,3 +32,13 @@ metrics_grafana_mem: 512m
 # 3001 statt 3000: auf 127.0.0.1:3000 laeuft bereits die Homepage.
 metrics_grafana_port: 3001
 
+# Alertmanager (Phase 3). 0.34.2 statt 0.35.0 (erschien am 09.11.2026).
+metrics_alertmanager_image: "prom/alertmanager:v0.34.2"
+metrics_alertmanager_mem: 128m
+metrics_alertmanager_port: 9093
+
+# Webhook-Kennung in Home Assistant. Bewusst kein Geheimnis: HA ist nur ueber
+# Tailscale erreichbar, und der Alarmweg soll ohne zusaetzliche Secret-Verwaltung
+# funktionieren. Wer die Kennung kennt, kann Alarme ausloesen, aber nicht lesen.
+metrics_ha_webhook_id: "metrics-alerts"
+

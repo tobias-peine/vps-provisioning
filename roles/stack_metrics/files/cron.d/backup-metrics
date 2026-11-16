@@ -1,0 +1,4 @@
+# Verwaltet von Ansible (Rolle stack_metrics).
+# Alle 30 Minuten die Backup-Frische als Metrik schreiben. Das Skript schreibt
+# atomar, damit node-exporter nie eine halbe Datei sieht.
+*/30 * * * * root /usr/local/sbin/backup-metrics.sh >> /var/log/backup-metrics.log 2>&1

@@ -1,0 +1,60 @@
+---
+# Verwaltet von Ansible (Rolle stack_metrics).
+# Alarmregeln. Jede Regel hat ein severity-Label und eine summary, die im
+# Telegramm an die Familie landet - deshalb ganze Saetze, keine Kuerzel.
+groups:
+  - name: host
+    rules:
+      - alert: NodeExporterDown
+        expr: up{job="node"} == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: >-
+            node-exporter antwortet seit 5 Minuten nicht - Host-Metriken fehlen.
+
+      - alert: DiskFastVoll
+        expr: >-
+          100 * (1 - node_filesystem_avail_bytes{mountpoint="/",fstype!~"tmpfs|overlay"}
+          / node_filesystem_size_bytes{mountpoint="/",fstype!~"tmpfs|overlay"}) > 85
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: >-
+            Wurzeldateisystem ist zu {{ $value | printf "%.0f" }} Prozent voll -
+            Docker-Cache oder Backups pruefen.
+
+      - alert: SwapUeberLimit
+        expr: (node_memory_SwapTotal_bytes - node_memory_SwapFree_bytes) > 1.5e9
+        for: 30m
+        labels:
+          severity: warning
+        annotations:
+          summary: >-
+            Swap ist seit 30 Minuten ueber 1,5 GB belegt - ein Container haelt
+            zu viel Speicher.
+
+  - name: backup
+    rules:
+      # Erst pruefen, ob die Metrik ueberhaupt existiert: fehlt sie, waere
+      # "BackupZuAlt" stillschweigend gruen, weil Prometheus nichts zu rechnen hat.
+      - alert: BackupMetrikFehlt
+        expr: absent(restic_snapshot_timestamp_seconds)
+        for: 30m
+        labels:
+          severity: critical
+        annotations:
+          summary: >-
+            Keine Backup-Metrik seit 30 Minuten - Textfile-Collector, Cron oder
+            Restic-Zugriff pruefen.
+
+      - alert: BackupZuAlt
+        expr: time() - restic_snapshot_timestamp_seconds > 129600
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          summary: >-
+            Letztes Backup im Repo {{ $labels.repo }} ist aelter als 36 Stunden.

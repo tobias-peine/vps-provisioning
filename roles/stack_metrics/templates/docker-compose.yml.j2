@@ -16,6 +16,7 @@ services:
       - --web.enable-lifecycle
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./rules:/etc/prometheus/rules:ro
       - prometheus_data:/prometheus
     # Nur Loopback und Tailscale: Docker veroeffentlicht Ports ueber eigene
     # iptables-Regeln und umgeht damit ufw. Ein "0.0.0.0:9090" waere also
@@ -53,10 +54,14 @@ services:
       # Pseudo-Dateisysteme nicht mitzaehlen: sonst verfaelschen sie die
       # Disk-Auslastung, weil sie bei jedem Scrape ihre Groesse aendern.
       - --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)
+      # Textfile-Collector: liest die von backup-metrics.sh geschriebene Datei,
+      # damit die Backup-Frische als Metrik und nicht nur im Log steht.
+      - --collector.textfile.directory=/textfile
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /:/rootfs:ro
+      - ./textfile:/textfile:ro
     # PID-Namespace des Hosts: sonst sieht der Exporter nur seine eigene
     # Prozessliste und liefert keine Prozess-Metriken.
     pid: host
@@ -99,6 +104,38 @@ services:
     mem_limit: {{ metrics_cadvisor_mem }}
     security_opt:
       - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  alertmanager:
+    image: {{ metrics_alertmanager_image }}
+    container_name: metrics-alertmanager
+    restart: unless-stopped
+    command:
+      - --config.file=/etc/alertmanager/alertmanager.yml
+      - --storage.path=/alertmanager
+    volumes:
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - alertmanager_data:/alertmanager
+    ports:
+      - "127.0.0.1:{{ metrics_alertmanager_port }}:9093"
+{% if metrics_tailscale_ip | length > 0 %}
+      - "{{ metrics_tailscale_ip }}:{{ metrics_alertmanager_port }}:9093"
+{% endif %}
+    networks:
+      - metrics
+    mem_limit: {{ metrics_alertmanager_mem }}
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:9093/-/healthy"]
+      interval: 60s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
     logging:
       driver: json-file
       options:
@@ -152,5 +189,6 @@ networks:
   metrics:
 
 volumes:
+  alertmanager_data:
   prometheus_data:
   grafana_data:

@@ -1,0 +1,27 @@
+---
+# Verwaltet von Ansible (Rolle stack_metrics).
+#
+# Empfaenger ist ein Home-Assistant-Webhook: Alertmanager laeuft auf demselben
+# Host wie HA, kann also keinen Alarm melden, wenn der ganze Host steht - dafuer
+# bleibt der Dead-Man-Ping an healthchecks.io zustaendig. Fuer alles, was den
+# Host am Leben laesst (Disk, Swap, Backups), ist der Weg ueber HA richtig.
+global:
+  resolve_timeout: 5m
+
+route:
+  receiver: home-assistant
+  # Nach Alarmname gruppieren: ein voller Swap erzeugt sonst eine Nachricht pro
+  # betroffenem Container.
+  group_by:
+    - alertname
+  group_wait: 30s
+  group_interval: 5m
+  # Nach 12 h erneut erinnern, solange der Alarm noch aktiv ist.
+  repeat_interval: 12h
+
+receivers:
+  - name: home-assistant
+    webhook_configs:
+      - url: "http://{{ metrics_tailscale_ip }}:8123/api/webhook/{{ metrics_ha_webhook_id }}"
+        send_resolved: true
+        max_alerts: 5
