@@ -65,6 +65,12 @@ services:
     # PID-Namespace des Hosts: sonst sieht der Exporter nur seine eigene
     # Prozessliste und liefert keine Prozess-Metriken.
     pid: host
+{% if metrics_tailscale_ip | length > 0 and metrics_expose_exporters | default(false) %}
+    # Nur wenn Prometheus auf einer anderen Maschine laeuft: der Exporter wird
+    # ueber Tailscale erreichbar, nicht ueber die oeffentliche IP.
+    ports:
+      - "{{ metrics_tailscale_ip }}:9100:9100"
+{% endif %}
     networks:
       - metrics
     mem_limit: {{ metrics_node_exporter_mem }}
@@ -99,6 +105,10 @@ services:
       - /dev/disk/:/dev/disk:ro
     devices:
       - /dev/kmsg
+{% if metrics_tailscale_ip | length > 0 and metrics_expose_exporters | default(false) %}
+    ports:
+      - "{{ metrics_tailscale_ip }}:8080:8080"
+{% endif %}
     networks:
       - metrics
     mem_limit: {{ metrics_cadvisor_mem }}

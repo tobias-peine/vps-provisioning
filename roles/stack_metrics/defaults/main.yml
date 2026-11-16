@@ -42,3 +42,14 @@ metrics_alertmanager_port: 9093
 # funktionieren. Wer die Kennung kennt, kann Alarme ausloesen, aber nicht lesen.
 metrics_ha_webhook_id: "metrics-alerts"
 
+# Adresse, unter der Home Assistant erreichbar ist. Standard ist derselbe Host;
+# beim geteilten Betrieb (Monitoring auf zweiter Maschine) wird hier die
+# Tailscale-Adresse des App-Hosts eingetragen.
+metrics_ha_host: "{{ metrics_tailscale_ip }}"
+
+
+# Geteilter Betrieb: laeuft Prometheus auf einer anderen Maschine als die
+# Exporter, wird dessen Tailscale-Adresse hier eingetragen und die Exporter
+# werden veroeffentlicht. Leer heisst: alles auf einem Host (Standard).
+metrics_remote_host: ""
+metrics_expose_exporters: false

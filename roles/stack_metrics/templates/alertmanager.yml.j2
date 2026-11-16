@@ -22,6 +22,6 @@ route:
 receivers:
   - name: home-assistant
     webhook_configs:
-      - url: "http://{{ metrics_tailscale_ip }}:8123/api/webhook/{{ metrics_ha_webhook_id }}"
+      - url: "http://{{ metrics_ha_host }}:8123/api/webhook/{{ metrics_ha_webhook_id }}"
         send_resolved: true
         max_alerts: 5

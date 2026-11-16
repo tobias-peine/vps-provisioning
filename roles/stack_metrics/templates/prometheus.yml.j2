@@ -24,15 +24,40 @@ scrape_configs:
     static_configs:
       - targets:
           - localhost:9090
+        labels:
+          host: monitor
 
   # Host-Metriken: CPU, RAM, Swap, Disk, Netzwerk, Load.
   - job_name: node
     static_configs:
       - targets:
           - node-exporter:9100
+        labels:
+          host: monitor
 
   # Container-Metriken: CPU und RAM je Container, Restarts, Image-Groessen.
   - job_name: cadvisor
     static_configs:
       - targets:
           - cadvisor:8080
+        labels:
+          host: monitor
+
+{% if metrics_remote_host | default('') | length > 0 %}
+  # Zweite Maschine ueber Tailscale. Auf dem App-Host laufen dann nur noch die
+  # Exporter, waehrend Prometheus hier liegt - faellt der App-Host aus, laeuft
+  # die Ueberwachung weiter und kann es melden.
+  - job_name: remote-node
+    static_configs:
+      - targets:
+          - "{{ metrics_remote_host }}:9100"
+        labels:
+          host: app
+
+  - job_name: remote-cadvisor
+    static_configs:
+      - targets:
+          - "{{ metrics_remote_host }}:8080"
+        labels:
+          host: app
+{% endif %}
