@@ -8,10 +8,13 @@ Einstieg ohne eigene Zugangsdaten: Abschnitt 3, bis `make check`.
 
 ## 1. Was das hier ist
 
-Dieses Repository provisioniert einen VPS (Webtropia, Ubuntu 24.04.5 LTS) per Ansible
-von null auf produktiv: Hardening (ufw, SSH, Fail2ban, unattended-upgrades),
-Tailscale-Zugang, Docker und 19 Container in sieben Compose-Projekten hinter einem
-Nginx Proxy Manager.
+Dieses Repository provisioniert **zwei Hosts** per Ansible von null auf produktiv:
+den Anwendungshost (Webtropia, Ubuntu 24.04.5 LTS) mit Hardening (ufw, SSH,
+Fail2ban, unattended-upgrades), Tailscale-Zugang, Docker und 19 Containern in
+sieben Compose-Projekten hinter einem Nginx Proxy Manager - und seit dem
+16.11.2026 einen zweiten, kleinen Host bei Hetzner Cloud, der die Ueberwachung
+uebernimmt (Prometheus, Grafana, Alertmanager). Warum getrennt, steht in
+Abschnitt 9; beide Hosts haengen an demselben Tailnet.
 Ein frisch installierter VPS ist damit in **knapp sechs Minuten** provisioniert -
 gemessen am 08.11.2026 auf einer frischen CPX32 mit Ubuntu 22.04: **356 Sekunden**
 fuer Base, Hardening, Docker, Tailscale und drei Compose-Stacks.
@@ -31,7 +34,9 @@ dafuer ist es da.
 | ufw: deny incoming, 2222 nur auf `tailscale0` | ja | `roles/ufw` |
 | fail2ban-Jail fuer sshd (systemd-Backend) | ja | `roles/fail2ban` |
 | Docker Engine, Compose-Plugin, `daemon.json` | ja | `roles/docker` |
-| sieben Compose-Stacks (fuenf davon mit `.env` aus dem Vault) | ja | `roles/stack_*` |
+| sieben Compose-Stacks auf dem App-Host (fuenf davon mit `.env` aus dem Vault) | ja | `roles/stack_*` |
+| Monitoring-Stack auf dem zweiten Host (Prometheus, Grafana, Alertmanager) | ja | `roles/stack_metrics`, Play `monitor` |
+| Exporter auf beiden Hosts (node-exporter, cAdvisor, Backup-Metrik) | ja | `roles/metrics_exporters` |
 | Uptime-Wache: oeffentliche Hosts, RustDesk-Ports, Disk, unhealthy Container | ja | `roles/monitoring` |
 | Tailnet-Beitritt des VPS | ja, wenn der Authkey im Vault liegt | `roles/tailscale`; das **Erzeugen** des Keys ist manuell |
 | NPM-Vhosts, TLS-Zertifikate, Redirects | **nein** | liegen im NPM-Volume und werden in der Web-UI gepflegt - nach einem Neuaufbau Handarbeit |
@@ -90,6 +95,15 @@ flowchart LR
         F2B["Fail2ban"]
     end
 
+    subgraph MON["Ubuntu 26.04 · Hetzner Cloud"]
+        MUFW["ufw<br/>eingehend nur tailscale0"]
+        MF2B["Fail2ban"]
+        MEXP["node-exporter :9100<br/>cAdvisor :8080"]
+        MPROM["Prometheus :9090"]
+        MAM["Alertmanager :9093"]
+        MGRAF["Grafana :3001"]
+    end
+
     NET -->|"80/443 tcp"| UFW
     NET -->|"8443 tcp"| UFW
     UFW --> NPM
@@ -113,7 +127,20 @@ flowchart LR
     TS -->|"2222/tcp"| SSHD
     TS -->|"8123/tcp"| HA
     SSHD --- F2B
+
+    %% Monitoring-Host: zieht die Metriken ueber das Tailnet und meldet
+    %% Alarme zurueck in den App-Host bzw. an ntfy.
+    ADM -->|"WireGuard / DERP"| MUFW
+    MUFW --> MGRAF
+    MPROM -->|"scrape 9100/8080"| TS
+    MAM -->|"Webhook 8123"| HA
+    MAM -.->|"ntfy.sh"| NET
+    MUFW --- MF2B
 ```
+
+Neben dem oeffentlichen Weg gibt es den **Monitoring-Weg**: Prometheus auf dem
+Hetzner-Host fragt beide Maschinen ueber Tailscale ab, Alertmanager meldet per
+HA-Webhook und zusaetzlich per ntfy (Abschnitt 9).
 
 Zwei Wege: **oeffentlich** sind 80/443/tcp (NPM) und 8443/tcp (`kisium-tls`),
 **Admin** laeuft ueber `tailscale0` auf 2222/tcp und 8123/tcp. `41641/udp` ist
@@ -142,6 +169,18 @@ DERP-Relais auf; eine Portfreigabe ist fuer NAT-Traversal nicht erforderlich
 | RustDesk hbbs | 21115, 21116 (tcp+udp) | `0.0.0.0` (host-Netz) | Internet |
 | RustDesk hbbr | 21117 | `0.0.0.0` (host-Netz) | Internet |
 | sshd | 2222 | `0.0.0.0`, ufw nur `tailscale0` | Tailnet |
+
+Auf dem **Monitoring-Host** lauscht nichts oeffentlich. Alle Dienste sind an die
+Tailscale-Adresse gebunden (Docker veroeffentlicht Ports an ufw vorbei, deshalb
+explizit statt `0.0.0.0`):
+
+| Dienst | Port | Binding | Erreichbar ueber |
+| --- | --- | --- | --- |
+| Prometheus | 9090 | `tailscale0` | Tailnet (Admin) |
+| Alertmanager | 9093 | `tailscale0` | Tailnet (Admin) |
+| Grafana | 3001 | `tailscale0` | Tailnet (Admin) |
+| node-exporter | 9100 | `tailscale0` | Prometheus auf `monitor` |
+| cAdvisor | 8080 | `tailscale0` | Prometheus auf `monitor` |
 
 ## 3. Quickstart
 
@@ -177,7 +216,7 @@ Secret-Vorpruefung vor jedem Push: `make audit`.
 
 ## 4. Rollen
 
-Fuenfzehn Rollen und sieben Stacks sind operativ keine Sammlung, sondern eine Kette: der
+Siebzehn Rollen und sieben Stacks sind operativ keine Sammlung, sondern eine Kette: der
 Lauf ist alles-oder-nichts, ein Abbruch in der Mitte hinterlaesst einen Host, der weder
 alt noch neu ist - deshalb die feste Reihenfolge in `site.yml` und der Dry-Run als
 Pflichtschritt.
@@ -200,8 +239,14 @@ so als Kommentar in `site.yml`.
 | `stack_lunaria` | Next.js-App hinter NPM, Daten im benannten Volume | `lunaria`, `stacks` |
 | `stack_kisium_tv` | Stream-Proxy, Catalog-Sync, TLS-Terminator auf 8443 | `kisium_tv`, `stacks` |
 | `stack_rustdesk` | RustDesk-ID- und Relay-Server (hbbs/hbbr) | `rustdesk`, `stacks` |
+| `metrics_exporters` | node-exporter und cAdvisor, gebunden an die Tailscale-Adresse - laeuft auf **beiden** Hosts | `metrics`, `monitoring` |
+| `stack_metrics` | Prometheus, Alertmanager, Grafana und Alert-Bridge - nur auf dem Monitoring-Host | `metrics`, `monitoring` |
 | `monitoring` | Uptime-Wache als systemd-Timer: oeffentliche Hosts, RustDesk-Ports, Disk, unhealthy Container | `monitoring` |
 | `backup` | Backup-, Restore- und Monitoring-Skripte plus `/etc/cron.d`-Zeitplaene | `backup`, `cron` |
+
+Die letzten beiden Rollen laufen nur im Play `prod`; `stack_metrics` nur im Play
+`monitor`. `metrics_exporters` steht in beiden Plays, weil jeder Host seine
+eigenen Werte liefert.
 
 Warum diese Reihenfolge:
 
@@ -217,6 +262,20 @@ Tags erlauben gezielte Laeufe: `ansible-playbook site.yml --tags stacks --ask-va
 provisioniert nur die Compose-Stacks neu, `--tags hardening` nur SSH/ufw/Fail2ban.
 
 ## 5. Sicherheitsentscheidungen
+
+### Zwei Hosts, zwei Firewalls - aber nur ein Weg hinein
+
+Auch der Monitoring-Host hat `ufw` aktiv, eingehend ausschliesslich `in on
+tailscale0`. Das war nicht von Anfang an so: bei der Einrichtung antwortete dort
+sshd auf Port 22 aus dem offenen Internet, weil die Maschine ohne Firewall
+angelegt worden war. Seit dem 16.11.2026 ist Port 22 von aussen nicht mehr
+erreichbar (geprueft), Fail2ban laeuft mit sshd-Jail, `unattended-upgrades` ist
+aktiv.
+
+Der wichtige Punkt dabei: **Docker veroeffentlicht Ports an ufw vorbei** (eigene
+iptables-Ketten). Deshalb binden alle Monitoring-Dienste explizit an die
+Tailscale-Adresse statt an `0.0.0.0` - eine Firewall-Regel allein wuerde dort
+nicht schuetzen.
 
 ### SSH ausschliesslich ueber Tailscale
 
