@@ -1,7 +1,7 @@
 # Ubuntu-24.04-VPS mit Ansible provisionieren
 
 Ein-Host-Provisionierung fuer einen Ubuntu-24.04-VPS (Webtropia): Hardening, Docker,
-17 Container in sechs Compose-Projekten, Tailscale, Fail2ban, unattended-upgrades.
+19 Container in sieben Compose-Projekten, Tailscale, Fail2ban, unattended-upgrades.
 Lizenz: [MIT](LICENSE) · CI: Lint und Syntax-Check (`.github/workflows/ci.yml`,
 ansible-lint, yamllint, shellcheck) - **kein Rollen-Test**, dafuer `scripts/test-vm.sh`.
 
@@ -9,7 +9,7 @@ ansible-lint, yamllint, shellcheck) - **kein Rollen-Test**, dafuer `scripts/test
 
 Dieses Repository provisioniert einen VPS (Webtropia, Ubuntu 24.04.5 LTS) per Ansible
 von null auf produktiv: Hardening (ufw, SSH, Fail2ban, unattended-upgrades),
-Tailscale-Zugang, Docker und 17 Container in sechs Compose-Projekten hinter einem
+Tailscale-Zugang, Docker und 18 Container in sechs Compose-Projekten hinter einem
 Nginx Proxy Manager.
 Ein frisch installierter VPS ist damit in **knapp sechs Minuten** provisioniert -
 gemessen am 08.11.2026 auf einer frischen CPX32 mit Ubuntu 22.04: **356 Sekunden**
@@ -23,6 +23,13 @@ Metriken, Multi-Host-Orchestrierung, automatisierte Backup-Restore-Tests und die
 DNS-/Domain-Verwaltung.
 Die Wiederherstellungszeit ist die Zeit fuer einen Neuaufbau aus diesem Repo - genau
 dafuer ist es da.
+
+**Stand auf dem Host (16.11.2026, gemessen):** 19 laufende Container in sieben
+Compose-Projekten. Dieses Repo verwaltet davon 18 in sechs Stacks; das siebte
+(`deploy`, Anwendung `lunaria`) liegt unter `/opt/lunaria/deploy` und ist **nicht**
+versioniert. Die wiederkehrenden Jobs - Backups, Restore-Test, Zertifikatserneuerung,
+Health-Check, Reboot-Fenster - laufen als Dateien unter `/etc/cron.d` und in der
+root-crontab; dieses Repo erzeugt und prueft sie nicht.
 
 ## 2. Architektur
 
@@ -107,8 +114,9 @@ DERP-Relais auf; eine Portfreigabe ist fuer NAT-Traversal nicht erforderlich
 | Paperless-ngx | 8000 | Compose-Netz | NPM (intern) |
 | Ollama | 11434 | Compose-Netz | Open WebUI |
 | MySQL / Postgres / Redis | 3306 / 5432 / 6379 | Compose-Netz | nur eigener Stack |
-| RustDesk hbbs | 21115, 21116, 21118 | `0.0.0.0` (host-Netz) | Internet |
-| RustDesk hbbr | 21117, 21119 | `0.0.0.0` (host-Netz) | Internet |
+| RustDesk hbbs | 21115, 21116 (tcp+udp) | `0.0.0.0` (host-Netz) | Internet |
+| RustDesk hbbr | 21117 | `0.0.0.0` (host-Netz) | Internet |
+| ~~21118, 21119~~ | in ufw erlaubt, **nichts lauscht** | - | offen ohne Dienst |
 | sshd | 2222 | `0.0.0.0`, ufw nur `tailscale0` | Tailnet |
 
 ## 3. Quickstart
@@ -152,6 +160,7 @@ so als Kommentar in `site.yml`.
 | `stack_homeassistant` | Home Assistant, 8123 auf Loopback und `tailscale0` | `homeassistant`, `stacks` |
 | `stack_kisium_tv` | Stream-Proxy, Catalog-Sync, TLS-Terminator auf 8443 | `kisium_tv`, `stacks` |
 | `stack_rustdesk` | RustDesk-ID- und Relay-Server (hbbs/hbbr) | `rustdesk`, `stacks` |
+| `monitoring` | Uptime-Wache als systemd-Timer: oeffentliche Hosts, RustDesk-Ports, Disk, unhealthy Container | `monitoring` |
 
 Warum diese Reihenfolge:
 
@@ -316,8 +325,9 @@ provisioniert nur die Compose-Stacks neu, `--tags hardening` nur SSH/ufw/Fail2ba
   wichtige Teil: faellt der Host aus, kann ntfy nichts mehr melden, weil es auf
   demselben Host laeuft - healthchecks.io merkt es am ausbleibenden Ping.
   Dazu ein Boot-Check, der nach einem Neustart zaehlt, ob alle Container
-  zurueckkommen, und ein **deaktiviertes** Reboot-Fenster (`reboot-window.sh`) - die
-  Entscheidung, wann neu gestartet wird, bleibt manuell.
+  zurueckkommen, und ein Reboot-Fenster (`reboot-window.sh`): Der Cron startet es
+  monatlich am 1. um 04:00, rebootet aber nur, wenn `/var/run/reboot-required`
+  existiert.
   Keine Metriken, keine Dashboards, kein Verlauf.
 - **NPM braucht root fuer 80/443:** Privilegierte Ports. Die Alternative
   (`CAP_NET_BIND_SERVICE` plus Socket-Activation) wuerde Certbot-Hooks und das
