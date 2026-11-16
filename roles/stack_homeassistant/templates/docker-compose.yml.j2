@@ -28,6 +28,9 @@ services:
       - ALL
     cap_add:
       - CHOWN
+      # NET_RAW: ohne diese Capability scheitert aiodhcpwatcher beim Start
+      # ("Cannot watch for dhcp packets: Operation not permitted").
+      - NET_RAW
       - DAC_OVERRIDE
       - FOWNER
       - SETGID
