@@ -1,0 +1,52 @@
+---
+# Verwaltet von Ansible (Rolle stack_lunaria).
+# TLS macht der vorhandene Nginx Proxy Manager: keine veroeffentlichten Ports,
+# NPM erreicht den Container ueber das gemeinsame Netz homeserver_default.
+#
+# Das Image wird aus dem Quellbaum gebaut. Der Quellbaum gehoert nicht zu
+# diesem Repo - ohne ihn scheitert der erste Lauf beim Build, nicht beim Start.
+name: lunaria
+
+services:
+  app:
+    build:
+      context: "{{ lunaria_src_dir }}"
+      dockerfile: Dockerfile
+    image: {{ lunaria_image }}
+    container_name: lunaria-app
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      PORT: "{{ lunaria_port }}"
+      HOSTNAME: 0.0.0.0
+      LUNARIA_DATA_DIR: /app/data
+    networks:
+      - homeserver_default
+    volumes:
+      - "{{ lunaria_data_volume }}:/app/data"
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:{{ lunaria_port }}/login"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  homeserver_default:
+    external: true
+
+volumes:
+  {{ lunaria_data_volume }}:
+    name: {{ lunaria_data_volume }}
+    external: true

@@ -1,0 +1,37 @@
+---
+lunaria_dir: /opt/lunaria/deploy
+lunaria_src_dir: /opt/lunaria
+lunaria_image: "lunaria:latest"
+lunaria_port: 3000
+
+# Das Datenvolumen behaelt den Namen des alten Compose-Projekts "deploy".
+# Eine Umbenennung waere eine Datenmigration (Push-Abos, Uhrzeiten), kein
+# Refactoring - und der Anlass dafuer ist bisher nur Ordnung. Auf einem
+# frischen Host legt die Rolle das Volume leer an; dann startet Lunaria
+# ohne Bestandsdaten, was dem Zustand einer Neuinstallation entspricht.
+lunaria_data_volume: deploy_lunaria-data
+
+# Nicht-geheime Laufzeitwerte. Die Domain kommt aus base_domain, damit hier
+# keine echte Domain im Repo steht.
+lunaria_env:
+  NODE_ENV: "production"
+  PORT: "{{ lunaria_port }}"
+  LUNARIA_DATA_DIR: "/app/data"
+  LUNARIA_DOMAIN: "lunaria.{{ base_domain }}"
+  DEEPSEEK_BASE_URL: "https://api.deepseek.com"
+  DEEPSEEK_TEXT_MODEL: "deepseek-chat"
+  DEEPSEEK_VISION_MODEL: "deepseek-flash"
+  VAPID_SUBJECT: "mailto:admin@{{ base_domain }}"
+  LUNARIA_FEEDBACK_MAIL: "beta@{{ base_domain }}"
+
+# Secrets aus dem Vault (group_vars/all/vault.yml). VAPID_PUBLIC_KEY steht
+# hier, weil ein Wechsel des Schluesselpaars alle Push-Abos ungueltig macht -
+# er ist oeffentlich, aber nicht beliebig.
+lunaria_secrets:
+  LUNARIA_PASSWORD: "{{ vault_lunaria_password }}"
+  LUNARIA_SESSION_SECRET: "{{ vault_lunaria_session_secret }}"
+  LUNARIA_BETA_PASSWORD: "{{ vault_lunaria_beta_password }}"
+  LUNARIA_BETA_SECRET: "{{ vault_lunaria_beta_secret }}"
+  DEEPSEEK_API_KEY: "{{ vault_deepseek_api_key }}"
+  VAPID_PUBLIC_KEY: "{{ vault_vapid_public_key }}"
+  VAPID_PRIVATE_KEY: "{{ vault_vapid_private_key }}"

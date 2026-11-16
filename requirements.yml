@@ -8,6 +8,6 @@ collections:
   - name: community.general
     version: ">=8.0.0"
 
-  # community.docker.docker_compose_v2 fuer die fuenf Compose-Projekte.
+  # community.docker.docker_compose_v2 fuer die Compose-Projekte.
   - name: community.docker
     version: ">=3.4.0"

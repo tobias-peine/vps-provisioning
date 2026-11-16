@@ -1,0 +1,69 @@
+---
+# Lunaria lief bis 16.11.2026 als handgestartetes Compose-Projekt "deploy" unter
+# /opt/lunaria/deploy. Diese Rolle uebernimmt den Betrieb, ohne das laufende
+# Verhalten zu aendern: gleiche Compose-Datei-Struktur, gleiches Datenvolumen,
+# gleiches Netz, gleiches Image.
+#
+# Was hier NICHT passiert:
+#   - kein cap_drop/mem_limit. Das ist eine Haertung, keine Migration; sie
+#     gehoert in einen eigenen Lauf mit eigenem Test (siehe README, Abschnitt 6).
+#   - kein Image-Build im Repo: der Quellbaum liegt unter lunaria_src_dir und
+#     ist nicht Teil dieses Repos.
+- name: Projektverzeichnis anlegen
+  ansible.builtin.file:
+    path: "{{ lunaria_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Datenvolumen sicherstellen
+  community.docker.docker_volume:
+    name: "{{ lunaria_data_volume }}"
+    state: present
+
+- name: Bestehenden Container und sein Compose-Projekt ermitteln
+  community.docker.docker_container_info:
+    name: lunaria-app
+  register: lunaria_existing
+  failed_when: false
+
+# Einmalige Migration: solange der Container noch zum alten Projekt "deploy"
+# gehoert, belegt er den Namen lunaria-app. Ohne dieses down scheitert der
+# Start unten mit einem Namenskonflikt.
+- name: Altes Compose-Projekt "deploy" herunterfahren
+  ansible.builtin.command:
+    cmd: docker compose -f docker-compose.vps.yml down
+    chdir: "{{ lunaria_dir }}"
+  when:
+    - lunaria_existing.container is defined
+    - lunaria_existing.container
+    - (lunaria_existing.container.Config.Labels | default({}, true)).get('com.docker.compose.project', '') == 'deploy'
+  changed_when: true
+
+# Secret-Datei: 0600, root, kein Log - docker liest sie als Daemon.
+- name: .env schreiben
+  ansible.builtin.template:
+    src: env.j2
+    dest: "{{ lunaria_dir }}/.env"
+    owner: root
+    group: root
+    mode: "0600"
+  no_log: true
+  notify: Lunaria neu starten
+
+- name: Compose-Datei schreiben
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: "{{ lunaria_dir }}/compose.yaml"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Lunaria neu starten
+
+- name: Stack starten
+  community.docker.docker_compose_v2:
+    project_src: "{{ lunaria_dir }}"
+    files:
+      - compose.yaml
+    state: present
+    pull: never
+    remove_orphans: true

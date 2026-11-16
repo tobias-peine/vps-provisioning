@@ -33,5 +33,16 @@ vault_homepage_paperless_token: "TODO"
 vault_kisium_tv_admin_password: "TODO"
 vault_kisium_tv_proxy_password: "TODO"
 
+# lunaria (Next.js-App hinter dem NPM)
+vault_lunaria_password: "TODO"
+vault_lunaria_session_secret: "TODO"
+vault_lunaria_beta_password: "TODO"
+vault_lunaria_beta_secret: "TODO"
+vault_deepseek_api_key: "TODO"
+# Das VAPID-Paar ist oeffentlich/geheim, aber nicht beliebig: ein Wechsel macht
+# alle bestehenden Push-Abos ungueltig. Beim Umzug unveraendert uebernehmen.
+vault_vapid_public_key: "TODO"
+vault_vapid_private_key: "TODO"
+
 # Optional: zweites Binding fuer Home Assistant auf die Tailscale-Adresse.
 # hass_tailscale_ip: "100.x.y.z"

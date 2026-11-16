@@ -6,7 +6,8 @@
 #     externe Netz kisium-net, das der kisium-Stack erzeugt.
 #   - docker nach dem Hardening: die Stacks starten erst, wenn die Firewall
 #     steht - sonst oeffnen ihre Ports kurz ins Leere.
-#   - stack_homeserver vor homepage/homeassistant: beide nutzen homeserver_default.
+#   - stack_homeserver vor homepage/homeassistant/lunaria: alle drei nutzen
+#     homeserver_default.
 #
 # ssh und ufw duerfen nicht im selben Lauf wie der erste become-Wechsel auf einen
 # unbekannten Host laufen: wer sich dabei aussperrt, kommt nur ueber die Konsole
@@ -36,6 +37,8 @@
       tags: [homepage, stacks]
     - role: stack_homeassistant
       tags: [homeassistant, stacks]
+    - role: stack_lunaria
+      tags: [lunaria, stacks]
     - role: stack_kisium_tv
       tags: [kisium_tv, stacks]
     - role: stack_rustdesk

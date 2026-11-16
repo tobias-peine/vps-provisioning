@@ -1,0 +1,9 @@
+---
+- name: Lunaria neu starten
+  community.docker.docker_compose_v2:
+    project_src: "{{ lunaria_dir }}"
+    files:
+      - compose.yaml
+    state: present
+    pull: never
+    recreate: auto

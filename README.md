@@ -9,7 +9,7 @@ ansible-lint, yamllint, shellcheck) - **kein Rollen-Test**, dafuer `scripts/test
 
 Dieses Repository provisioniert einen VPS (Webtropia, Ubuntu 24.04.5 LTS) per Ansible
 von null auf produktiv: Hardening (ufw, SSH, Fail2ban, unattended-upgrades),
-Tailscale-Zugang, Docker und 18 Container in sechs Compose-Projekten hinter einem
+Tailscale-Zugang, Docker und 19 Container in sieben Compose-Projekten hinter einem
 Nginx Proxy Manager.
 Ein frisch installierter VPS ist damit in **knapp sechs Minuten** provisioniert -
 gemessen am 08.11.2026 auf einer frischen CPX32 mit Ubuntu 22.04: **356 Sekunden**
@@ -25,11 +25,10 @@ Die Wiederherstellungszeit ist die Zeit fuer einen Neuaufbau aus diesem Repo - g
 dafuer ist es da.
 
 **Stand auf dem Host (16.11.2026, gemessen):** 19 laufende Container in sieben
-Compose-Projekten. Dieses Repo verwaltet davon 18 in sechs Stacks; das siebte
-(`deploy`, Anwendung `lunaria`) liegt unter `/opt/lunaria/deploy` und ist **nicht**
-versioniert. Die wiederkehrenden Jobs - Backups, Restore-Test, Zertifikatserneuerung,
-Health-Check, Reboot-Fenster - laufen als Dateien unter `/etc/cron.d` und in der
-root-crontab; dieses Repo erzeugt und prueft sie nicht.
+Compose-Projekten - alle sieben sind in diesem Repo beschrieben. Die wiederkehrenden
+Jobs (Backups, Restore-Test, Zertifikatserneuerung, Health-Check, Reboot-Fenster)
+laufen dagegen als Dateien unter `/etc/cron.d` und in der root-crontab; dieses Repo
+erzeugt und prueft sie nicht.
 
 ## 2. Architektur
 
@@ -158,6 +157,7 @@ so als Kommentar in `site.yml`.
 | `stack_homeserver` | NPM, Open WebUI, Ollama, SearXNG, n8n, Paperless (+ Postgres, Redis) | `homeserver`, `stacks` |
 | `stack_homepage` | Homepage-Dashboard | `homepage`, `stacks` |
 | `stack_homeassistant` | Home Assistant, 8123 auf Loopback und `tailscale0` | `homeassistant`, `stacks` |
+| `stack_lunaria` | Next.js-App hinter NPM, Daten im benannten Volume | `lunaria`, `stacks` |
 | `stack_kisium_tv` | Stream-Proxy, Catalog-Sync, TLS-Terminator auf 8443 | `kisium_tv`, `stacks` |
 | `stack_rustdesk` | RustDesk-ID- und Relay-Server (hbbs/hbbr) | `rustdesk`, `stacks` |
 | `monitoring` | Uptime-Wache als systemd-Timer: oeffentliche Hosts, RustDesk-Ports, Disk, unhealthy Container | `monitoring` |
@@ -169,7 +169,7 @@ Warum diese Reihenfolge:
   `tailscale0` stehen, bevor `ufw` aktiviert wird.
 - **`stack_kisium` vor `stack_homeserver`** - der homeserver-Stack haengt sich
   als externes Netz an `kisium-net`, das der kisium-Stack erzeugt.
-- **`stack_homeserver` vor Homepage und Home Assistant** - beide nutzen das Netz
+- **`stack_homeserver` vor Homepage, Home Assistant und Lunaria** - alle drei nutzen das Netz
   `homeserver_default`.
 
 Tags erlauben gezielte Laeufe: `ansible-playbook site.yml --tags stacks --ask-vault-pass`
@@ -347,6 +347,10 @@ provisioniert nur die Compose-Stacks neu, `--tags hardening` nur SSH/ufw/Fail2ba
   gebautes nonroot-Image. Ein Neuaufbau braucht entweder ein gepushtes Image oder
   `-e homeserver_image_openwebui=ghcr.io/open-webui/open-webui:main` - sonst
   scheitert der Pull.
+- **Lunaria wird auf dem Host gebaut:** Die Rolle `stack_lunaria` schreibt Compose-Datei
+  und `.env`, baut das Image aber aus `lunaria_src_dir` (`/opt/lunaria`). Der Quellbaum
+  ist nicht Teil dieses Repos; ein Neuaufbau ohne ihn scheitert beim Build, nicht beim
+  Start. Ein gepushtes Image wuerde das aufloesen.
 - **Keine Molecule-Tests:** Rollen werden nicht in Containern getestet. Die CI prueft
   Syntax und Lint, nicht das Verhalten der Rollen - ein Rollen-Regressionscheck fehlt
   damit komplett.
