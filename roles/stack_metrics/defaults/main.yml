@@ -24,3 +24,11 @@ metrics_node_exporter_mem: 128m
 # cAdvisor liest /var/lib/docker und liegt im ersten Lauf bei ~250 MB inklusive
 # Page-Cache. Bei 256m Deckel wuerde er sich selbst OOM-killen.
 metrics_cadvisor_mem: 512m
+
+# Grafana (Phase 2). 13.3.1 ist ein Patch-Release vom 10.11.2026, kein
+# frischer Major - bewusst nicht 13.3.0 direkt am Erscheinungstag.
+metrics_grafana_image: "grafana/grafana:13.3.1"
+metrics_grafana_mem: 512m
+# 3001 statt 3000: auf 127.0.0.1:3000 laeuft bereits die Homepage.
+metrics_grafana_port: 3001
+

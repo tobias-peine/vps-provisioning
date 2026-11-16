@@ -1,0 +1,16 @@
+---
+# Verwaltet von Ansible (Rolle stack_metrics).
+# uid bewusst fest vergeben: die Dashboards verweisen per uid darauf, damit ein
+# Neuaufbau der Grafana-Datenbank die Panels nicht ins Leere zeigen laesst.
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    uid: prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: false
+    jsonData:
+      timeInterval: 30s

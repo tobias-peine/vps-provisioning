@@ -10,6 +10,15 @@
     status_code: [200, 204]
   failed_when: false
 
+- name: Grafana neu starten
+  community.docker.docker_compose_v2:
+    project_src: "{{ metrics_dir }}"
+    files:
+      - compose.yaml
+    services:
+      - grafana
+    state: restarted
+
 - name: Metrics-Stack neu starten
   community.docker.docker_compose_v2:
     project_src: "{{ metrics_dir }}"

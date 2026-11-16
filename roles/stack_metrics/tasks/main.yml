@@ -7,6 +7,61 @@
     group: root
     mode: "0755"
 
+- name: Grafana-Konfigurationsverzeichnisse anlegen
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  loop:
+    - "{{ metrics_dir }}/grafana/provisioning/datasources"
+    - "{{ metrics_dir }}/grafana/provisioning/dashboards"
+    - "{{ metrics_dir }}/grafana/dashboards"
+
+# Das Adminpasswort wird einmalig zufaellig erzeugt und liegt danach root-only
+# auf dem Host. force: false verhindert, dass ein erneuter Lauf das Passwort
+# stillschweigend austauscht - das waere nach dem ersten Login ein Raetsel.
+- name: Grafana-Adminpasswort erzeugen (nur beim ersten Lauf)
+  ansible.builtin.copy:
+    content: "GF_SECURITY_ADMIN_PASSWORD={{ lookup('password', '/dev/null length=24 chars=ascii_letters,digits') }}\n"
+    dest: "{{ metrics_dir }}/grafana.env"
+    owner: root
+    group: root
+    mode: "0600"
+    force: false
+  no_log: true
+
+- name: Prometheus als Grafana-Datasource provisionieren
+  ansible.builtin.copy:
+    src: provisioning/datasources/prometheus.yml
+    dest: "{{ metrics_dir }}/grafana/provisioning/datasources/prometheus.yml"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Grafana neu starten
+
+- name: Dashboard-Provider provisionieren
+  ansible.builtin.copy:
+    src: provisioning/dashboards/default.yml
+    dest: "{{ metrics_dir }}/grafana/provisioning/dashboards/default.yml"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Grafana neu starten
+
+# Dashboards werden nicht neu gestartet: Grafana liest den Ordner alle 30 s neu.
+- name: Dashboards ausliefern
+  ansible.builtin.copy:
+    src: "dashboards/{{ item }}"
+    dest: "{{ metrics_dir }}/grafana/dashboards/{{ item }}"
+    owner: root
+    group: root
+    mode: "0644"
+  loop:
+    - host-uebersicht.json
+    - container-uebersicht.json
+
 # Die Tailscale-Adresse wird zur Laufzeit ermittelt statt in group_vars zu
 # stehen: die Adresse identifiziert das Tailnet und gehoert nicht in ein
 # oeffentliches Repo. Fehlt das Interface, bleibt die Liste leer und es wird

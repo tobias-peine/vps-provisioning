@@ -1,0 +1,19 @@
+---
+# Verwaltet von Ansible (Rolle stack_metrics).
+# Dashboards liegen als JSON im Repo und werden beim Start eingelesen.
+# allowUiUpdates: false - Aenderungen gehoeren in Git, nicht in die Datenbank;
+# sonst sind sie beim naechsten Provisioning-Lauf wieder weg und niemand weiss,
+# welche Version gilt.
+apiVersion: 1
+
+providers:
+  - name: phase-2
+    orgId: 1
+    folder: ""
+    type: file
+    disableDeletion: true
+    updateIntervalSeconds: 30
+    allowUiUpdates: false
+    options:
+      path: /var/lib/grafana/dashboards
+      foldersFromFilesStructure: false

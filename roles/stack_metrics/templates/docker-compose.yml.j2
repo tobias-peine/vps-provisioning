@@ -105,8 +105,52 @@ services:
         max-size: "10m"
         max-file: "3"
 
+  grafana:
+    image: {{ metrics_grafana_image }}
+    container_name: metrics-grafana
+    restart: unless-stopped
+    env_file:
+      - ./grafana.env
+    environment:
+      # Lesen ohne Login: die Oberflaeche haengt nur an Loopback und Tailscale,
+      # und die Dashboards kommen ohnehin aus dem Repo. Fuer eigene Experimente
+      # (Explore, Ad-hoc-PromQL) reicht die Viewer-Rolle; wer mehr will, meldet
+      # sich mit dem Adminpasswort aus grafana.env an.
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      GF_ANALYTICS_CHECK_FOR_UPDATES: "false"
+      GF_NEWS_NEWS_FEED_ENABLED: "false"
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "127.0.0.1:{{ metrics_grafana_port }}:3000"
+{% if metrics_tailscale_ip | length > 0 %}
+      - "{{ metrics_tailscale_ip }}:{{ metrics_grafana_port }}:3000"
+{% endif %}
+    networks:
+      - metrics
+    mem_limit: {{ metrics_grafana_mem }}
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:3000/api/health"]
+      interval: 60s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
 networks:
   metrics:
 
 volumes:
   prometheus_data:
+  grafana_data:
