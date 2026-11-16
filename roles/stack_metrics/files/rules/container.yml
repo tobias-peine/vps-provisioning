@@ -30,11 +30,11 @@ groups:
             zweimal neu gestartet.
 
       - alert: CadvisorDown
-        expr: up{job="cadvisor"} == 0
+        expr: up{job=~"cadvisor-.*"} == 0
         for: 10m
         labels:
           severity: warning
         annotations:
           summary: >-
-            cAdvisor antwortet seit 10 Minuten nicht - Container-Metriken
-            fehlen, ContainerNaheAmMemLimit kann nicht greifen.
+            cAdvisor auf {{ $labels.host }} antwortet seit 10 Minuten nicht -
+            Container-Metriken fehlen, ContainerNaheAmMemLimit kann nicht greifen.

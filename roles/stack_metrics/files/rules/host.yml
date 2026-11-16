@@ -6,13 +6,14 @@ groups:
   - name: host
     rules:
       - alert: NodeExporterDown
-        expr: up{job="node"} == 0
+        expr: up{job=~"node-.*"} == 0
         for: 5m
         labels:
           severity: critical
         annotations:
           summary: >-
-            node-exporter antwortet seit 5 Minuten nicht - Host-Metriken fehlen.
+            node-exporter auf {{ $labels.host }} antwortet seit 5 Minuten nicht -
+            Host-Metriken fehlen.
 
       - alert: DiskFastVoll
         expr: >-
