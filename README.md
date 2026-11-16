@@ -1,9 +1,10 @@
 # Ubuntu-24.04-VPS mit Ansible provisionieren
 
-Ein-Host-Provisionierung fuer einen Ubuntu-24.04-VPS (Webtropia): Hardening, Docker,
-19 Container in sieben Compose-Projekten, Tailscale, Fail2ban, unattended-upgrades.
-Lizenz: [MIT](LICENSE) · CI: Lint und Syntax-Check (`.github/workflows/ci.yml`,
-ansible-lint, yamllint, shellcheck) - **kein Rollen-Test**, dafuer `scripts/test-vm.sh`.
+Ein gemieteter Server, von Hand eingerichtet, ist nach einem halben Jahr nicht mehr
+reproduzierbar. Dieses Playbook baut ihn aus dem Repo neu auf: Hardening, Docker,
+Tailscale, sieben Compose-Stacks. Belegt ist das mit gemessenen Laufzeiten (Plattform
+82 s, zweiter Lauf 34 s) - und mit dem, was ausdruecklich offen bleibt (Abschnitt 6).
+Einstieg ohne eigene Zugangsdaten: Abschnitt 3, bis `make check`.
 
 ## 1. Was das hier ist
 
@@ -18,17 +19,40 @@ Ein zweiter Lauf gegen denselben Host braucht **101 Sekunden**.
 Der Plattform-Teil (`base`, `tailscale`, `ssh`, `ufw`, `fail2ban`) laeuft auf einer
 frischen Ubuntu-24.04-VM in **82 Sekunden**, der zweite Lauf in **34 Sekunden ohne
 Aenderung** - reproduzierbar mit `scripts/test-vm.sh`.
-Ausdruecklich **nicht** abgedeckt: Hochverfuegbarkeit/Failover, zentrale Logs und
-Metriken, Multi-Host-Orchestrierung, automatisierte Backup-Restore-Tests und die
-DNS-/Domain-Verwaltung.
 Die Wiederherstellungszeit ist die Zeit fuer einen Neuaufbau aus diesem Repo - genau
 dafuer ist es da.
+
+### Was automatisiert ist und was nicht
+
+| Aufgabe | automatisiert | wo / warum nicht |
+| --- | --- | --- |
+| OS-Basis, apt, Zeitzone, unattended-upgrades | ja | `roles/base` |
+| sshd: Port 2222, key-only, kein root, `AllowUsers admin` | ja | `roles/ssh`, `sshd -t` vor dem Reload |
+| ufw: deny incoming, 2222 nur auf `tailscale0` | ja | `roles/ufw` |
+| fail2ban-Jail fuer sshd (systemd-Backend) | ja | `roles/fail2ban` |
+| Docker Engine, Compose-Plugin, `daemon.json` | ja | `roles/docker` |
+| sieben Compose-Stacks inkl. `.env` aus dem Vault | ja | `roles/stack_*` |
+| Uptime-Wache: oeffentliche Hosts, RustDesk-Ports, Disk, unhealthy Container | ja | `roles/monitoring` |
+| Tailnet-Beitritt des VPS | ja, wenn der Authkey im Vault liegt | `roles/tailscale`; das **Erzeugen** des Keys ist manuell |
+| NPM-Vhosts, TLS-Zertifikate, Redirects | **nein** | liegen im NPM-Volume und werden in der Web-UI gepflegt - nach einem Neuaufbau Handarbeit |
+| DNS, SPF, DKIM, DMARC | **nein** | beim Registrar |
+| Vault-Passwort | **nein** | Password-Manager |
+| drei healthchecks.io-Checks | **nein** | per API angelegt |
+| `health-check.sh`, `reboot-window.sh`, Boot-Check | **nein** | laufen auf dem Host, nicht aus diesem Repo |
+| Backup und Restore-Test | **nein, hier** | per cron auf dem Host bzw. im `homelab`-Repo |
+| Erstinstallation, Rettungskonsole | **nein** | Webtropia-Konsole |
+
+Was hier als "nein" steht, ist die Grenze zwischen provisioniert und von Hand gepflegt -
+sie ist Teil des Betriebsmodells, nicht eine Luecke in der Automatisierung.
 
 **Stand auf dem Host (16.11.2026, gemessen):** 19 laufende Container in sieben
 Compose-Projekten - alle sieben sind in diesem Repo beschrieben. Die wiederkehrenden
 Jobs (Backups, Restore-Test, Zertifikatserneuerung, Health-Check, Reboot-Fenster)
 laufen dagegen als Dateien unter `/etc/cron.d` und in der root-crontab; dieses Repo
 erzeugt und prueft sie nicht.
+
+Lizenz: [MIT](LICENSE) · CI: Lint und Syntax-Check (`.github/workflows/ci.yml`,
+ansible-lint, yamllint, shellcheck) - **kein Rollen-Test**, dafuer `scripts/test-vm.sh`.
 
 ## 2. Architektur
 
@@ -125,22 +149,34 @@ Begruendung), `roles/stack_homeserver/templates/docker-compose.yml.j2` (Stack-Vo
 und die Reihenfolge in `site.yml`. Die laengste Begruendung steht in Abschnitt 5.
 
 ```bash
-pipx install ansible-core && ansible-galaxy collection install -r requirements.yml
-cp hosts.ini.example hosts.ini      # Tailscale-IP, Port und Key-Pfad eintragen
-ansible-playbook site.yml --ask-vault-pass -K
+git clone git@github.com:tobias-peine/vps-provisioning.git && cd vps-provisioning
+make setup                        # ansible-core, Linter, Collections
+cp hosts.ini.example hosts.ini     # Tailscale-IP, Port und Key-Pfad eintragen
+make check                        # yamllint + ansible-lint + syntax-check
 ```
 
-Voraussetzungen: Tailscale auf dem Client aktiv, ein Key-Paar fuer `admin`,
-Vault-Passwort im Password-Manager, und der VPS ist bereits im Tailnet. Der
-Tailnet-Beitritt des VPS ist ein manueller Einmal-Schritt (`tailscale up`):
-ein Authkey gehoert nicht ins Repo und nicht in die CI.
-Erster Lauf immer als Dry-Run:
-`ansible-playbook site.yml --check --diff --ask-vault-pass -K`.
+Bis hierher laeuft alles ohne eigene Infrastruktur. Danach brauchst du, was absichtlich
+nicht im Repo liegt: ein eigenes Tailnet mit dem Host darin, dein Vault-Passwort und
+deinen SSH-Key. Ohne diese drei ist der Pfad zu Ende.
 
-Lint und Syntax-Check lokal wie in der CI: `make check` (legt `hosts.ini` bei
-Bedarf aus der Vorlage an). Secret-Vorpruefung vor jedem Push: `make audit`.
+```bash
+ansible-vault create group_vars/all/vault.yml   # Vorlage: vault.yml.example
+make dry-run                      # --check --diff, erster Lauf immer so
+make deploy                       # --diff, echter Lauf
+```
+
+Der Authkey fuer den Tailnet-Beitritt wird im Tailnet erzeugt und im Vault abgelegt;
+der Beitritt selbst ist automatisiert (Rolle `tailscale`), nicht der Key. Erster Lauf
+immer als Dry-Run.
+
+Secret-Vorpruefung vor jedem Push: `make audit`.
 
 ## 4. Rollen
+
+Dreizehn Rollen und sieben Stacks sind operativ keine Sammlung, sondern eine Kette: der
+Lauf ist alles-oder-nichts, ein Abbruch in der Mitte hinterlaesst einen Host, der weder
+alt noch neu ist - deshalb die feste Reihenfolge in `site.yml` und der Dry-Run als
+Pflichtschritt.
 
 Die Reihenfolge in der Tabelle ist die Ausfuehrungsreihenfolge; sie steht auch
 so als Kommentar in `site.yml`.
