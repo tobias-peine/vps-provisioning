@@ -142,7 +142,6 @@ DERP-Relais auf; eine Portfreigabe ist fuer NAT-Traversal nicht erforderlich
 | MySQL / Postgres / Redis | 3306 / 5432 / 6379 | Compose-Netz | nur eigener Stack |
 | RustDesk hbbs | 21115, 21116 (tcp+udp) | `0.0.0.0` (host-Netz) | Internet |
 | RustDesk hbbr | 21117 | `0.0.0.0` (host-Netz) | Internet |
-| ~~21118, 21119~~ | in ufw erlaubt, **nichts lauscht** | - | offen ohne Dienst |
 | sshd | 2222 | `0.0.0.0`, ufw nur `tailscale0` | Tailnet |
 
 ## 3. Quickstart
@@ -306,12 +305,13 @@ provisioniert nur die Compose-Stacks neu, `--tags hardening` nur SSH/ufw/Fail2ba
 
 - **Was:** hbbs und hbbr laufen im Host-Netz und brauchen 21115, 21116 (tcp und udp)
   sowie 21117 direkt aus dem Internet. Das sind die einzigen Ports, die nicht ueber
-  den NPM laufen; 21118 und 21119 stehen in ufw offen, haben aber keinen Dienst
-  (gemessen am 16.11.2026).
+  den NPM laufen. 21118 und 21119 (Web-Client-Ports) waren bis 16.11.2026 offen,
+  ohne dass dort etwas lauschte - sie sind geschlossen und aus der Portliste entfernt.
 - **Warum:** Ein selbstgehosteter RustDesk-Server ist der Vermittler fuer
   Fernzugriffe. Ohne diese Ports finden sich die Clients nicht; ein Proxy davor
   wuerde UDP und den Relay-Verkehr brechen.
-- **Was ich dafuer aufgegeben habe:** Vier zusaetzliche Port-Eintraege auf
+- **Was ich dafuer aufgegeben habe:** Drei zusaetzliche Ports (21115, 21116 tcp+udp,
+  21117) auf
   einem Host, dessen Prinzip "so wenig Angriffsflaeche wie moeglich" ist. Sie
   sind auf die beiden Container beschraenkt, aber sie sind sichtbar.
 
@@ -365,9 +365,10 @@ provisioniert nur die Compose-Stacks neu, `--tags hardening` nur SSH/ufw/Fail2ba
   wichtige Teil: faellt der Host aus, kann ntfy nichts mehr melden, weil es auf
   demselben Host laeuft - healthchecks.io merkt es am ausbleibenden Ping.
   Dazu ein Boot-Check, der nach einem Neustart zaehlt, ob alle Container
-  zurueckkommen, und ein Reboot-Fenster (`reboot-window.sh`): Der Cron startet es
-  monatlich am 1. um 04:00, rebootet aber nur, wenn `/var/run/reboot-required`
-  existiert.
+  zurueckkommen, und ein Reboot-Fenster (`reboot-window.sh`), das derzeit
+  **deaktiviert** ist: Der Eintrag in `/etc/cron.d/reboot-window` ist auskommentiert,
+  das Skript wuerde nur rebooten, wenn `/var/run/reboot-required` existiert. Die
+  Entscheidung, wann neu gestartet wird, bleibt manuell.
   Keine Metriken, keine Dashboards, kein Verlauf.
 - **NPM braucht root fuer 80/443:** Privilegierte Ports. Die Alternative
   (`CAP_NET_BIND_SERVICE` plus Socket-Activation) wuerde Certbot-Hooks und das

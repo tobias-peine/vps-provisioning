@@ -19,7 +19,9 @@ timezone: Europe/Berlin
 
 # Oeffentliche Ports. Nur was von aussen erreichbar sein muss.
 # 80/443: Nginx Proxy Manager, 8443: TLS-Terminator Kisium,
-# 21115-21119: RustDesk (hbbs/hbbr), davon 21116 auch UDP.
+# 21115-21117: RustDesk (hbbs/hbbr), davon 21116 auch UDP.
+# 21118/21119 waren bis 16.11.2026 offen, ohne dass dort etwas lauschte
+# (Web-Client-Ports, nicht aktiviert) - am 16.11. geschlossen und entfernt.
 ufw_public_ports:
   - 80
   - 443
@@ -27,7 +29,5 @@ ufw_public_ports:
   - 21115
   - 21116
   - 21117
-  - 21118
-  - 21119
 ufw_public_udp_ports:
   - 21116
