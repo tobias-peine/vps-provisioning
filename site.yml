@@ -45,3 +45,5 @@
       tags: [rustdesk, stacks]
     - role: monitoring
       tags: [monitoring]
+    - role: backup
+      tags: [backup, cron]

@@ -1,0 +1,3 @@
+# n8n, Home Assistant und Compose-Konfiguration.
+# Laeuft vor paperless (03:30) und dem Restore-Test (04:00).
+45 2 * * * root /usr/local/sbin/backup-extras.sh >> /var/log/backup-extras.log 2>&1

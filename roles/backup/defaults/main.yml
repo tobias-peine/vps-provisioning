@@ -1,0 +1,21 @@
+---
+# Betriebs-Jobs, die vorher nur auf dem Host existierten.
+#
+# Warum eine eigene Rolle: Backup, Restore-Test, Zertifikatserneuerung und
+# Monitoring sind der Teil des Betriebs, den man nach einem Totalverlust
+# zuerst braucht - und sie lagen bis 16.11.2026 ausschliesslich in
+# /etc/cron.d und /usr/local/sbin. Ohne sie ist "aus dem Repo neu aufbauen"
+# eine halbe Aussage.
+#
+# Was hier bewusst NICHT liegt: die Zugangsdaten. Die Monitor-URLs
+# (/opt/backups/.*-monitor.env), das Offsite-Ziel (/etc/restic/offsite.env,
+# inklusive RESTIC_REPOSITORY und Passwortdatei) und das ntfy-Thema bleiben
+# auf dem Host. Ohne sie laufen die Skripte absichtlich in einen sauberen
+# Abbruch statt still ins Leere.
+backup_root: /opt/backups
+backup_sbin_dir: /usr/local/sbin
+backup_kisium_dir: /opt/kisium
+
+# Die Skripte erwarten root-Rechte und schreiben in /opt/backups.
+backup_script_mode: "0700"
+backup_dir_mode: "0700"

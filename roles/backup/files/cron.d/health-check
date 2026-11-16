@@ -1,0 +1,2 @@
+# Stuendlicher Check von Zertifikaten und Container-Health.
+17 * * * * root /usr/local/sbin/health-check.sh 2>&1 | logger -t health-check

@@ -1,0 +1,4 @@
+# Offsite-Backup, bewusst noch deaktiviert: RESTIC_REPOSITORY in
+# /etc/restic/offsite.env ist TODO. Nach dem Eintragen die Raute entfernen
+# und einmal manuell testen (restic init noetig).
+30 5 * * * root /usr/local/sbin/restic-offsite.sh >> /var/log/restic-offsite.log 2>&1

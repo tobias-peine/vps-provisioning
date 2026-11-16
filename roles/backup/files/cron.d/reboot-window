@@ -1,0 +1,4 @@
+# Reboot-Fenster - bewusst deaktiviert. Nach der Entscheidung die Raute
+# entfernen; der Lauf prueft selbst, ob ein Reboot aussteht.
+#0 4 1 * * root /usr/local/sbin/reboot-window.sh
+@reboot root /usr/local/sbin/boot-check.sh >> /var/log/boot-check.log 2>&1

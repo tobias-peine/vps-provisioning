@@ -1,0 +1,3 @@
+# Managed by Ansible: Kisium TV SQLite/catalog backup
+30 3 * * * root tar czf /home/admin/kisium-backups/kisium-data-$(date +\%F).tar.gz -C /home/admin/kisium-tv data && find /home/admin/kisium-backups -type f -name 'kisium-data-*.tar.gz' -mtime +14 -delete
+0 3 * * * root /usr/bin/docker exec npm certbot renew --quiet && /usr/bin/docker exec kisium-tls nginx -s reload

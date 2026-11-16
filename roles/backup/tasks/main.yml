@@ -1,0 +1,66 @@
+---
+# Diese Rolle bildet den Ist-Zustand des Hosts ab (Stand 16.11.2026), statt ihn
+# neu zu erfinden: die Dateien stammen wortgleich von dort. Das ist Absicht -
+# ein Betriebsskript beim Umzug zu "verbessern" ist der schnellste Weg, einen
+# Backup-Job still zu brechen.
+- name: Backup-Verzeichnis anlegen
+  ansible.builtin.file:
+    path: "{{ backup_root }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "{{ backup_dir_mode }}"
+
+- name: Skripte nach /usr/local/sbin installieren
+  ansible.builtin.copy:
+    src: "sbin/{{ item }}"
+    dest: "{{ backup_sbin_dir }}/{{ item }}"
+    owner: root
+    group: root
+    mode: "{{ backup_script_mode }}"
+  loop:
+    - backup-extras.sh
+    - boot-check.sh
+    - health-check.sh
+    - reboot-window.sh
+    - restic-offsite.sh
+
+- name: Backup-Skripte nach /opt/backups installieren
+  ansible.builtin.copy:
+    src: "opt-backups/{{ item }}"
+    dest: "{{ backup_root }}/{{ item }}"
+    owner: root
+    group: root
+    mode: "{{ backup_script_mode }}"
+  loop:
+    - check-ghost-backup.sh
+    - paperless-backup.sh
+    - restore-test.sh
+    - run-restore-test.sh
+
+- name: Kisium-Backup-Skript installieren
+  ansible.builtin.copy:
+    src: kisium-backup.sh
+    dest: "{{ backup_kisium_dir }}/backup.sh"
+    owner: root
+    group: root
+    mode: "{{ backup_script_mode }}"
+
+# Die Zeitplaene. reboot-window wird bewusst auskommentiert ausgeliefert
+# (Stand der Entscheidung vom 16.11.2026) - das Skript wuerde sonst monatlich
+# neu starten, sobald ein Reboot ansteht.
+- name: Cron-Zeitplaene nach /etc/cron.d installieren
+  ansible.builtin.copy:
+    src: "cron.d/{{ item }}"
+    dest: "/etc/cron.d/{{ item }}"
+    owner: root
+    group: root
+    mode: "0644"
+  loop:
+    - backup-extras
+    - ghost-backup-check
+    - health-check
+    - kisium-backup
+    - kisium-tls-renew
+    - reboot-window
+    - restic-offsite

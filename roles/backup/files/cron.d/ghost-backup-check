@@ -1,0 +1,1 @@
+0 5 * * * root /opt/backups/check-ghost-backup.sh >> /var/log/ghost-backup-check.log 2>&1

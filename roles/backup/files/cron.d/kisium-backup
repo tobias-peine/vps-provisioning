@@ -1,0 +1,2 @@
+# Ghost-Backup täglich 03:00
+0 3 * * * root /opt/kisium/backup.sh >> /var/log/kisium-backup.log 2>&1

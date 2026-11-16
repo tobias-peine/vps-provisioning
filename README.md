@@ -37,9 +37,8 @@ dafuer ist es da.
 | NPM-Vhosts, TLS-Zertifikate, Redirects | **nein** | liegen im NPM-Volume und werden in der Web-UI gepflegt - nach einem Neuaufbau Handarbeit |
 | DNS, SPF, DKIM, DMARC | **nein** | beim Registrar |
 | Vault-Passwort | **nein** | Password-Manager |
-| drei healthchecks.io-Checks | **nein** | per API angelegt |
-| `health-check.sh`, `reboot-window.sh`, Boot-Check | **nein** | laufen auf dem Host, nicht aus diesem Repo |
-| Backup und Restore-Test | **nein, hier** | per cron auf dem Host bzw. im `homelab`-Repo |
+| Backup-, Restore- und Monitoring-Jobs (Skripte und Zeitplan) | ja | `roles/backup`; nur die Zugangsdaten bleiben host-lokal |
+| drei healthchecks.io-Checks | **nein** | per API angelegt, Ping-URL in `/opt/backups/.health-check-monitor.env` |
 | Erstinstallation, Rettungskonsole | **nein** | Webtropia-Konsole |
 
 Was hier als "nein" steht, ist die Grenze zwischen provisioniert und von Hand gepflegt -
@@ -47,9 +46,9 @@ sie ist Teil des Betriebsmodells, nicht eine Luecke in der Automatisierung.
 
 **Stand auf dem Host (16.11.2026, gemessen):** 19 laufende Container in sieben
 Compose-Projekten - alle sieben sind in diesem Repo beschrieben. Die wiederkehrenden
-Jobs (Backups, Restore-Test, Zertifikatserneuerung, Health-Check, Reboot-Fenster)
-laufen dagegen als Dateien unter `/etc/cron.d` und in der root-crontab; dieses Repo
-erzeugt und prueft sie nicht.
+Jobs (Backups, Restore-Test, Zertifikatserneuerung, Health-Check, Boot-Check) liegen
+als Rolle `backup` im Repo - Skripte und Zeitplan; host-lokal bleiben nur die
+Zugangsdaten: Monitor-URLs, Offsite-Ziel und ntfy-Thema.
 
 Lizenz: [MIT](LICENSE) · CI: Lint und Syntax-Check (`.github/workflows/ci.yml`,
 ansible-lint, yamllint, shellcheck) - **kein Rollen-Test**, dafuer `scripts/test-vm.sh`.
@@ -175,7 +174,7 @@ Secret-Vorpruefung vor jedem Push: `make audit`.
 
 ## 4. Rollen
 
-Vierzehn Rollen und sieben Stacks sind operativ keine Sammlung, sondern eine Kette: der
+Fuenfzehn Rollen und sieben Stacks sind operativ keine Sammlung, sondern eine Kette: der
 Lauf ist alles-oder-nichts, ein Abbruch in der Mitte hinterlaesst einen Host, der weder
 alt noch neu ist - deshalb die feste Reihenfolge in `site.yml` und der Dry-Run als
 Pflichtschritt.
@@ -199,6 +198,7 @@ so als Kommentar in `site.yml`.
 | `stack_kisium_tv` | Stream-Proxy, Catalog-Sync, TLS-Terminator auf 8443 | `kisium_tv`, `stacks` |
 | `stack_rustdesk` | RustDesk-ID- und Relay-Server (hbbs/hbbr) | `rustdesk`, `stacks` |
 | `monitoring` | Uptime-Wache als systemd-Timer: oeffentliche Hosts, RustDesk-Ports, Disk, unhealthy Container | `monitoring` |
+| `backup` | Backup-, Restore- und Monitoring-Skripte plus `/etc/cron.d`-Zeitplaene | `backup`, `cron` |
 
 Warum diese Reihenfolge:
 
