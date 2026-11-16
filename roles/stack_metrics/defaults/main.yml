@@ -22,6 +22,10 @@ metrics_grafana_mem: 512m
 metrics_grafana_port: 3001
 metrics_alertmanager_port: 9093
 
+# Adresse, an der die Web-Oberflaechen (Prometheus, Alertmanager, Grafana)
+# lauschen: nur Tailscale, nie oeffentlich - Docker umgeht ufw.
+metrics_tailscale_ip: "{{ ansible_host }}"
+
 # Adressen der beiden Hosts, die abgefragt werden (Tailscale).
 # Werden in site.yml aus dem Inventory gesetzt:
 #   metrics_monitor_host: der Host, auf dem diese Rolle laeuft

@@ -5,8 +5,12 @@
 collections:
   # community.general.yaml liefert stdout_callback = yaml (ansible.cfg)
   # und community.general.ufw die Firewall-Regeln.
+  # Obergrenze 12: ab 12.0.0 ist das yaml-Callback entfernt, auf das
+  # ansible.cfg setzt (stdout_callback = yaml). Ohne Grenze bricht ein
+  # frischer Install mit "The 'community.general.yaml' callback plugin has
+  # been removed" ab, bevor der Lauf beginnt.
   - name: community.general
-    version: ">=8.0.0"
+    version: ">=8.0.0,<12.0.0"
 
   # community.docker.docker_compose_v2 fuer die Compose-Projekte.
   - name: community.docker
