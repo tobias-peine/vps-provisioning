@@ -153,3 +153,21 @@
     owner: root
     group: root
     mode: "0644"
+
+# Woechentlicher Selbsttest: faellt ein Alarmkanal aus, merkt man das sonst
+# erst, wenn es darauf ankommt.
+- name: Selbsttest-Skript installieren
+  ansible.builtin.copy:
+    src: alert-selftest.sh
+    dest: /usr/local/sbin/alert-selftest.sh
+    owner: root
+    group: root
+    mode: "0700"
+
+- name: Cron-Eintrag fuer den Selbsttest installieren
+  ansible.builtin.copy:
+    src: cron.d/alert-selftest
+    dest: /etc/cron.d/alert-selftest
+    owner: root
+    group: root
+    mode: "0644"
