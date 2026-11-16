@@ -31,7 +31,7 @@ dafuer ist es da.
 | ufw: deny incoming, 2222 nur auf `tailscale0` | ja | `roles/ufw` |
 | fail2ban-Jail fuer sshd (systemd-Backend) | ja | `roles/fail2ban` |
 | Docker Engine, Compose-Plugin, `daemon.json` | ja | `roles/docker` |
-| sieben Compose-Stacks inkl. `.env` aus dem Vault | ja | `roles/stack_*` |
+| sieben Compose-Stacks (fuenf davon mit `.env` aus dem Vault) | ja | `roles/stack_*` |
 | Uptime-Wache: oeffentliche Hosts, RustDesk-Ports, Disk, unhealthy Container | ja | `roles/monitoring` |
 | Tailnet-Beitritt des VPS | ja, wenn der Authkey im Vault liegt | `roles/tailscale`; das **Erzeugen** des Keys ist manuell |
 | NPM-Vhosts, TLS-Zertifikate, Redirects | **nein** | liegen im NPM-Volume und werden in der Web-UI gepflegt - nach einem Neuaufbau Handarbeit |
@@ -75,6 +75,7 @@ flowchart LR
             GHOST["Ghost :2368"]
             STREAM["Stream-Proxy :5000"]
             HA["Home Assistant :8123"]
+            LUN["Lunaria :3000"]
         end
 
         subgraph INTERN["nur im Compose-Netz"]
@@ -99,6 +100,7 @@ flowchart LR
     NPM --> N8N
     NPM --> HOME
     NPM --> GHOST
+    NPM --> LUN
     TLS -->|"127.0.0.1:5000"| STREAM
 
     GHOST --> MYSQL
@@ -135,6 +137,7 @@ DERP-Relais auf; eine Portfreigabe ist fuer NAT-Traversal nicht erforderlich
 | Stream-Proxy | 5000 | `127.0.0.1` | `kisium-tls` |
 | Home Assistant | 8123 | `127.0.0.1` + `tailscale0` | NPM, Tailnet |
 | Paperless-ngx | 8000 | Compose-Netz | NPM (intern) |
+| Lunaria | 3000 | Compose-Netz | NPM (intern) |
 | Ollama | 11434 | Compose-Netz | Open WebUI |
 | MySQL / Postgres / Redis | 3306 / 5432 / 6379 | Compose-Netz | nur eigener Stack |
 | RustDesk hbbs | 21115, 21116 (tcp+udp) | `0.0.0.0` (host-Netz) | Internet |
@@ -173,7 +176,7 @@ Secret-Vorpruefung vor jedem Push: `make audit`.
 
 ## 4. Rollen
 
-Dreizehn Rollen und sieben Stacks sind operativ keine Sammlung, sondern eine Kette: der
+Vierzehn Rollen und sieben Stacks sind operativ keine Sammlung, sondern eine Kette: der
 Lauf ist alles-oder-nichts, ein Abbruch in der Mitte hinterlaesst einen Host, der weder
 alt noch neu ist - deshalb die feste Reihenfolge in `site.yml` und der Dry-Run als
 Pflichtschritt.
@@ -301,13 +304,14 @@ provisioniert nur die Compose-Stacks neu, `--tags hardening` nur SSH/ufw/Fail2ba
 
 ### RustDesk-Ports oeffentlich
 
-- **Was:** hbbs und hbbr laufen im Host-Netz und brauchen 21115-21119/tcp sowie
-  21116/udp direkt aus dem Internet. Das sind die einzigen Ports, die nicht ueber
-  den NPM laufen.
+- **Was:** hbbs und hbbr laufen im Host-Netz und brauchen 21115, 21116 (tcp und udp)
+  sowie 21117 direkt aus dem Internet. Das sind die einzigen Ports, die nicht ueber
+  den NPM laufen; 21118 und 21119 stehen in ufw offen, haben aber keinen Dienst
+  (gemessen am 16.11.2026).
 - **Warum:** Ein selbstgehosteter RustDesk-Server ist der Vermittler fuer
   Fernzugriffe. Ohne diese Ports finden sich die Clients nicht; ein Proxy davor
   wuerde UDP und den Relay-Verkehr brechen.
-- **Was ich dafuer aufgegeben habe:** Vier zusaetzliche oeffentliche Ports auf
+- **Was ich dafuer aufgegeben habe:** Vier zusaetzliche Port-Eintraege auf
   einem Host, dessen Prinzip "so wenig Angriffsflaeche wie moeglich" ist. Sie
   sind auf die beiden Container beschraenkt, aber sie sind sichtbar.
 
@@ -387,6 +391,10 @@ provisioniert nur die Compose-Stacks neu, `--tags hardening` nur SSH/ufw/Fail2ba
   und `.env`, baut das Image aber aus `lunaria_src_dir` (`/opt/lunaria`). Der Quellbaum
   ist nicht Teil dieses Repos; ein Neuaufbau ohne ihn scheitert beim Build, nicht beim
   Start. Ein gepushtes Image wuerde das aufloesen.
+- **Lunaria ohne `cap_drop` und `mem_limit`:** Die Rolle betreibt den Stack mit dem
+  Verhalten, das er vorher hatte. Erst die Migration, dann die Haertung - eine
+  Migration, die gleichzeitig haertet, kann nicht sagen, welcher der beiden Schritte
+  einen Container gebrochen hat.
 - **Keine Molecule-Tests:** Rollen werden nicht in Containern getestet. Die CI prueft
   Syntax und Lint, nicht das Verhalten der Rollen - ein Rollen-Regressionscheck fehlt
   damit komplett.

@@ -15,6 +15,6 @@
 # Deshalb steht oben "Jinja" statt "Ansible" - kein Fehler im Repo, sondern
 # eine Eigenschaft des Zaehlers.
 # "*.j2 linguist-detectable=false" wuerde den Balken auf "Shell" drehen und
-# tauscht damit ein Etikett gegen ein anderes: der Inhalt sind 1283 Zeilen
-# YAML und 785 Zeilen Jinja, nicht die 314 Zeilen Shell. Die Einordnung
-# leistet die Description; der Balken bleibt unangetastet.
+# tauscht damit ein Etikett gegen ein anderes: der Inhalt ist ueberwiegend
+# YAML plus Jinja-Vorlagen (zusammen ein Mehrfaches der Shell-Zeilen), nicht
+# Shell. Die Einordnung leistet die Description; der Balken bleibt unangetastet.

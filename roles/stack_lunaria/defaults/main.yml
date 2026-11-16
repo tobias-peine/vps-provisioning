@@ -4,6 +4,10 @@ lunaria_src_dir: /opt/lunaria
 lunaria_image: "lunaria:latest"
 lunaria_port: 3000
 
+# Das Image wird nur gebaut, wenn es fehlt. Fuer Quellaenderungen im Bestand
+# braucht es einen bewussten Rebuild: -e lunaria_rebuild=true
+lunaria_rebuild: false
+
 # Das Datenvolumen behaelt den Namen des alten Compose-Projekts "deploy".
 # Eine Umbenennung waere eine Datenmigration (Push-Abos, Uhrzeiten), kein
 # Refactoring - und der Anlass dafuer ist bisher nur Ordnung. Auf einem
@@ -11,8 +15,8 @@ lunaria_port: 3000
 # ohne Bestandsdaten, was dem Zustand einer Neuinstallation entspricht.
 lunaria_data_volume: deploy_lunaria-data
 
-# Nicht-geheime Laufzeitwerte. Die Domain kommt aus base_domain, damit hier
-# keine echte Domain im Repo steht.
+# Nicht-geheime Laufzeitwerte. Die Domain kommt aus base_domain, damit Lunaria
+# nicht als einziger Stack eine fest eingetragene Domain traegt.
 lunaria_env:
   NODE_ENV: "production"
   PORT: "{{ lunaria_port }}"
@@ -22,7 +26,6 @@ lunaria_env:
   DEEPSEEK_TEXT_MODEL: "deepseek-chat"
   DEEPSEEK_VISION_MODEL: "deepseek-flash"
   VAPID_SUBJECT: "mailto:admin@{{ base_domain }}"
-  LUNARIA_FEEDBACK_MAIL: "beta@{{ base_domain }}"
 
 # Secrets aus dem Vault (group_vars/all/vault.yml). VAPID_PUBLIC_KEY steht
 # hier, weil ein Wechsel des Schluesselpaars alle Push-Abos ungueltig macht -
