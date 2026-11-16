@@ -1,0 +1,40 @@
+---
+# Verwaltet von Ansible (Rolle stack_metrics).
+# Regeln rund um die Container selbst. Ziel ist nicht, jeden Peak zu melden,
+# sondern die zwei Faelle, die man sonst erst merkt, wenn der Host steht:
+# ein Container am Speicherdeckel und eine Neustart-Schleife.
+groups:
+  - name: container
+    rules:
+      - alert: ContainerNaheAmMemLimit
+        expr: >-
+          (container_memory_working_set_bytes{name!=""}
+          / container_spec_memory_limit_bytes{name!=""}) > 0.9
+          and container_spec_memory_limit_bytes{name!=""} > 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: >-
+            Container {{ $labels.name }} nutzt {{ $value | humanizePercentage }}
+            seines Speicherdeckels - Deckel oder Verbrauch pruefen.
+
+      - alert: ContainerNeustartSchleife
+        expr: changes(container_start_time_seconds{name!=""}[1h]) > 2
+        for: 0m
+        labels:
+          severity: warning
+        annotations:
+          summary: >-
+            Container {{ $labels.name }} ist in der letzten Stunde mehr als
+            zweimal neu gestartet.
+
+      - alert: CadvisorDown
+        expr: up{job="cadvisor"} == 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: >-
+            cAdvisor antwortet seit 10 Minuten nicht - Container-Metriken
+            fehlen, ContainerNaheAmMemLimit kann nicht greifen.

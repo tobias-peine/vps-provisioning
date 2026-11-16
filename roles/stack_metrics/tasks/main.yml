@@ -61,6 +61,7 @@
   loop:
     - host-uebersicht.json
     - container-uebersicht.json
+    - backup-und-alarme.json
 
 # Die Tailscale-Adresse wird zur Laufzeit ermittelt statt in group_vars zu
 # stehen: die Adresse identifiziert das Tailnet und gehoert nicht in ein
@@ -101,6 +102,7 @@
     mode: "0644"
   loop:
     - host.yml
+    - container.yml
   notify: Prometheus-Konfiguration neu laden
 
 - name: Alertmanager-Konfiguration schreiben

@@ -26,15 +26,31 @@ groups:
             Wurzeldateisystem ist zu {{ $value | printf "%.0f" }} Prozent voll -
             Docker-Cache oder Backups pruefen.
 
+      # Voller Swap ist auf diesem Host Normalzustand: Linux lagert kalte Seiten
+      # aus, solange genug Cache da ist. Gemeldet wird deshalb nur die
+      # Kombination aus vollem Swap UND knappem Arbeitsspeicher.
       - alert: SwapUeberLimit
-        expr: (node_memory_SwapTotal_bytes - node_memory_SwapFree_bytes) > 1.5e9
+        expr: >-
+          (node_memory_SwapTotal_bytes - node_memory_SwapFree_bytes)
+          / node_memory_SwapTotal_bytes > 0.9
+          and node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes < 0.15
         for: 30m
         labels:
           severity: warning
         annotations:
           summary: >-
-            Swap ist seit 30 Minuten ueber 1,5 GB belegt - ein Container haelt
-            zu viel Speicher.
+            Swap ist zu {{ $value | humanizePercentage }} belegt und der freie
+            Arbeitsspeicher geht zur Neige - ein Container haelt zu viel Speicher.
+
+      - alert: ArbeitsspeicherKnapp
+        expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes < 0.1
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: >-
+            Weniger als 10 Prozent Arbeitsspeicher verfuegbar - Speicherfresser
+            suchen, bevor der OOM-Killer entscheidet.
 
   - name: backup
     rules:
