@@ -43,6 +43,8 @@
       tags: [kisium_tv, stacks]
     - role: stack_rustdesk
       tags: [rustdesk, stacks]
+    - role: stack_metrics
+      tags: [metrics, monitoring, stacks]
     - role: monitoring
       tags: [monitoring]
     - role: backup

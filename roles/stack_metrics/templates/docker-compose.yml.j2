@@ -1,0 +1,106 @@
+---
+# Verwaltet von Ansible (Rolle stack_metrics).
+name: metrics
+
+services:
+  prometheus:
+    image: {{ metrics_prometheus_image }}
+    container_name: metrics-prometheus
+    restart: unless-stopped
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time={{ metrics_retention }}
+      # --web.enable-lifecycle erlaubt dem Reload-Handler ein POST /-/reload,
+      # ohne den Container neu zu starten.
+      - --web.enable-lifecycle
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    # Nur Loopback und Tailscale: Docker veroeffentlicht Ports ueber eigene
+    # iptables-Regeln und umgeht damit ufw. Ein "0.0.0.0:9090" waere also
+    # trotz Firewall aus dem Internet erreichbar.
+    ports:
+      - "127.0.0.1:9090:9090"
+{% if metrics_tailscale_ip | length > 0 %}
+      - "{{ metrics_tailscale_ip }}:9090:9090"
+{% endif %}
+    networks:
+      - metrics
+    mem_limit: {{ metrics_prometheus_mem }}
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:9090/-/healthy"]
+      interval: 60s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  node-exporter:
+    image: {{ metrics_node_exporter_image }}
+    container_name: metrics-node-exporter
+    restart: unless-stopped
+    command:
+      - --path.procfs=/host/proc
+      - --path.sysfs=/host/sys
+      - --path.rootfs=/rootfs
+      # Pseudo-Dateisysteme nicht mitzaehlen: sonst verfaelschen sie die
+      # Disk-Auslastung, weil sie bei jedem Scrape ihre Groesse aendern.
+      - --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    # PID-Namespace des Hosts: sonst sieht der Exporter nur seine eigene
+    # Prozessliste und liefert keine Prozess-Metriken.
+    pid: host
+    networks:
+      - metrics
+    mem_limit: {{ metrics_node_exporter_mem }}
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  cadvisor:
+    image: {{ metrics_cadvisor_image }}
+    container_name: metrics-cadvisor
+    restart: unless-stopped
+    command:
+      # Standard ist 1 s Housekeeping - bei 19 Containern kostet das dauerhaft
+      # CPU, ohne dass Prometheus (30 s Scrape) etwas davon sieht.
+      - --housekeeping_interval=30s
+      - --max_housekeeping_interval=60s
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    devices:
+      - /dev/kmsg
+    networks:
+      - metrics
+    mem_limit: {{ metrics_cadvisor_mem }}
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  metrics:
+
+volumes:
+  prometheus_data:

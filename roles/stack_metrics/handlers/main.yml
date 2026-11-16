@@ -1,0 +1,20 @@
+---
+# Konfigurationsaenderung ohne Neustart einspielen: Prometheus liest die
+# scrape_configs bei POST /-/reload neu. Beim allerersten Lauf gibt es den
+# Endpunkt noch nicht - failed_when: false verhindert, dass der Lauf deswegen
+# rot wird; der Stack wird ohnehin gleich danach gestartet.
+- name: Prometheus-Konfiguration neu laden
+  ansible.builtin.uri:
+    url: http://127.0.0.1:9090/-/reload
+    method: POST
+    status_code: [200, 204]
+  failed_when: false
+
+- name: Metrics-Stack neu starten
+  community.docker.docker_compose_v2:
+    project_src: "{{ metrics_dir }}"
+    files:
+      - compose.yaml
+    state: present
+    pull: missing
+    recreate: auto

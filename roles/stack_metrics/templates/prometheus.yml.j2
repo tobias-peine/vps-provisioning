@@ -1,0 +1,28 @@
+---
+# Verwaltet von Ansible (Rolle stack_metrics).
+# Phase 1 der Observability: nur sammeln. Dashboards (Grafana) und Alarme
+# (Alertmanager) folgen in Phase 2 und 3 - ein Schritt pro Ausbau, damit man
+# jeden einzeln versteht und einzeln zurueckrollen kann.
+global:
+  scrape_interval: 30s
+  evaluation_interval: 30s
+
+scrape_configs:
+  # Prometheus selbst: zeigt, ob der Scrape-Zyklus und die eigene
+  # Speichernutzung gesund sind.
+  - job_name: prometheus
+    static_configs:
+      - targets:
+          - localhost:9090
+
+  # Host-Metriken: CPU, RAM, Swap, Disk, Netzwerk, Load.
+  - job_name: node
+    static_configs:
+      - targets:
+          - node-exporter:9100
+
+  # Container-Metriken: CPU und RAM je Container, Restarts, Image-Groessen.
+  - job_name: cadvisor
+    static_configs:
+      - targets:
+          - cadvisor:8080

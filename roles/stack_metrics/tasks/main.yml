@@ -1,0 +1,44 @@
+---
+- name: Projektverzeichnis anlegen
+  ansible.builtin.file:
+    path: "{{ metrics_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+# Die Tailscale-Adresse wird zur Laufzeit ermittelt statt in group_vars zu
+# stehen: die Adresse identifiziert das Tailnet und gehoert nicht in ein
+# oeffentliches Repo. Fehlt das Interface, bleibt die Liste leer und es wird
+# nur auf Loopback gebunden.
+- name: Tailscale-Adresse fuer das optionale Binding ermitteln
+  ansible.builtin.set_fact:
+    metrics_tailscale_ip: >-
+      {{ (ansible_facts['tailscale0'] | default({})).get('ipv4', {}).get('address', '') }}
+
+- name: Prometheus-Konfiguration schreiben
+  ansible.builtin.template:
+    src: prometheus.yml.j2
+    dest: "{{ metrics_dir }}/prometheus.yml"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Prometheus-Konfiguration neu laden
+
+- name: Compose-Datei schreiben
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: "{{ metrics_dir }}/compose.yaml"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Metrics-Stack neu starten
+
+- name: Stack starten
+  community.docker.docker_compose_v2:
+    project_src: "{{ metrics_dir }}"
+    files:
+      - compose.yaml
+    state: present
+    pull: missing
+    remove_orphans: true
