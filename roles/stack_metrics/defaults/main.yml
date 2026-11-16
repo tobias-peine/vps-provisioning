@@ -40,3 +40,12 @@ metrics_ha_host: "{{ metrics_app_host }}"
 # Tailscale erreichbar, und der Alarmweg soll ohne zusaetzliche Secret-Verwaltung
 # funktionieren. Wer die Kennung kennt, kann Alarme ausloesen, aber nicht lesen.
 metrics_ha_webhook_id: "metrics-alerts"
+
+# Dritter, unabhaengiger Alarmweg: E-Mail ueber den Brevo-Relay, dessen
+# Zugangsdaten ohnehin im Vault liegen (dieselben wie fuer Ghost). Der Weg
+# funktioniert auch dann, wenn prod und damit Home Assistant stehen - dann
+# laeuft Alertmanager auf dem Monitoring-Host weiter und schickt direkt raus.
+metrics_alert_mail: true
+metrics_alert_mail_to: "tobiaspeine8@gmail.com"
+metrics_alert_mail_from: "Kisium Alarme <hallo@kisium.de>"
+metrics_alert_mail_smarthost: "smtp-relay.brevo.com:587"

@@ -30,3 +30,15 @@ receivers:
       - url: "http://alertbridge:8080/alert"
         send_resolved: true
         max_alerts: 5
+{% if metrics_alert_mail | bool %}
+    # Dritter Weg: direkt per SMTP raus. Unabhaengig von Home Assistant und
+    # von ntfy - falls ein Kanal mal haengt, bleibt dieser.
+    email_configs:
+      - to: "{{ metrics_alert_mail_to }}"
+        from: "{{ metrics_alert_mail_from }}"
+        smarthost: "{{ metrics_alert_mail_smarthost }}"
+        auth_username: "{{ vault_mail_user }}"
+        auth_password: "{{ vault_mail_password }}"
+        require_tls: true
+        send_resolved: true
+{% endif %}
