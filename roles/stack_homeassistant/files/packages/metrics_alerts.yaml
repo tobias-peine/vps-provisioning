@@ -15,6 +15,11 @@ automation:
         webhook_id: metrics-alerts
         allowed_methods:
           - POST
+        # Ohne diese Zeile verwirft HA den Aufruf mit "Received remote
+        # request for local webhook": local_only gilt fuer alles ausser
+        # 127.0.0.1/::1, und der Alertmanager laeuft seit dem Umzug auf dem
+        # Monitoring-Host. HA ist ohnehin nur ueber Tailscale erreichbar.
+        local_only: false
     action:
       - action: notify.familie
         data:
