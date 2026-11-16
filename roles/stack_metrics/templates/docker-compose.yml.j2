@@ -80,6 +80,12 @@ services:
       # CPU, ohne dass Prometheus (30 s Scrape) etwas davon sieht.
       - --housekeeping_interval=30s
       - --max_housekeeping_interval=60s
+      # Ohne docker_only laeuft cAdvisor zusaetzlich alle systemd-Cgroups ab.
+      - --docker_only=true
+      # "disk" laesst cAdvisor die Overlay-Verzeichnisse jedes Containers
+      # ablaufen (5-15 s pro Container, reine I/O-Last). Die Host-Disk liefert
+      # node_exporter, die Container-Disk braucht hier niemand.
+      - --disable_metrics=disk,diskIO
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:ro
