@@ -1,0 +1,14 @@
+---
+# Restic-REST-Server: das Ziel des primaeren Offsite-Backups (restic-offsite.sh
+# auf dem App-Host sichert per HTTP hierher). Laeuft auf dem Monitoring-Host,
+# weil dort ohnehin ein zweiter Rechner im Tailnet steht.
+rest_server_dir: /opt/rest-server
+rest_server_image: "restic/rest-server:0.14.0"
+# Daten und Zugangsdaten liegen ausserhalb des Compose-Projekts, damit ein
+# Neuaufbau der Rolle das 3,8-GB-Repository nicht anfasst.
+rest_server_data_dir: /srv/restic/data
+rest_server_auth_dir: /srv/restic/auth
+rest_server_port: 8000
+# Nur Tailscale: Docker veroeffentlicht Ports an ufw vorbei.
+rest_server_bind_ip: "{{ ansible_host }}"
+rest_server_mem: 128m

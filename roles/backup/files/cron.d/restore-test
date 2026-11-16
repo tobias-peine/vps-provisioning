@@ -1,0 +1,4 @@
+# Verwaltet von Ansible (Rolle backup).
+# Restore-Test: spielt das Paperless-Backup in ein Wegwerf-Projekt zurueck und
+# prueft, ob der Webserver antwortet. Taeglich 04:00, nach dem Backup.
+0 4 * * * root /opt/backups/run-restore-test.sh

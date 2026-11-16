@@ -1,0 +1,42 @@
+---
+# Der Container lief bisher per docker run und tauchte in keinem Compose-Projekt
+# auf - bei einem Neuaufbau des Hosts waere das Ziel des Offsite-Backups
+# stillschweigend verschwunden. Diese Rolle macht ihn reproduzierbar.
+- name: Projektverzeichnis anlegen
+  ansible.builtin.file:
+    path: "{{ rest_server_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+# Die Datenverzeichnisse werden nur angelegt, nie geleert: hier liegen 3,8 GB
+# Snapshots, die ein zweiter Lauf nicht anfassen darf.
+- name: Daten- und Auth-Verzeichnis sicherstellen
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0750"
+  loop:
+    - "{{ rest_server_data_dir }}"
+    - "{{ rest_server_auth_dir }}"
+
+- name: Compose-Datei schreiben
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: "{{ rest_server_dir }}/compose.yaml"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Rest-Server neu starten
+
+- name: Stack starten
+  community.docker.docker_compose_v2:
+    project_src: "{{ rest_server_dir }}"
+    files:
+      - compose.yaml
+    state: present
+    pull: missing
+    remove_orphans: true

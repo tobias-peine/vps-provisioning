@@ -1,4 +1,6 @@
-# Offsite-Backup, bewusst noch deaktiviert: RESTIC_REPOSITORY in
-# /etc/restic/offsite.env ist TODO. Nach dem Eintragen die Raute entfernen
-# und einmal manuell testen (restic init noetig).
+# Verwaltet von Ansible (Rolle backup).
+# Offsite-Backup 1: verschluesselt zum Restic-REST-Server auf dem Monitoring-Host
+# (RESTIC_REPOSITORY in /etc/restic/offsite.env). Laeuft seit 09.11.2026
+# taeglich; das Repo liegt in /srv/restic/data, verwaltet von der Rolle
+# rest_server.
 30 5 * * * root /usr/local/sbin/restic-offsite.sh >> /var/log/restic-offsite.log 2>&1

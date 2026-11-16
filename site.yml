@@ -73,3 +73,7 @@
       tags: [metrics, monitoring]
     - role: stack_metrics
       tags: [metrics, monitoring]
+    # Ziel des Offsite-Backups. Lag bis 16.11.2026 als docker-run-Container
+    # ausserhalb jedes Compose-Projekts.
+    - role: rest_server
+      tags: [rest_server, backup]

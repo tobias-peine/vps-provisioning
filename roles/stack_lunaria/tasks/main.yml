@@ -4,9 +4,13 @@
 # Verhalten zu aendern: gleiche Compose-Datei-Struktur, gleiches Datenvolumen,
 # gleiches Netz, gleiches Image.
 #
+# Haertung: seit commit 688e1bd setzt das Template cap_drop: ALL und
+# mem_limit: 512m (gemessen 51 MiB, Deckel mit Reserve). Das war ein eigener
+# Schritt nach der Migration, nicht Teil davon - deshalb steht es hier
+# ausdruecklich, damit der naechste Leser nicht denkt, es sei versehentlich
+# hineingeraten.
+#
 # Was hier NICHT passiert:
-#   - kein cap_drop/mem_limit. Das ist eine Haertung, keine Migration; sie
-#     gehoert in einen eigenen Lauf mit eigenem Test (README, Abschnitt 6).
 #   - kein Image-Build im Repo: der Quellbaum liegt unter lunaria_src_dir und
 #     ist nicht Teil dieses Repos.
 - name: Vault-Werte fuer Lunaria vorhanden
@@ -83,6 +87,15 @@
     mode: "0644"
   notify: Lunaria neu starten
 
+# Im Check-Modus schreibt die Template-Task die Datei nicht. Auf einem Host,
+# der die Rolle noch nie gesehen hat, fehlt sie dann und docker_compose_v2
+# bricht ab - der vorgeschriebene Dry-Run waere unbrauchbar. Deshalb vorher
+# pruefen und den Start im Check-Modus ueberspringen, statt blind zu starten.
+- name: Vorhandensein der Compose-Datei pruefen
+  ansible.builtin.stat:
+    path: "{{ lunaria_dir }}/compose.yaml"
+  register: lunaria_compose_file
+
 - name: Stack starten
   community.docker.docker_compose_v2:
     project_src: "{{ lunaria_dir }}"
@@ -92,3 +105,4 @@
     pull: never
     build: "{{ 'always' if lunaria_rebuild | bool else 'policy' }}"
     remove_orphans: true
+  when: lunaria_compose_file.stat.exists or not ansible_check_mode

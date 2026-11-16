@@ -63,6 +63,8 @@
     - health-check
     - kisium-backup
     - kisium-tls-renew
+    - paperless-backup
     - reboot-window
     - restic-offsite
     - restic-offsite2
+    - restore-test

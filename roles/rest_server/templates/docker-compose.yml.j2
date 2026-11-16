@@ -1,0 +1,31 @@
+---
+# Verwaltet von Ansible (Rolle rest_server).
+# Ziel des Offsite-Backups: restic auf dem App-Host schiebt die Snapshots hierher.
+name: rest-server
+
+services:
+  rest-server:
+    image: {{ rest_server_image }}
+    container_name: rest-server
+    restart: unless-stopped
+    # Das Image startet /entrypoint.sh und liest die Pfade aus der Umgebung.
+    # Kommandozeilen-Flags wuerden den Entrypoint ersetzen und als Programm
+    # ausgefuehrt - genau daran ist der erste Versuch gescheitert.
+    environment:
+      DATA_DIRECTORY: /data
+      PASSWORD_FILE: /auth/.htpasswd
+    volumes:
+      # Daten und Auth getrennt: die Zugangsdatei muss niemandem gehoeren,
+      # der nur die Snapshots lesen will.
+      - "{{ rest_server_data_dir }}:/data"
+      - "{{ rest_server_auth_dir }}:/auth:ro"
+    ports:
+      - "{{ rest_server_bind_ip }}:{{ rest_server_port }}:8000"
+    mem_limit: {{ rest_server_mem }}
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

@@ -10,8 +10,8 @@ Einstieg ohne eigene Zugangsdaten: Abschnitt 3, bis `make check`.
 
 Dieses Repository provisioniert **zwei Hosts** per Ansible von null auf produktiv:
 den Anwendungshost (Webtropia, Ubuntu 24.04.5 LTS) mit Hardening (ufw, SSH,
-Fail2ban, unattended-upgrades), Tailscale-Zugang, Docker und 19 Containern in
-sieben Compose-Projekten hinter einem Nginx Proxy Manager - und seit dem
+Fail2ban, unattended-upgrades), Tailscale-Zugang, Docker und 21 Containern in
+acht Compose-Projekten (19 Anwendungen plus zwei Exporter) hinter einem Nginx Proxy Manager - und seit dem
 16.11.2026 einen zweiten, kleinen Host bei Hetzner Cloud, der die Ueberwachung
 uebernimmt (Prometheus, Grafana, Alertmanager). Warum getrennt, steht in
 Abschnitt 9; beide Hosts haengen an demselben Tailnet.
@@ -367,8 +367,10 @@ nicht schuetzen.
 
 - **Was:** hbbs und hbbr laufen im Host-Netz und brauchen 21115, 21116 (tcp und udp)
   sowie 21117 direkt aus dem Internet. Das sind die einzigen Ports, die nicht ueber
-  den NPM laufen. 21118 und 21119 (Web-Client-Ports) waren bis 16.11.2026 offen,
-  ohne dass dort etwas lauschte - sie sind geschlossen und aus der Portliste entfernt.
+  den NPM laufen. 21118 und 21119 (Web-Client-Ports) wurden bis 16.11.2026 in der
+  ufw-Freigabe gefuehrt, obwohl kein Client sie nutzt. Die Prozesse (hbbs/hbbr)
+  lauschen dort zwar weiter auf `0.0.0.0`, ufw blockt sie aber - von aussen geprueft
+  sind beide zu. Seit 16.11. stehen sie nicht mehr in der Portliste.
 - **Warum:** Ein selbstgehosteter RustDesk-Server ist der Vermittler fuer
   Fernzugriffe. Ohne diese Ports finden sich die Clients nicht; ein Proxy davor
   wuerde UDP und den Relay-Verkehr brechen.
@@ -454,10 +456,11 @@ nicht schuetzen.
   und `.env`, baut das Image aber aus `lunaria_src_dir` (`/opt/lunaria`). Der Quellbaum
   ist nicht Teil dieses Repos; ein Neuaufbau ohne ihn scheitert beim Build, nicht beim
   Start. Ein gepushtes Image wuerde das aufloesen.
-- **Lunaria ohne `cap_drop` und `mem_limit`:** Die Rolle betreibt den Stack mit dem
-  Verhalten, das er vorher hatte. Erst die Migration, dann die Haertung - eine
-  Migration, die gleichzeitig haertet, kann nicht sagen, welcher der beiden Schritte
-  einen Container gebrochen hat.
+- **Lunaria: Migration und Haertung in zwei Schritten.** Die Rolle uebernimmt
+  seit dem 16.11.2026 den Betrieb des vorher handgestarteten Projekts `deploy`.
+  Die Haertung (`cap_drop: ALL`, `mem_limit: 512m` nach Messung von 51 MiB) kam
+  als eigener Commit danach - eine Migration, die gleichzeitig haertet, kann
+  nicht sagen, welcher der beiden Schritte einen Container gebrochen hat.
 - **Keine Molecule-Tests:** Rollen werden nicht in Containern getestet. Die CI prueft
   Syntax und Lint, nicht das Verhalten der Rollen - ein Rollen-Regressionscheck fehlt
   damit komplett.
@@ -540,9 +543,9 @@ wird.
 
 | | `prod` (Webtropia-VPS) | `monitor` (Hetzner Cloud) |
 |---|---|---|
-| Rollen | alle `stack_*`, `metrics_exporters`, `monitoring`, `backup` | `metrics_exporters`, `stack_metrics` |
-| Container | Anwendungen + 2 Exporter | Prometheus, Alertmanager, Grafana + 2 Exporter |
-| RAM | 7,8 GB (4,3 GB frei) | 3,7 GB (2,6 GB frei) |
+| Rollen | alle `stack_*`, `metrics_exporters`, `monitoring`, `backup` | `metrics_exporters`, `stack_metrics`, `rest_server` |
+| Container | 19 Anwendungen + 2 Exporter = 21 | 7: Prometheus, Alertmanager, Grafana, alertbridge, rest-server + 2 Exporter |
+| RAM | 7,8 GB (4,2 GiB verfügbar, 274 MiB „free") | 3,7 GB (2,6 GiB verfügbar) |
 | Firewall | ufw, SSH nur auf `tailscale0` | ufw, eingehend nur `tailscale0` |
 
 **Datenfluss.** Beide Hosts laufen `metrics_exporters` (node-exporter auf

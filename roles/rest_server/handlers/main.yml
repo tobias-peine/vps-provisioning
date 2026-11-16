@@ -1,0 +1,9 @@
+---
+- name: Rest-Server neu starten
+  community.docker.docker_compose_v2:
+    project_src: "{{ rest_server_dir }}"
+    files:
+      - compose.yaml
+    state: present
+    pull: missing
+    recreate: auto
