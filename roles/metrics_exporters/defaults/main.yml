@@ -15,7 +15,7 @@ metrics_cadvisor_mem: 512m
 
 # Verzeichnis fuer den textfile-Collector (Backup-Frische).
 metrics_textfile_dir: "{{ metrics_exporters_dir }}/textfile"
----
+
 # Adresse, an der die Exporter lauschen. Standard ist die Adresse, ueber die
 # Ansible den Host anspricht - im Normalfall die Tailscale-Adresse.
 metrics_bind_ip: "{{ ansible_host }}"

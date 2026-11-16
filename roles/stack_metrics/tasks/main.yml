@@ -37,7 +37,7 @@
 
 # Das ntfy-Topic ist die halbe Zugangskontrolle: wer es kennt, kann mitlesen.
 # Es wird einmalig erzeugt und steht danach in dieser Datei.
-- name: ntfy-Thema erzeugen (nur beim ersten Lauf)
+- name: Alarm-Thema fuer ntfy erzeugen (nur beim ersten Lauf)
   ansible.builtin.copy:
     content: "NTFY_TOPIC=kisium-alerts-{{ lookup('password', '/dev/null length=16 chars=ascii_lowercase,digits') }}\n"
     dest: "{{ metrics_dir }}/alertbridge.env"
