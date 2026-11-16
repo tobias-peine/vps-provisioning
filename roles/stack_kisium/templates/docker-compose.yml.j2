@@ -18,6 +18,9 @@ services:
       - SETUID
     init: true
     restart: unless-stopped
+    # Deckel nach Messung: Ghost liegt bei ~157 MB, 512m lassen Luft fuer
+    # Importe, ohne dass der Prozess den Host in den Swap draengt.
+    mem_limit: 512m
     depends_on:
       mysql:
         condition: service_healthy
@@ -56,6 +59,10 @@ services:
   mysql:
     image: {{ kisium_image_mysql }}
     container_name: kisium-mysql
+    # Deckel nach Messung: MySQL 8.4 mit 128 MB Buffer Pool liegt bei ~110 MB
+    # RSS, hatte aber 421 MB im Swap. 1g ist reichlich Luft und verhindert,
+    # dass eine wachsende Connection-Zahl den Host leerzieht.
+    mem_limit: 1g
     security_opt:
       - no-new-privileges:true
     cap_drop:
