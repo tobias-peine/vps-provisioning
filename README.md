@@ -465,6 +465,26 @@ nicht schuetzen.
   Syntax und Lint, nicht das Verhalten der Rollen - ein Rollen-Regressionscheck fehlt
   damit komplett.
 
+### Aufgeraeumt am 16.11.2026: Ueberwachung von vor dem Umzug
+
+Ein unabhaengiger Drift-Audit fand auf dem Monitoring-Host ein Cron-Skript
+(`/etc/cron.d/container-check`), das seit dem **19.10.2026** alle fuenf Minuten
+neun Container-Namen prueft und bei Ausfall an ein fest verdrahtetes
+oeffentliches ntfy-Thema schreibt. Es gehoerte zur damaligen Beszel/Portainer-
+Ueberwachung auf dieser Maschine.
+
+Beim Umzug am **08.11.2026** verschwanden alle neun Container gleichzeitig; die
+Zustandsdateien unter `/var/lib/container-check` stammen genau von diesem Abend
+(18:30-18:40), danach schwieg das Skript. Es hat also seit ueber einer Woche
+alle fuenf Minuten neun `docker ps`-Aufrufe gemacht, um nichts zu finden.
+
+Entfernt wurden: das Cron-Skript, `/opt/scripts`, die Zustandsdateien, die
+Altverzeichnisse `/opt/{beszel,portainer,n8n,open-webui,searxng,rustdesk}` und
+die verwaisten Docker-Volumes `n8n_n8n_data` und `open-webui`. Vorher geprueft:
+kein laufender Container bindet einen dieser Pfade. `/opt/npm` (1,7 MB alte
+NPM-Daten samt Zertifikaten) blieb bewusst stehen - es ist winzig, und
+Zertifikatsdateien loescht man nicht auf Verdacht.
+
 ## 7. Was ich dabei gelernt habe
 
 **1. ufw hat die Docker-Ports nicht geschlossen.**
