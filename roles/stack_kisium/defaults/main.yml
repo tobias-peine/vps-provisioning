@@ -4,11 +4,11 @@ kisium_port: 2368
 kisium_image_ghost: "ghost:6-alpine"
 kisium_image_mysql: "mysql:8.4"
 
-# Nicht-geheime Werte. Mailversand laeuft ueber Brevo (Port 587, STARTTLS).
+# Mailversand laeuft ueber Brevo (Port 587, STARTTLS).
 # Wichtig: der SMTP-Login ist NICHT die Konto-Adresse, sondern die
-# Relay-Kennung aus dem Brevo-Konto ("c0ff36001@smtp-brevo.com"). Mit der
-# Konto-E-Mail scheitert die Anmeldung mit 535. Das Passwort ist ein eigener
-# SMTP-Key (xsmtpsib-...) und steht im Vault.
+# Relay-Kennung aus dem Brevo-Konto. Mit der Konto-E-Mail scheitert die
+# Anmeldung mit 535. Login und Passwort sind Zugangsdaten und stehen
+# deshalb im Vault (vault_mail_user, vault_mail_password).
 # DNS fuer die Domain: SPF include:spf.brevo.com, DKIM als zwei CNAMEs
 # (brevo1/brevo2._domainkey), DMARC p=none - alles bei ntdns gepflegt.
 kisium_env:
@@ -16,10 +16,10 @@ kisium_env:
   MAIL_HOST: "smtp-relay.brevo.com"
   MAIL_PORT: "587"
   MAIL_SECURE: "false"
-  MAIL_USER: "c0ff36001@smtp-brevo.com"
   MAIL_FROM: "Kisium <hallo@{{ base_domain }}>"
 
 kisium_secrets:
+  MAIL_USER: "{{ vault_mail_user }}"
   MYSQL_ROOT_PASSWORD: "{{ vault_mysql_root_password }}"
   MYSQL_PASSWORD: "{{ vault_mysql_password }}"
   MAIL_PASSWORD: "{{ vault_mail_password }}"

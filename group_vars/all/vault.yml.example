@@ -16,6 +16,8 @@ vault_paperless_admin_password: "TODO"
 vault_webui_secret_key: "TODO"
 
 # kisium (Ghost, MySQL, Mail-Relay)
+# Der SMTP-Login ist die Relay-Kennung aus dem Brevo-Konto, nicht die Konto-Mail.
+vault_mail_user: "TODO"
 vault_mysql_root_password: "TODO"
 vault_mysql_password: "TODO"
 vault_mail_password: "TODO"

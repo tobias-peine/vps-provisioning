@@ -1,4 +1,15 @@
 ---
+- name: Mail-Zugangsdaten vorhanden
+  ansible.builtin.assert:
+    that:
+      - vault_mail_user is defined
+      - vault_mail_password is defined
+    fail_msg: >-
+      Es fehlen vault_mail_user / vault_mail_password in
+      group_vars/all/vault.yml. Der Brevo-SMTP-Login steht bewusst nicht mehr
+      im Repo - Schluesselnamen siehe group_vars/all/vault.yml.example.
+    quiet: true
+
 - name: Projektverzeichnis anlegen
   ansible.builtin.file:
     path: "{{ kisium_dir }}"
