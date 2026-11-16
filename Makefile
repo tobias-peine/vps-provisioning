@@ -8,6 +8,11 @@ SHELL := /bin/bash
 PLAYBOOK := site.yml
 INVENTORY := hosts.ini
 
+# Vault-Passwort: entweder tippen (Standard) oder eine Datei zeigen:
+#   make deploy VAULT="--vault-password-file ~/.vault_pass"
+# Die Datei ist gitignored und liegt ausserhalb des Repos.
+VAULT ?= --ask-vault-pass
+
 .DEFAULT_GOAL := help
 
 .PHONY: help setup lint yamllint ansible-lint syntax inventory check dry-run deploy audit clean
@@ -48,10 +53,10 @@ lint: yamllint ansible-lint ## Beide Linter (wie CI)
 check: syntax lint ## Alles, was die CI auch macht
 
 dry-run: $(INVENTORY) ## --check --diff gegen den echten Host
-	ansible-playbook $(PLAYBOOK) --check --diff --ask-vault-pass -K
+	ansible-playbook $(PLAYBOOK) --check --diff $(VAULT) -K
 
 deploy: $(INVENTORY) ## Echter Lauf gegen den echten Host
-	ansible-playbook $(PLAYBOOK) --diff --ask-vault-pass -K
+	ansible-playbook $(PLAYBOOK) --diff $(VAULT) -K
 
 audit: ## Secret-Muster in Arbeitskopie und Historie suchen
 	./scripts/secret-audit.sh

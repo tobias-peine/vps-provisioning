@@ -166,6 +166,9 @@ make dry-run                      # --check --diff, erster Lauf immer so
 make deploy                       # --diff, echter Lauf
 ```
 
+Liegt das Vault-Passwort in einer Datei, statt es zu tippen:
+`make deploy VAULT="--vault-password-file ~/.vault_pass"`.
+
 Der Authkey fuer den Tailnet-Beitritt wird im Tailnet erzeugt und im Vault abgelegt;
 der Beitritt selbst ist automatisiert (Rolle `tailscale`), nicht der Key. Erster Lauf
 immer als Dry-Run.
