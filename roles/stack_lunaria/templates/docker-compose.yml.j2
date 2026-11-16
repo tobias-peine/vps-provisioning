@@ -30,6 +30,11 @@ services:
       - /tmp
     security_opt:
       - no-new-privileges:true
+    # Der Prozess laeuft als non-root (nextjs) und braucht keine Capabilities.
+    # Gemessen am 16.11.2026: 51 MiB RSS im Leerlauf, daher 512m als Deckel.
+    cap_drop:
+      - ALL
+    mem_limit: 512m
     healthcheck:
       test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:{{ lunaria_port }}/login"]
       interval: 30s
