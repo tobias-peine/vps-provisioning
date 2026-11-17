@@ -180,5 +180,10 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 - linux-nerds.org hat aktuell keine passende offene Docker-/Backup-Frage; nicht erzwungen.
 - Noch nicht gepostet; Status in `docs/seo/outreach-targets-20261117.md`.
 
+### W2.1w — Bing-Import erfolgt
+- Bing Webmaster Tools hat die Property automatisch aus der Search Console importiert (Nutzerangabe).
+- Sitemap-Status und Indexierung noch unverifiziert; nächster Check 24.11.2026.
+- Dokumentiert in `docs/seo/bing-20261117.md`.
+
 ## Grenzen
 - **Feld-CWV:** PSI/CrUX am 17.11.2026 mit Key geprüft: PSI 200, aber 0 Metriken; CrUX 404 für URL/Origin, Phone/Desktop. Keine Felddaten verfügbar. Bericht: `docs/field-cwv-20261117.md`.

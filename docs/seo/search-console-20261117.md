@@ -73,7 +73,8 @@ Nur zwei Queries sichtbar; der Rest ist anonymisiert. Aus 4 Query-Impressionen k
 ## Bing
 
 - Eigene Indexierung, unabhängig von Google: `docs/seo/bing-20261117.md`.
-- Import aus der Search Console, Sitemap `https://kisium.de/sitemap.xml`, danach URL Inspection.
+- **17.11.2026:** Import aus der Search Console automatisch erfolgt (Nutzerangabe); Indexierung noch unverifiziert.
+- Nächster Check: Sitemap-Status, URL Inspection, ggf. URL Submission; 24.11.2026.
 
 ## Datenlücken
 
