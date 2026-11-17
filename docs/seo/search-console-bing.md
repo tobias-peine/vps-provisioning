@@ -2,6 +2,13 @@
 
 Ziel: Query-, Index- und CTR-Daten für kisium.de. Ohne diese Daten ist jede weitere SEO-Änderung geraten.
 
+## Stand 17.11.2026
+
+- Ein Google-Verifikations-Meta-Tag ist bereits in der Ghost **Code Injection** (`codeinjection_head`) gesetzt und im HTML sichtbar.
+- Damit ist die URL-Prefix-Property `https://kisium.de/` technisch verifizierbar. Ob die Property im Google-Konto existiert, ist ohne Login **unverifiziert**.
+- Die Sitemap `https://kisium.de/sitemap.xml` ist gültig und in `robots.txt` referenziert.
+- Nächster Schritt: Login, Property prüfen, Sitemap bestätigen, Performance-Export.
+
 ## Google Search Console
 
 1. [search.google.com/search-console](https://search.google.com/search-console) öffnen.
