@@ -101,5 +101,11 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 - **Verifiziert:** HTTP 200, Title/Description/H1, Codeblöcke, Sitemap 13 Posts, Startseite erstes Bild eager; Lighthouse mobil 3 Läufe: TBT 177/75/26 ms (Median 75), LCP 2.088/2.032/1.242 ms (Median 2.032), CLS 0/0,109/0,109.
 - Tag-Seiten `VPS` und `Sicherheit` mit Meta-Title/Description ergänzt; SEO-Audit danach **30/30**.
 
+### W3.6 — Mastodon-Auto-Poster
+- Neuer Artikel aus `https://kisium.de/rss/` → einmaliger öffentlicher Post auf `@kisium`; Baseline beim ersten Lauf, max. 1 Post/Tag, `Idempotency-Key`, State `/var/lib/kisium-mastodon/state.json`.
+- Installiert: `/opt/kisium/mastodon-autopost.py` (700), `/etc/kisium/mastodon.token` (600 root), Cron alle 15 Minuten, Logrotate wöchentlich.
+- **Verifiziert:** Baseline 13 Artikel ohne Post; Dry-Run danach „keine neuen Artikel“; Caption 310 Zeichen; Cron aktiv; Log leer.
+- Rollback: `/etc/cron.d/kisium-mastodon` entfernen; Details: `docs/runbooks/mastodon-autopost.md`.
+
 ## Grenzen
 - **Feld-CWV:** PSI/CrUX am 17.11.2026 mit Key geprüft: PSI 200, aber 0 Metriken; CrUX 404 für URL/Origin, Phone/Desktop. Keine Felddaten verfügbar. Bericht: `docs/field-cwv-20261117.md`.

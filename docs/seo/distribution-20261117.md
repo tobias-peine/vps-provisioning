@@ -34,3 +34,7 @@ Nicht als eigener Link-Post. In einem passenden Thread als Antwort:
 3. Mastodon.
 4. Zwei Community-Antworten mit echtem Mehrwert.
 5. Nach 7 Tagen: Search-Console-Daten prüfen, Title/Description ggf. nachschärfen.
+
+## Status
+
+- **17.11.2026:** Mastodon `@kisium` eingerichtet (Bio, Avatar, Header, vier Profilfelder, discoverable); VPS-Post veröffentlicht; Auto-Poster für neue RSS-Artikel aktiv (max. 1/Tag).
