@@ -228,5 +228,12 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 - Backup vor Update: `~/kisium-backups/kisium-post-vps-20261117-before-live-update.json` (600).
 - Mastodon: Fail2ban-Antwort gepostet; SSH-Port/Passphrase war bereits beantwortet; Auto-Poster-Dry-Run: keine neuen Artikel.
 
+### W2.2f — Lunaria-Case-Study
+- Technischen Portfolio-Artikel „Lunaria: Eine Gesundheits-PWA zwischen local-first und KI“ entworfen: 1.236 Wörter, zwei interne Links, keine externen Links.
+- Schwerpunkte: Architektur, local-first, KI-Datenfluss, Docker-Betrieb, Auth-Fehler, Grenzen; keine Launch-/Medizinversprechen.
+- Cover 1600×880 (Archivnummer 15, Projekt): `content/lunaria-local-first-gesundheits-pwa-cover.jpg`.
+- Metadaten und Veröffentlichungsvorschlag **03.12.2026, 09:00** in `content/lunaria-local-first-gesundheits-pwa.meta.md`.
+- **Nicht veröffentlicht**; wartet auf „freigegeben“.
+
 ## Grenzen
 - **Feld-CWV:** PSI/CrUX am 17.11.2026 mit Key geprüft: PSI 200, aber 0 Metriken; CrUX 404 für URL/Origin, Phone/Desktop. Keine Felddaten verfügbar. Bericht: `docs/field-cwv-20261117.md`.
