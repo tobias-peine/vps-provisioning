@@ -6,6 +6,8 @@ Tailscale, sieben Compose-Stacks. Belegt ist das mit gemessenen Laufzeiten (Plat
 82 s, zweiter Lauf 34 s) - und mit dem, was ausdruecklich offen bleibt (Abschnitt 6).
 Einstieg ohne eigene Zugangsdaten: Abschnitt 3, bis `make check`.
 
+**Blog:** [kisium.de](https://kisium.de) — u. a. [VPS absichern: Debian-Checkliste](https://kisium.de/vps-absichern-debian-checkliste/).
+
 ## 1. Was das hier ist
 
 Dieses Repository provisioniert **zwei Hosts** per Ansible von null auf produktiv:
