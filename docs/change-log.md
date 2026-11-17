@@ -217,5 +217,10 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 - **Noch nicht live**; Veröffentlichung erst nach „freigegeben“.
 - Mastodon-Antworten vorbereitet, aber nicht gepostet: Token `/etc/kisium/mastodon.token` ist root-only; ohne sudo kein API-Zugriff.
 
+### W2.2d — Mastodon-Antworten
+- Antwort auf den Fail2ban-Hinweis gepostet: https://mastodon.social/@kisium/117633021030277219
+- Der zweite Post (SSH-Port/ed25519-Passphrase) war bereits beantwortet: https://mastodon.social/@kisium/117632215233419619 — kein Doppelpost.
+- Checklisten-Update weiterhin **nur lokal**; live noch nicht veröffentlicht.
+
 ## Grenzen
 - **Feld-CWV:** PSI/CrUX am 17.11.2026 mit Key geprüft: PSI 200, aber 0 Metriken; CrUX 404 für URL/Origin, Phone/Desktop. Keine Felddaten verfügbar. Bericht: `docs/field-cwv-20261117.md`.
