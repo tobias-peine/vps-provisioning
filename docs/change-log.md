@@ -191,5 +191,10 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 - **Indexierung unverifiziert:** `GetUrlInfo` für VPS/Backup liefert noch `HttpStatus: 0` und keine Crawl-Daten; nächster Check 24.11.2026.
 - Alter Endpoint `GetSites` 404; aktuell `GetUserSites` und POST für `SubmitUrl`.
 
+### W2.1y — Sitemap-Abgleich Search Console
+- Sitemap-Inhalt geprüft: 30 URLs (13 Posts, 5 Seiten, 1 Autor, 11 Tags); valide.
+- Search Console zeigt 25 erkannte Seiten; Kind-Sitemaps zuletzt 16.11.2026 gelesen, Index 17.11.2026 — Aktualisierungsstau, kein Sitemap-Fehler.
+- Aktion: URL-Prüfung für neue URLs; Index einmal neu senden; bei weiterhin 25 Kind-Sitemaps einmal separat senden.
+
 ## Grenzen
 - **Feld-CWV:** PSI/CrUX am 17.11.2026 mit Key geprüft: PSI 200, aber 0 Metriken; CrUX 404 für URL/Origin, Phone/Desktop. Keine Felddaten verfügbar. Bericht: `docs/field-cwv-20261117.md`.

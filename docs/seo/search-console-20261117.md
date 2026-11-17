@@ -63,6 +63,15 @@ Nur zwei Queries sichtbar; der Rest ist anonymisiert. Aus 4 Query-Impressionen k
 4. **Indexierung:** Sitemap-Index erneut senden; neuen VPS-Post per URL-Prüfung beantragen; Seiten-Report exportieren.
 5. **2–4 Wochen messen** — nicht auf 2 Klicks optimieren.
 
+## Sitemap-Abgleich (17.11.2026)
+
+- Sitemap-Index enthält **4 Kind-Sitemaps**: `sitemap-pages.xml`, `sitemap-posts.xml`, `sitemap-authors.xml`, `sitemap-tags.xml`.
+- Tatsächlicher Inhalt: **30 URLs** — 13 Posts, 5 Seiten, 1 Autor, 11 Tags.
+- Search Console zeigt für den Index **25 erkannte Seiten**; die Kind-Sitemaps `sitemap-posts.xml` (10) und `sitemap-pages.xml` (5) wurden zuletzt **16.11.2026** gelesen, der Index am **17.11.2026**.
+- Bewertung: Sitemap ist valide; die 25 sind ein **Aktualisierungsstau**, kein Fehler. Neue Posts fehlen im letzten Kind-Lesevorgang.
+- Nächster Schritt: URL-Prüfung für die neuen URLs; Index ggf. einmal neu senden. Wenn nach 2 Tagen weiter 25: Kind-Sitemaps einmal separat senden.
+- Nicht täglich neu einreichen.
+
 ## Links
 
 - Export „More sample links“ (17.11.2026): nur die Kopfzeile `Verweisende Seite`, **0 Datenzeilen**.
