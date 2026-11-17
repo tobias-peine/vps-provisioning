@@ -70,6 +70,11 @@ Nur zwei Queries sichtbar; der Rest ist anonymisiert. Aus 4 Query-Impressionen k
 - GitHub, LinkedIn und Mastodon erzeugen Traffic, sind aber keine redaktionellen Backlinks (meist `nofollow`).
 - Der nächste Hebel ist deshalb Backlink-Aufbau, nicht weitere Technik: `docs/seo/backlinks-20261117.md`.
 
+## Bing
+
+- Eigene Indexierung, unabhängig von Google: `docs/seo/bing-20261117.md`.
+- Import aus der Search Console, Sitemap `https://kisium.de/sitemap.xml`, danach URL Inspection.
+
 ## Datenlücken
 
 - Indexierungsstatus (Seiten-Report) fehlt.

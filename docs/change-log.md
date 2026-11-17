@@ -171,5 +171,9 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 - Bestätigung vom Nutzer gesehen; Status **eingereicht und bestätigt**.
 - Follow-up ab 24.11., falls keine Rückmeldung.
 
+### W2.1u — Bing-Checkliste
+- Import aus der Search Console, Sitemap, URL-Meldung, URL Inspection und optional IndexNow: `docs/seo/bing-20261117.md`.
+- Keine Änderung an Website, DNS oder NPM; nur Dokumentation.
+
 ## Grenzen
 - **Feld-CWV:** PSI/CrUX am 17.11.2026 mit Key geprüft: PSI 200, aber 0 Metriken; CrUX 404 für URL/Origin, Phone/Desktop. Keine Felddaten verfügbar. Bericht: `docs/field-cwv-20261117.md`.
