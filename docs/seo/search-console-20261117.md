@@ -67,7 +67,7 @@ Nur zwei Queries sichtbar; der Rest ist anonymisiert. Aus 4 Query-Impressionen k
 
 - **Indexiert:** `/vps-absichern-debian-checkliste/`, `/bewerbung-quereinsteiger/`, `/zertifikate/`
 - **Noch nicht indexiert:** `/ein-backup-ziel-das-einen-nachmittag-gebraucht-hat/`
-- Für den Backup-Post: URL-Prüfung → „Indexierung beantragen“, falls noch nicht geschehen; danach 2–4 Tage warten. Keine erneute Anfrage für die bereits indexierten URLs.
+- Für den Backup-Post: **Indexierung beantragt** (Nutzerangabe 17.11.2026); noch nicht indexiert. Jetzt 2–4 Tage warten, keine erneute Anfrage. Keine erneute Anfrage für die bereits indexierten URLs.
 
 ## Sitemap-Abgleich (17.11.2026)
 

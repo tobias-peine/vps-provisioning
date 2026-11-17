@@ -198,7 +198,7 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 
 ### W2.1z — URL-Status: nur Backup-Post offen
 - Nutzerangabe: VPS-Pillar, Bewerbung und Zertifikate sind indexiert; der Backup-Post noch nicht.
-- Nächster Schritt: für den Backup-Post „Indexierung beantragen“ (falls nicht bereits erfolgt), dann 2–4 Tage warten.
+- Für den Backup-Post wurde die **Indexierung beantragt** (17.11.2026); jetzt 2–4 Tage warten.
 - Keine erneute Anfrage für die bereits indexierten URLs.
 
 ## Grenzen
