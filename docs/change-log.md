@@ -206,5 +206,11 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 - Aktuell (17.11.2026) keine passenden offenen 2026er Docker-/ufw-/Backup-Fragen auf administrator.de oder linux-nerds.org gefunden.
 - Foren-Aktionen pausiert; alte Texte nur noch Archiv in `content/outreach/forum-answers-20261117.md`.
 
+### W2.2b — Ansible-Entwurf
+- Entwurf „Ansible für Einsteiger“: 1.181 Wörter, drei interne Links, keine externen Links.
+- Cover 1600×880 (Archivnummer 14, Automatisierung): `content/ansible-fuer-einsteiger-cover.jpg`.
+- Metadaten und Veröffentlichungsvorschlag **26.11.2026, 09:00** in `content/ansible-fuer-einsteiger.meta.md`.
+- **Nicht veröffentlicht**; wartet auf „freigegeben“.
+
 ## Grenzen
 - **Feld-CWV:** PSI/CrUX am 17.11.2026 mit Key geprüft: PSI 200, aber 0 Metriken; CrUX 404 für URL/Origin, Phone/Desktop. Keine Felddaten verfügbar. Bericht: `docs/field-cwv-20261117.md`.
