@@ -42,3 +42,18 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 - Casper 5.12.5 plus Patch als Theme `kisium` installiert; `active_theme=kisium`; ein Ghost-Restart.
 - **Verifiziert:** Tag-/Autor-Seiten mit H1, Beitrags-Byline als `<p>`, 27/27 H1, 0 Heading-Order-Verletzungen, HTTP/2 200, Ghost healthy.
 - Rollback: `active_theme=casper` setzen, Ghost neu starten, `kisium`-Ordner entfernen.
+
+### W1.2b — Ghost-Container auf 6.77.0 neu erstellt
+- `docker compose up -d --no-deps ghost`; Image `ghost:6-alpine` → `ghost:6.77.0`; MySQL unverändert; kurze Downtime.
+- Healthcheck nach Debian-Wechsel von `nc` auf Node umgestellt; Compose-Backup `/opt/backups/ghost/docker-compose.yml.bak-20261117-131909`.
+- **Verifiziert:** Ghost healthy, HTTP/2 200, www 301, Theme `kisium`, 27/27 SEO, MySQL/NPM healthy.
+- Rollback: Compose-Backup und altes Image; DB-/Content-Backup.
+
+### W3.1 — Restore-Test bestanden
+- Frisches Backup `20261117-131545`; isolierte temporäre DB und temporärer Container; Produktion unverändert.
+- **Verifiziert:** HTTP 200, 16 Beiträge, 3 Mitglieder, `active_theme=kisium`; Cleanup danach.
+- Runbook: `docs/runbooks/ghost-backup-restore.md`.
+
+### W3.2/W3.3 — Runbooks und Check-Skript
+- `docs/runbooks/ghost-update.md`, `docs/runbooks/monitoring.md`, `scripts/check-kisium.sh`.
+- **Verifiziert:** Check-Skript auf dem VPS 7/7 PASS (HTTP/2, www-Redirect, TLS/SAN, Container, Backup-Alter, Disk).
