@@ -38,3 +38,4 @@ Nicht als eigener Link-Post. In einem passenden Thread als Antwort:
 ## Status
 
 - **17.11.2026:** Mastodon `@kisium` eingerichtet (Bio, Avatar, Header, vier Profilfelder, discoverable); VPS-Post veröffentlicht; Auto-Poster für neue RSS-Artikel aktiv (max. 1/Tag).
+- **17.11.2026:** LinkedIn-Post und Bild vorbereitet (`docs/seo/linkedin-vps-post.md`); Veröffentlichung manuell oder per API-Token noch offen.
