@@ -7,9 +7,9 @@ oder ein manueller Post. Bild: `docs/seo/assets/linkedin-vps-absichern.jpg` (120
 
 > Die meisten VPS-Anleitungen fangen mit der Firewall an. Ich würde mit dem SSH-Zugang anfangen.
 >
-> Auf meinem Server habe ich die Reihenfolge aufgeschrieben, die bei mir hängen geblieben ist: Schlüssel statt Passwort, Root-Login aus, dann erst Ports. Danach Updates, Docker-Ports prüfen, TLS, Backups und ein Alarm, der wirklich ankommt.
+> Auf meinem Server habe ich die Reihenfolge aufgeschrieben, die sich bei mir bewährt hat: Schlüssel statt Passwort, Root-Login aus, dann erst Ports. Danach Updates, Docker-Ports prüfen, TLS, Backups und ein Alarm, der wirklich ankommt.
 >
-> Der unangenehmste Teil: Docker kann an ufw vorbei. Ein `0.0.0.0:3306` ist keine Kleinigkeit.
+> Der unangenehmste Teil: Docker kann an ufw vorbei. Ein Port-Mapping auf `0.0.0.0:3306` ist keine Kleinigkeit.
 >
 > Checkliste: https://kisium.de/vps-absichern-debian-checkliste/
 >
