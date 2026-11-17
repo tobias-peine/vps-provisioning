@@ -1,7 +1,22 @@
-# Foren-Antworten (Entwürfe)
+# Foren-Antworten — ARCHIV, NICHT POSTEN
 
-Stand 17.11.2026. **Nicht gepostet.** Alle Antworten ohne Link; erst helfen, kein Link-Drop.
-Ziel: administrator.de. linux-nerds.org hat aktuell keine passende offene Docker-/Backup-Frage.
+Stand 17.11.2026. **Diese Threads sind von 2021–2024. Nicht necroposten.**
+Die Texte bleiben nur als Formulierungshilfe; der Forenkanal ist pausiert.
+
+## Aktueller Befund (17.11.2026)
+
+- **administrator.de:** Keine passende offene Docker-/ufw-/Backup-Frage aus 2026.
+  Die relevanten 2026er Threads (Synology-SFTP, Moodle/NPM, Debian/Unifi) sind
+  **gelöst**; der Podman-Thread ist offen, aber bereits hitzig und nicht der
+  richtige Ort für einen Einstieg.
+- **linux-nerds.org:** Keine passende offene Docker-/Backup-Frage; zuletzt nur
+  OpenCloud/AI.
+- **Entscheidung:** Foren-Aktionen pausiert. Keine alten Threads aufwärmen.
+
+## Archiv — nicht posten
+
+Die folgenden drei Antworten sind nur noch Referenz. Sie wurden **nicht**
+gepostet und sollen nicht gepostet werden.
 
 ## 1. Komisches Verhalten Docker-Portainer-UFW-UFW Docker
 

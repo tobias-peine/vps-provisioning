@@ -201,5 +201,10 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 - Für den Backup-Post wurde die **Indexierung beantragt** (17.11.2026); jetzt 2–4 Tage warten.
 - Keine erneute Anfrage für die bereits indexierten URLs.
 
+### W2.2a — Forenkanal pausiert
+- Die drei vorbereiteten Foren-Antworten beziehen sich auf Threads von 2021–2024; als Necroposting verworfen.
+- Aktuell (17.11.2026) keine passenden offenen 2026er Docker-/ufw-/Backup-Fragen auf administrator.de oder linux-nerds.org gefunden.
+- Foren-Aktionen pausiert; alte Texte nur noch Archiv in `content/outreach/forum-answers-20261117.md`.
+
 ## Grenzen
 - **Feld-CWV:** PSI/CrUX am 17.11.2026 mit Key geprüft: PSI 200, aber 0 Metriken; CrUX 404 für URL/Origin, Phone/Desktop. Keine Felddaten verfügbar. Bericht: `docs/field-cwv-20261117.md`.

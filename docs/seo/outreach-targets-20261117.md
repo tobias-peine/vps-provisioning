@@ -14,7 +14,7 @@ Gastbeitrags-/Artikel-Weg oder eine echte Community für Hilfe bietet.
 | **A** | **LinuxNews.de** | News/Tutorials | „Gastautoren willkommen“, Markdown-Formular, Autor wird genannt | [Mitschreiben](https://linuxnews.de/mitschreiben/) | **eingereicht 17.11.2026, bestätigt** |
 | **B** | **IT-Administrator** | Fachmagazin | Professionelle Admin-Zielgruppe, Kontaktformular; Gastbeitragsregeln nicht öffentlich | [Kontakt](https://www.it-administrator.de/contact) | Pitch **unverifiziert** |
 | **B** | **t3n** | Digital-Business | Gastautoren möglich, aber **keine Backlinks im Artikel** — nur Autorenbio | [Gastautor-Seite](https://t3n.de/news/gastautor-t3n-277791/) | verifiziert, **schwacher SEO-Wert** |
-| **C** | **Administrator.de** | Forum | 120.000+ Mitglieder; nur Antworten, keine Gastartikel | [Forum](https://administrator.de/forum/) | verifiziert |
+| **C** | **Administrator.de** | Forum | 120.000+ Mitglieder; nur Antworten, keine Gastartikel | [Forum](https://administrator.de/forum/) | **pausiert — keine aktuellen offenen Fragen (17.11.2026)** |
 | **C** | **Linux-nerds.org** | Forum | Aktive Linux-Community; nur Antworten | [Forum](https://linux-nerds.org/) | verifiziert |
 
 ## Ausgeschlossen
@@ -47,8 +47,9 @@ Gastbeitrags-/Artikel-Weg oder eine echte Community für Hilfe bietet.
    einen Link auf die Checkliste. — **17.11.2026 eingereicht und bestätigt**;
    Follow-up ab 24.11.
 3. **Administrator.de**: drei bestehende Fragen zu Docker/ufw/Backup beantworten,
-   ohne Link. Profil ausfüllen. — **Antworten vorbereitet** in
-   `content/outreach/forum-answers-20261117.md`; noch nicht gepostet.
+   ohne Link. Profil ausfüllen. — **ausgesetzt:** Die drei vorbereiteten Threads
+   sind von 2021–2024; keine passenden offenen 2026er Fragen gefunden. Kein
+   Necroposting.
 3. **Administrator.de**: drei bestehende Fragen zu Docker/ufw/Backup beantworten,
    ohne Link. Profil ausfüllen.
 4. **Linux-nerds.org**: zwei Antworten, gleiche Regel.
