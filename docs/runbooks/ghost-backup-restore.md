@@ -52,6 +52,30 @@ Prinzip: temporäre Datenbank + temporärer Ghost-Container auf `127.0.0.1:2369`
 - 16 veröffentlichte Beiträge, 3 Mitglieder, `active_theme=kisium`
 - Produktion währenddessen unverändert
 
+## Offsite-Backup (verifiziert 17.11.2026)
+
+Zwei unabhängige Ziele, beide verschlüsselt mit restic:
+
+- **REST-Server auf dem Monitoring-Host:** `/etc/cron.d/restic-offsite`, täglich 05:30, `/usr/local/sbin/restic-offsite.sh`, Env `/etc/restic/offsite.env`.
+- **Hetzner Storage Box:** `/etc/cron.d/restic-offsite2`, täglich 06:30, `/usr/local/sbin/restic-offsite2.sh`, Env `/etc/restic/offsite2.env`.
+
+Beide sichern `/opt/backups`, `/opt/kisium/backups`, `/home/[BENUTZER]/kisium-backups` und `/home/[BENUTZER]/monitor-secrets`; Retention 7 täglich / 4 wöchentlich / 6 monatlich; danach `restic check`.
+
+**Verifiziert am 17.11.2026:** manueller Lauf beider Jobs um 14:23; Storage-Box-Snapshot `d6b0aecf` enthält `ghost-db-20261117-131545.sql.gz` und `content-20261117-131545.tar.gz`; DB-Gzip-Test und Content-Tar-Liste erfolgreich.
+
+Manuell anstoßen:
+
+```bash
+sudo /usr/local/sbin/restic-offsite.sh
+sudo /usr/local/sbin/restic-offsite2.sh
+```
+
+Snapshots prüfen (Passwort bleibt in der Env-Datei):
+
+```bash
+sudo sh -c 'set -a; . /etc/restic/offsite2.env; restic snapshots'
+```
+
 ## Produktions-Restore (Wartungsfenster)
 
 1. Wartungsfenster ankündigen und aktuellen Zustand sichern.

@@ -79,5 +79,14 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 - **Verifiziert:** Testmail `alert_sent`, zweiter Lauf `alert_suppressed`; State danach zurückgesetzt; Check weiter `PASS`.
 - Rollback: Helper und Aufruf entfernen; Cron bleibt reines Logging.
 
+### W2.1e — Portal-Mitglieder-Login E2E
+- Temporären Member per Admin-API angelegt, Signin-Link (`/members/:id/signin_urls`) erzeugt, mit Playwright eingelöst; Header zeigte den Account-Link; Member danach gelöscht.
+- **Verifiziert:** Login erfolgreich; keine dauerhafte Mitgliederänderung (Bestand wieder 3).
+
+### W3.5 — Offsite-Backup verifiziert
+- Bestehende restic-Ziele: REST-Server (05:30) und Hetzner Storage Box (06:30); beide liefen am 17.11. erfolgreich.
+- Manueller Lauf 14:23; Snapshot `d6b0aecf` enthält den 13:15-Stand; DB-Gzip und Content-Tar aus der Storage Box erfolgreich geprüft.
+- Keine neue Konfiguration nötig; Runbook ergänzt.
+
 ## Grenzen
 - **Feld-CWV:** PSI/CrUX am 17.11.2026 mit Key geprüft: PSI 200, aber 0 Metriken; CrUX 404 für URL/Origin, Phone/Desktop. Keine Felddaten verfügbar. Bericht: `docs/field-cwv-20261117.md`.
