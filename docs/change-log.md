@@ -143,5 +143,10 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 - Ausgeschlossen: Pro-Linux (eingestellt), linuxforen.de (DNS), Linux-Magazin (kein Weg), Hetzner Community (unverifiziert).
 - Matrix und erste fünf Schritte: `docs/seo/outreach-targets-20261117.md`.
 
+### W2.1o — Zwei Gastbeitrags-Entwürfe
+- **GNU/Linux.ch:** „Zwei Türen, ein Repository: restic auf einer Hetzner Storage Box“, 813 Wörter, Du-/man-Form, CC-BY-SA, ein Link.
+- **LinuxNews.de:** „Docker umgeht ufw: Was auf einem VPS wirklich hilft“, 645 Wörter, Markdown, ein Link.
+- Einreichungswege und Regeln: `content/outreach/README.md`. Noch nicht eingereicht.
+
 ## Grenzen
 - **Feld-CWV:** PSI/CrUX am 17.11.2026 mit Key geprüft: PSI 200, aber 0 Metriken; CrUX 404 für URL/Origin, Phone/Desktop. Keine Felddaten verfügbar. Bericht: `docs/field-cwv-20261117.md`.
