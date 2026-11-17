@@ -88,5 +88,12 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 - Manueller Lauf 14:26; Snapshot `3f3e5c67` enthält `ghost-db-20261117-142614.sql.gz` und `ghost-content-20261117-142614.tar.gz`; DB-Gzip, Content-Tar sowie Theme-Dateien und `custom_theme_settings` geprüft.
 - Keine neue Konfiguration nötig; Runbook ergänzt.
 
+### W2.1f — SERP-Metadaten + Autor-Schema
+- 12 Posts: `meta_title`/`meta_description` gesetzt; H1 und URLs unverändert; keine doppelten Titles; Längen 45–56 (Title), 126–150 (Description).
+- Autor: `website=https://github.com/tobias-peine`, LinkedIn-Handle `tobias-peine`; Article-`author.sameAs` enthält GitHub und LinkedIn; Autorenseite verlinkt beide.
+- Admin-API-Tokens dürfen `/users/` nicht ändern (403); Profil daher per DB gesetzt. Backups: `/opt/backups/kisium-meta-20261117-1435.json`, `/opt/backups/kisium-user-20261117-1438.json` (600, root).
+- **Verifiziert:** `<title>`/Description auf allen 12 Seiten, `sameAs` im Article-Schema, Autorenseite. Matrix: `docs/seo/meta-titles-20261117.md`.
+- Plan: `docs/seo/content-plan-30d.md`, Search Console/Bing: `docs/seo/search-console-bing.md`.
+
 ## Grenzen
 - **Feld-CWV:** PSI/CrUX am 17.11.2026 mit Key geprüft: PSI 200, aber 0 Metriken; CrUX 404 für URL/Origin, Phone/Desktop. Keine Felddaten verfügbar. Bericht: `docs/field-cwv-20261117.md`.
