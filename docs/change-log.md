@@ -70,4 +70,4 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 - Rollback: `default.hbs` aus `/opt/backups/ghost/default.hbs.bak-*`, Theme-Settings zurücksetzen oder `active_theme=casper`.
 
 ## Grenzen
-- **Feld-CWV:** PageSpeed Insights/CrUX am 17.11.2026 HTTP 429 (Quota), kein API-Key; keine Felddaten verfügbar. Dokumentiert in `docs/runbooks/monitoring.md`.
+- **Feld-CWV:** PSI/CrUX am 17.11.2026 mit Key geprüft: PSI 200, aber 0 Metriken; CrUX 404 für URL/Origin, Phone/Desktop. Keine Felddaten verfügbar. Bericht: `docs/field-cwv-20261117.md`.

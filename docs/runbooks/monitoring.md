@@ -41,9 +41,10 @@ Exit-Code 1 bei einem Fehler; Ausgabe `OK`/`FAIL` je Prüfung.
 
 ## Feld-Core-Web-Vitals
 
-- Abruf am 17.11.2026 über PageSpeed Insights/CrUX: **HTTP 429 Quota exceeded**, kein API-Key vorhanden.
-- Damit sind **keine Felddaten** verfügbar; der Status ist unverifiziert, nicht „gut“.
-- Lighthouse bleibt Labor. Für echte Feldwerte: `PSI_API_KEY`/CrUX-Key bereitstellen oder RUM ergänzen (nicht installiert).
+- Abruf am 17.11.2026 mit API-Key: PSI **HTTP 200**, aber `loadingExperience` und `originLoadingExperience` mit **0 Metriken**.
+- CrUX API: **HTTP 404 `chrome ux report data not found`** für URL und Origin, Phone und Desktop.
+- Ergebnis: **keine Felddaten** für kisium.de (zu wenig reale Nutzung); nicht „gut“, nicht „schlecht“. Bericht: `docs/field-cwv-20261117.md`.
+- Lighthouse bleibt Labor. Für echte Feldwerte: mehr Traffic, Search Console oder RUM (Datenschutzentscheidung, nicht installiert).
 
 ## Grenzen
 
