@@ -95,5 +95,11 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 - **Verifiziert:** `<title>`/Description auf allen 12 Seiten, `sameAs` im Article-Schema, Autorenseite. Matrix: `docs/seo/meta-titles-20261117.md`.
 - Plan: `docs/seo/content-plan-30d.md`, Search Console/Bing: `docs/seo/search-console-bing.md`.
 
+### W2.1g — Pillar „VPS absichern“ veröffentlicht
+- Neuer Post: `https://kisium.de/vps-absichern-debian-checkliste/`; 13. Post in der Sitemap; Tags `VPS`, `Sicherheit`, `Homelab`; 12 Codeblöcke, 7 interne Links; eigenes 44-KB-Cover.
+- Kein Newsletter-Versand (`email_recipient_filter=none`).
+- **Verifiziert:** HTTP 200, Title/Description/H1, Codeblöcke, Sitemap 13 Posts, Startseite erstes Bild eager; Lighthouse mobil 3 Läufe: TBT 177/75/26 ms (Median 75), LCP 2.088/2.032/1.242 ms (Median 2.032), CLS 0/0,109/0,109.
+- Tag-Seiten `VPS` und `Sicherheit` mit Meta-Title/Description ergänzt; SEO-Audit danach **30/30**.
+
 ## Grenzen
 - **Feld-CWV:** PSI/CrUX am 17.11.2026 mit Key geprüft: PSI 200, aber 0 Metriken; CrUX 404 für URL/Origin, Phone/Desktop. Keine Felddaten verfügbar. Bericht: `docs/field-cwv-20261117.md`.

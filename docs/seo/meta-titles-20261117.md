@@ -16,11 +16,12 @@ Angewendet über die Ghost Admin API. **H1 und Inhalt unverändert.** Backup des
 | `zertifikate` | Google IT Support Zertifikat: Erfahrungen und Kosten | 52 | Sechs Wochen, rund 80 Stunden, auf Deutsch und über Financial Aid finanziert: Was das Google-IT-Support-Zertifikat bringt – und wo es nicht hilft. | 146 |
 | `mein-homelab` | Mein Homelab: VPS, Docker und drei teure Fehler | 47 | Ein kleiner VPS, ein Reverse Proxy und sechs Container – und drei Fehler, an denen ich hängen geblieben bin. Was ich dabei gelernt habe. | 136 |
 | `mein-weg-in-die-it` | Vom Koch zum Cloud-Sysadmin: Mein Quereinstieg | 46 | Vom Koch zum Cloud-Sysadmin: Wie ich ohne Studium in die IT wechsle, welche Coursera-Kurse helfen und warum ich über den Support einsteige. | 139 |
+| `vps-absichern-debian-checkliste` | VPS absichern: Debian-Checkliste für 2026 | 41 | VPS absichern unter Debian und Ubuntu: SSH-Keys, Firewall, Docker-Fallen, TLS, Backups und Monitoring als praxisnahe Checkliste – mit Befehlen. | 143 |
 
 ## Verifikation
 
-- Alle 12 Seiten: `<title>` = Meta-Title, Meta-Description = gesetzter Text.
-- Keine doppelten Titles; Längen 45–56 (Title) und 126–150 (Description).
+- Alle 13 Seiten: `<title>` = Meta-Title, Meta-Description = gesetzter Text.
+- Keine doppelten Titles; Längen 41–56 (Title) und 126–150 (Description).
 - H1 bleibt der erzählerische Originaltitel; keine URL-Änderung.
 
 ## Autoren-Schema

@@ -75,3 +75,7 @@ Monatlich: Seiten mit Impressionen aber niedriger CTR → Title/Description übe
 ## Search Console / Bing
 
 Siehe `docs/seo/search-console-bing.md`. Ohne Query-Daten bleibt die Title-Optimierung eine Hypothese.
+
+## Status
+
+- **17.11.2026:** Pillar „VPS absichern: Die Debian-Checkliste für den Alltag“ veröffentlicht: https://kisium.de/vps-absichern-debian-checkliste/ — Tags `VPS`, `Sicherheit`, `Homelab`, 12 Codeblöcke, 7 interne Links, eigenes Cover.

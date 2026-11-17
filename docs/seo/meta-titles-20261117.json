@@ -142,5 +142,17 @@
   "title_len": 46,
   "desc_len": 139,
   "updated_at": "2026-11-02T20:52:05.000Z"
+ },
+ {
+  "id": "6afc590c833eaf00078d7f67",
+  "slug": "vps-absichern-debian-checkliste",
+  "h1": "VPS absichern: Die Debian-Checkliste für den Alltag",
+  "old_meta_title": null,
+  "old_meta_description": null,
+  "meta_title": "VPS absichern: Debian-Checkliste für 2026",
+  "meta_description": "VPS absichern unter Debian und Ubuntu: SSH-Keys, Firewall, Docker-Fallen, TLS, Backups und Monitoring als praxisnahe Checkliste – mit Befehlen.",
+  "title_len": 41,
+  "desc_len": 143,
+  "updated_at": null
  }
 ]
