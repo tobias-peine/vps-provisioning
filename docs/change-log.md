@@ -69,5 +69,10 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 - **Verifiziert:** initial kein Portal-Script-Tag, 0 Portal-Requests; Klick und Direktlink öffnen Portal; Suche funktioniert. Lighthouse mobil, 3 Läufe: TBT 0/119/140 ms (Median 119 ms) vs. Baseline 1.066 ms; CLS 0; Score 98–99; LCP 2.065–2.118 ms (Baseline 1.596 ms, noch darüber, im guten Bereich). Labor, keine Felddaten.
 - Rollback: `default.hbs` aus `/opt/backups/ghost/default.hbs.bak-*`, Theme-Settings zurücksetzen oder `active_theme=casper`.
 
+### W2.1d — LCP: erstes Post-Bild eager/high
+- `partials/post-card.hbs`: erstes Bild `loading="eager"` + `fetchpriority="high"`, übrige Bilder bleiben `loading="lazy"`.
+- **Verifiziert:** HTML erstes Bild eager/high, übrige lazy; Lighthouse mobil, 5 Läufe: TBT 440/75/44/94/286 ms (Median 94), LCP 2.427/1.257/1.248/1.139/2.207 ms (Median 1.257); CLS 0/0/0,109/0/0; Score 87–100. Baseline TBT 1.066, LCP 1.596. Zwei Ausreißer (Lauf 1/5), Median belastbarer.
+- Rollback: Zeile in `partials/post-card.hbs` auf `loading="lazy"` zurück, oder `active_theme=casper`.
+
 ## Grenzen
 - **Feld-CWV:** PSI/CrUX am 17.11.2026 mit Key geprüft: PSI 200, aber 0 Metriken; CrUX 404 für URL/Origin, Phone/Desktop. Keine Felddaten verfügbar. Bericht: `docs/field-cwv-20261117.md`.
