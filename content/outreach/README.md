@@ -5,9 +5,13 @@ Stand 17.11.2026. **Entwürfe, noch nicht eingereicht.** Jeweils genau ein Link.
 ## GNU/Linux.ch
 
 - Datei: `content/outreach/gnulinux-restic-storagebox.md`
+- **Haupt-Teil für das Formular:** `content/outreach/gnulinux-restic-storagebox-body.md` (nur Artikel, ohne Metadaten)
+- **Haupt-Bild:** `content/outreach/gnulinux-restic-storagebox-cover.jpg` (800 × 440, ca. 30 KB)
 - Formular: https://gnulinux.ch/mitschreiben#formular
-- Titel: „Zwei Türen, ein Repository: restic auf einer Hetzner Storage Box“
-- Zusammenfassung, Tags und Autor stehen oben in der Datei.
+- **Name:** Tobias Peine
+- **Titel:** Zwei Türen, ein Repository: restic auf einer Hetzner Storage Box
+- **Kurzbeschreibung:** Eine Storage Box spricht SFTP auf zwei Ports – mit unterschiedlichen Wurzeln. Warum das Repository dadurch plötzlich „verschwindet“ und weshalb ein Restore-Test mehr wert ist als ein grüner Cron-Job.
+- **Tags:** backup, restic, hetzner, sftp, restore
 - Lizenz: CC-BY-SA 4.0 (mit der Einreichung bestätigen).
 - Ton: Du-Form oder man-Form; der Text nutzt überwiegend „man“.
 - Link: genau einer, am Ende auf den Erfahrungsbericht.

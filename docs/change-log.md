@@ -148,5 +148,9 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 - **LinuxNews.de:** „Docker umgeht ufw: Was auf einem VPS wirklich hilft“, 645 Wörter, Markdown, ein Link.
 - Einreichungswege und Regeln: `content/outreach/README.md`. Noch nicht eingereicht.
 
+### W2.1p — GNU/Linux.ch-Formularvorlage
+- Formularfertig: Cover `content/outreach/gnulinux-restic-storagebox-cover.jpg` (800×440, ca. 30 KB), Body ohne Metadaten `content/outreach/gnulinux-restic-storagebox-body.md` (756 Wörter, ein Link).
+- Feldwerte in `content/outreach/README.md`; noch nicht eingereicht.
+
 ## Grenzen
 - **Feld-CWV:** PSI/CrUX am 17.11.2026 mit Key geprüft: PSI 200, aber 0 Metriken; CrUX 404 für URL/Origin, Phone/Desktop. Keine Felddaten verfügbar. Bericht: `docs/field-cwv-20261117.md`.
