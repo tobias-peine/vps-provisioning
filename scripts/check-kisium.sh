@@ -71,5 +71,14 @@ if [ "$fail" -eq 0 ]; then
   echo "PASS"
 else
   echo "FAIL"
+  if [ "$(id -u)" -eq 0 ] && [ -x /opt/kisium/send-alert.py ]; then
+    {
+      echo "check-kisium.sh: FAIL"
+      echo "Host: $(hostname)"
+      echo "Zeit: $(date -Is)"
+      echo
+      echo "Details: /var/log/kisium-health.log"
+    } | /opt/kisium/send-alert.py 2>&1 || true
+  fi
 fi
 exit "$fail"

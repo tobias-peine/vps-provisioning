@@ -74,5 +74,10 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 - **Verifiziert:** HTML erstes Bild eager/high, übrige lazy; Lighthouse mobil, 5 Läufe: TBT 440/75/44/94/286 ms (Median 94), LCP 2.427/1.257/1.248/1.139/2.207 ms (Median 1.257); CLS 0/0/0,109/0/0; Score 87–100. Baseline TBT 1.066, LCP 1.596. Zwei Ausreißer (Lauf 1/5), Median belastbarer.
 - Rollback: Zeile in `partials/post-card.hbs` auf `loading="lazy"` zurück, oder `active_theme=casper`.
 
+### W3.4 — E-Mail-Alarm verifiziert
+- `check-kisium.sh` ruft bei `FAIL` `/opt/kisium/send-alert.py` auf; SMTP aus `/opt/kisium/.env`; 6h-Cooldown, State `/var/lib/kisium-health.last-alert`.
+- **Verifiziert:** Testmail `alert_sent`, zweiter Lauf `alert_suppressed`; State danach zurückgesetzt; Check weiter `PASS`.
+- Rollback: Helper und Aufruf entfernen; Cron bleibt reines Logging.
+
 ## Grenzen
 - **Feld-CWV:** PSI/CrUX am 17.11.2026 mit Key geprüft: PSI 200, aber 0 Metriken; CrUX 404 für URL/Origin, Phone/Desktop. Keine Felddaten verfügbar. Bericht: `docs/field-cwv-20261117.md`.

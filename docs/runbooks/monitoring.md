@@ -35,9 +35,11 @@ Exit-Code 1 bei einem Fehler; Ausgabe `OK`/`FAIL` je Prüfung.
 ## Kadenz, Alarmierung und Rollback
 
 - Cron: alle 30 Minuten; nach jedem Deploy/Update zusätzlich manuell.
-- `logger`-Eintrag in die bestehende Alarmkette aufnehmen; Details der Kette sind **unverifiziert**.
+- Bei `FAIL` sendet `check-kisium.sh` eine E-Mail über den vorhandenen Ghost-SMTP (`/opt/kisium/send-alert.py`) an `MAIL_USER` (optional `ALERT_TO`), mit **6h-Cooldown** und State `/var/lib/kisium-health.last-alert`.
+- Test: `printf "Test\n" | sudo /opt/kisium/send-alert.py --force --subject "[kisium] Alert-Test"`.
+- Der `logger`-Eintrag bleibt zusätzlich; der verifizierte Alarmkanal ist E-Mail.
 - Wöchentlich Backup-Größen und Cert-Ablauf prüfen.
-- Rollback: `sudo rm /etc/cron.d/kisium-health-check`; optional `/opt/kisium/check-kisium.sh` entfernen.
+- Rollback: Aufruf in `check-kisium.sh` und `/opt/kisium/send-alert.py` entfernen; Cron bleibt reines Logging.
 
 ## Feld-Core-Web-Vitals
 
