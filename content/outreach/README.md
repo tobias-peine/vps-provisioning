@@ -13,7 +13,14 @@ Stand 17.11.2026. **Entwürfe, noch nicht eingereicht.** Jeweils genau ein Link.
 - **Titel:** Zwei Türen, ein Repository: restic auf einer Hetzner Storage Box
 - **Kurzbeschreibung:** Eine Storage Box spricht SFTP auf zwei Ports – mit unterschiedlichen Wurzeln. Warum das Repository dadurch plötzlich „verschwindet“ und weshalb ein Restore-Test mehr wert ist als ein grüner Cron-Job.
 - **Tags:** backup, restic, hetzner, sftp, restore
-- **Quellenangaben:** `Erfahrungsbericht: https://kisium.de/ein-backup-ziel-das-einen-nachmittag-gebraucht-hat/` — nur nötig, wenn der Markdown-Link im Haupttext nicht als Link übernommen wird. Nicht doppelt setzen.
+- **Quellenangaben:** offizielle Quellen eintragen:
+  ```text
+  Hetzner Storage Box – Dokumentation: https://docs.hetzner.com/storage/storage-box/
+  restic – Repository mit SFTP: https://github.com/restic/restic/blob/master/doc/030_preparing_a_new_repo.rst
+  restic – Restore: https://github.com/restic/restic/blob/master/doc/050_restore.rst
+  ```
+  Wenn der Link im Haupttext **nicht klickbar** ist, zusätzlich:
+  `Erfahrungsbericht: https://kisium.de/ein-backup-ziel-das-einen-nachmittag-gebraucht-hat/`
 - Lizenz: CC-BY-SA 4.0 (mit der Einreichung bestätigen).
 - Ton: Du-Form oder man-Form; der Text nutzt überwiegend „man“.
 - Link: genau einer, am Ende auf den Erfahrungsbericht.
