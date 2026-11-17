@@ -73,8 +73,9 @@ Nur zwei Queries sichtbar; der Rest ist anonymisiert. Aus 4 Query-Impressionen k
 ## Bing
 
 - Eigene Indexierung, unabhängig von Google: `docs/seo/bing-20261117.md`.
-- **17.11.2026:** Import aus der Search Console automatisch erfolgt (Nutzerangabe); Indexierung noch unverifiziert.
-- Nächster Check: Sitemap-Status, URL Inspection, ggf. URL Submission; 24.11.2026.
+- **17.11.2026:** Import aus der Search Console automatisch erfolgt; Property per API bestätigt.
+- Sitemaps: drei Feeds mit Status **Success**; fünf URLs per POST eingereicht.
+- **Indexierung unverifiziert:** `GetUrlInfo` für VPS/Backup noch ohne Crawl-Daten; nächster Check 24.11.2026.
 
 ## Datenlücken
 

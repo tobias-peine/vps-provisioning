@@ -185,5 +185,11 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 - Sitemap-Status und Indexierung noch unverifiziert; nächster Check 24.11.2026.
 - Dokumentiert in `docs/seo/bing-20261117.md`.
 
+### W2.1x — Bing-API: Sitemaps und URL-Meldung
+- Property per `GetUserSites` bestätigt; drei Sitemaps (`sitemap.xml`, posts, pages) mit Status **Success**, letzter Crawl 17.11.2026 15:43–15:44 UTC.
+- Fünf URLs per `SubmitUrl` (POST) mit HTTP 200 eingereicht; Quota danach 95/100 täglich, 1.395/1.400 monatlich.
+- **Indexierung unverifiziert:** `GetUrlInfo` für VPS/Backup liefert noch `HttpStatus: 0` und keine Crawl-Daten; nächster Check 24.11.2026.
+- Alter Endpoint `GetSites` 404; aktuell `GetUserSites` und POST für `SubmitUrl`.
+
 ## Grenzen
 - **Feld-CWV:** PSI/CrUX am 17.11.2026 mit Key geprüft: PSI 200, aber 0 Metriken; CrUX 404 für URL/Origin, Phone/Desktop. Keine Felddaten verfügbar. Bericht: `docs/field-cwv-20261117.md`.
