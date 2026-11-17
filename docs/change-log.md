@@ -212,5 +212,10 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 - Metadaten und Veröffentlichungsvorschlag **26.11.2026, 09:00** in `content/ansible-fuer-einsteiger.meta.md`.
 - **Nicht veröffentlicht**; wartet auf „freigegeben“.
 
+### W2.2c — Checkliste: Passphrase, Portwechsel, Fail2ban
+- VPS-Checkliste lokal ergänzt: Key-Passphrase, SSH-Portwechsel als Loghygiene (kein Schutz), Fail2ban inklusive Docker-/FORWARD-Hinweis.
+- **Noch nicht live**; Veröffentlichung erst nach „freigegeben“.
+- Mastodon-Antworten vorbereitet, aber nicht gepostet: Token `/etc/kisium/mastodon.token` ist root-only; ohne sudo kein API-Zugriff.
+
 ## Grenzen
 - **Feld-CWV:** PSI/CrUX am 17.11.2026 mit Key geprüft: PSI 200, aber 0 Metriken; CrUX 404 für URL/Origin, Phone/Desktop. Keine Felddaten verfügbar. Bericht: `docs/field-cwv-20261117.md`.

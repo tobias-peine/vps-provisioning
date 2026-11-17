@@ -56,6 +56,36 @@ Wichtig:
 - `AllowUsers` nur setzen, wenn der Benutzer wirklich existiert.
 - Root-Login per Passwort ist keine „Bequemlichkeit“, sondern ein offenes Tor.
 
+### Passphrase für den Schlüssel
+
+Ein ed25519-Key ohne Passphrase ist ein Schlüssel, der herumliegt. Mit Passphrase wird aus einer Datei ein Faktor, den ein Angreifer nicht einfach mitnehmen kann:
+
+```bash
+ssh-keygen -t ed25519 -a 100 -f ~/.ssh/kisium_ed25519 -C "kisium-vps"
+ssh-add ~/.ssh/kisium_ed25519
+```
+
+Die Passphrase gehört in den SSH-Agent, nicht in ein Skript und nicht in eine `.env`-Datei. Ein Hardware-Key ist die nächste Stufe, wenn der Aufwand für dich passt.
+
+### SSH-Port ändern? Loghygiene, kein Schutz
+
+Ein anderer Port — etwa `54321` — reduziert vor allem das Lograuschen der Standardscanner. Sicherheit ist er nicht: Scanner finden andere Ports auch. Wenn du ihn trotzdem änderst, ändere alles gleichzeitig:
+
+```text
+# /etc/ssh/sshd_config.d/99-hardening.conf
+Port 54321
+```
+
+```bash
+sudo ufw allow 54321/tcp
+sudo sshd -t
+sudo systemctl reload ssh
+# erst in einer zweiten Sitzung testen, dann:
+sudo ufw delete allow 22/tcp
+```
+
+Denke an Fail2ban (`port = 54321`), die Provider-Firewall und alle Skripte, die SSH auf Port 22 aufrufen. Die laufende Sitzung offen lassen, bis der neue Port nachweislich funktioniert.
+
 Wenn du nur eine Sache aus diesem Artikel machst: diese.
 
 ## 3. Updates und Reboots
@@ -118,6 +148,30 @@ ports:
 ```
 
 Für Docker gibt es die `DOCKER-USER`-Kette, um Regeln vor den Container-Regeln zu setzen. Wichtiger als die perfekte Regel ist die Gewohnheit, nach jedem neuen Container die Ports zu prüfen. Mehr zu meinem Setup steht in [Mein Homelab: ein VPS, Docker und die Fehler, die mich am meisten gelehrt haben](/mein-homelab/).
+
+### Fail2ban: sinnvoll, aber kein Docker-Schutz
+
+Fail2ban liest Logs und sperrt IPs nach wiederholten Fehlversuchen. Bei reinem Key-Login ist der Sicherheitsgewinn klein — ohne Passwort gibt es nichts zu brute-forcen —, aber es hält Logs und Last sauber. Bei Diensten mit Passwort-Login ist es deutlich sinnvoller.
+
+```bash
+sudo apt install fail2ban
+sudo tee /etc/fail2ban/jail.d/sshd.local >/dev/null <<'EOF'
+[sshd]
+enabled = true
+backend = systemd
+port = 22
+maxretry = 5
+findtime = 10m
+bantime = 1h
+ignoreip = localhost ::1
+EOF
+sudo systemctl enable --now fail2ban
+sudo fail2ban-client status sshd
+```
+
+Wenn du den SSH-Port geändert hast, `port = 54321` setzen. Trage in `ignoreip` nur Adressen ein, die du wirklich brauchst — etwa dein Heimnetz oder Tailscale. Sonst sperrst du dich im Zweifel selbst aus.
+
+**Die Docker-Falle:** Fail2ban-Regeln landen typischerweise in der `INPUT`-Kette. Veröffentlichte Container-Ports laufen über `FORWARD`; die Regeln greifen dort oft nicht. Für öffentlich erreichbare Container brauchst du den Schutz in der Anwendung, im Reverse Proxy oder in `DOCKER-USER` — nicht nur in Fail2ban.
 
 ## 5. Dienste reduzieren
 
@@ -212,7 +266,7 @@ Alles andere kann warten. Diese fünf Punkte verhindern die meisten vermeidbaren
 
 ## Was ich bewusst weglasse
 
-- **Port-Knocking und „Security by obscurity“** als Ersatz für Schlüssel und Updates.
+- **Port-Knocking und „Security by obscurity“** als Ersatz für Schlüssel und Updates. Ein anderer SSH-Port reduziert Lograuschen, ist aber kein Schutz.
 - **Ein Antivirus auf jedem Linux-VPS**, wenn die Dienste klar begrenzt sind.
 - **30 Tools gleichzeitig**, die niemand wartet.
 - **Ein „fertiges“ Sicherheitsversprechen.** Sicherheit ist ein Prozess, kein Skript.
