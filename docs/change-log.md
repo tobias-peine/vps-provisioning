@@ -113,5 +113,11 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 - Meta-Description auf 140 Zeichen aktualisiert; H1 unverändert. Ist-Post gesichert: `/opt/backups/kisium-post-zertifikate-20261117-1540.json`.
 - **Verifiziert:** HTTP 200, H1=1, H2=15, H3=12, 2 Tabellen; SEO-Audit 30/30; DB-Backup enthält den neuen Abschnitt.
 
+### W2.1i — Einheitliche Titelbilder
+- Alle 13 Posts erhalten neue 1600×880-Cover aus einem Raster: dunkles Grid, eine Akzentfarbe, Kategorie-Chip, Kurztitel, Archivnummer 01–13; Alt-Texte gesetzt.
+- Alte Post-/Cover-Metadaten gesichert: `/opt/backups/kisium-posts-covers-20261117-1545.json`.
+- **Verifiziert:** 13/13 neue Feature-URLs, 13/13 Alt-Texte, Startseite im 3er-Raster, SEO-Audit 30/30. Lighthouse mobil 3 Läufe: TBT 122/67/160 ms (Median 122), LCP 1.275/1.276/1.308 ms (Median 1.276), CLS 0,109/0/0.
+- Design: `docs/design/covers.md`; Kontaktbogen: `docs/seo/assets/covers-20261117-sheet.jpg`.
+
 ## Grenzen
 - **Feld-CWV:** PSI/CrUX am 17.11.2026 mit Key geprüft: PSI 200, aber 0 Metriken; CrUX 404 für URL/Origin, Phone/Desktop. Keine Felddaten verfügbar. Bericht: `docs/field-cwv-20261117.md`.
