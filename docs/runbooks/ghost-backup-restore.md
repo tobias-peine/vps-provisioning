@@ -61,7 +61,7 @@ Zwei unabhängige Ziele, beide verschlüsselt mit restic:
 
 Beide sichern `/opt/backups`, `/opt/kisium/backups`, `/home/[BENUTZER]/kisium-backups` und `/home/[BENUTZER]/monitor-secrets`; Retention 7 täglich / 4 wöchentlich / 6 monatlich; danach `restic check`.
 
-**Verifiziert am 17.11.2026:** manueller Lauf beider Jobs um 14:23; Storage-Box-Snapshot `d6b0aecf` enthält `ghost-db-20261117-131545.sql.gz` und `content-20261117-131545.tar.gz`; DB-Gzip-Test und Content-Tar-Liste erfolgreich.
+**Verifiziert am 17.11.2026:** manueller Lauf beider Jobs um 14:26; Storage-Box-Snapshot `3f3e5c67` enthält `ghost-db-20261117-142614.sql.gz` und `ghost-content-20261117-142614.tar.gz`; DB-Gzip, Content-Tar sowie die Theme-Dateien `default.hbs`/`partials/post-card.hbs` geprüft.
 
 Manuell anstoßen:
 

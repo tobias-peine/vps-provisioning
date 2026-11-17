@@ -85,7 +85,7 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 
 ### W3.5 — Offsite-Backup verifiziert
 - Bestehende restic-Ziele: REST-Server (05:30) und Hetzner Storage Box (06:30); beide liefen am 17.11. erfolgreich.
-- Manueller Lauf 14:23; Snapshot `d6b0aecf` enthält den 13:15-Stand; DB-Gzip und Content-Tar aus der Storage Box erfolgreich geprüft.
+- Manueller Lauf 14:26; Snapshot `3f3e5c67` enthält `ghost-db-20261117-142614.sql.gz` und `ghost-content-20261117-142614.tar.gz`; DB-Gzip, Content-Tar sowie Theme-Dateien und `custom_theme_settings` geprüft.
 - Keine neue Konfiguration nötig; Runbook ergänzt.
 
 ## Grenzen
