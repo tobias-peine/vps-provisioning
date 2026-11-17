@@ -10,9 +10,93 @@ diff -ruN casper/author.hbs kisium/author.hbs
                  </header>
  
                  {{#if bio}}
+diff -ruN casper/default.hbs kisium/default.hbs
+--- casper/default.hbs	1985-10-26 09:15:00.000000000 +0100
++++ kisium/default.hbs	2026-11-17 13:43:47.803718601 +0100
+@@ -19,7 +19,7 @@
+ 
+     {{!-- This tag outputs all your advanced SEO meta, structured data, and other important settings,
+     it should always be the last tag before the closing head tag --}}
+-    {{ghost_head}}
++    {{ghost_head exclude="portal"}}
+ 
+ </head>
+ <body class="{{body_class}} is-head-{{#match @custom.navigation_layout "Logo on cover"}}left-logo{{else match @custom.navigation_layout "Logo in the middle"}}middle-logo{{else}}stacked{{/match}}{{#match @custom.title_font "=" "Elegant serif"}} has-serif-title{{/match}}{{#match @custom.body_font "=" "Modern sans-serif"}} has-sans-body{{/match}}{{#if @custom.show_publication_cover}} has-cover{{/if}}">
+@@ -111,6 +111,71 @@
+ <script src="{{asset "built/casper.js"}}" defer></script>
+ 
+ {{!-- Ghost outputs required functional scripts with this tag - it should always be the last thing before the closing body tag --}}
++    {{!-- Portal is excluded from ghost_head and loaded on demand to cut initial JS --}}
++    <script>
++    (function () {
++        var portalUrl = 'https://cdn.jsdelivr.net/ghost/portal@~2.72/umd/portal.min.js';
++        var loading = false;
++        var ready = false;
++        var pending = null;
++
++        function loadPortal() {
++            if (ready || loading) return;
++            loading = true;
++            var search = document.querySelector('script[data-sodo-search]');
++            var key = search ? search.getAttribute('data-key') : '';
++            var script = document.createElement('script');
++            script.src = portalUrl;
++            script.async = true;
++            script.crossOrigin = 'anonymous';
++            script.setAttribute('data-i18n', 'true');
++            script.setAttribute('data-ghost', location.origin);
++            if (key) script.setAttribute('data-key', key);
++            script.setAttribute('data-api', location.origin + '/ghost/api/content');
++            script.setAttribute('data-locale', (search && search.getAttribute('data-locale')) || 'en');
++            script.onload = function () {
++                ready = true;
++                loading = false;
++                if (pending) {
++                    var el = pending;
++                    pending = null;
++                    var target = el.getAttribute('href') || ('#/portal/' + (el.getAttribute('data-portal') || 'signin'));
++                    if (target.indexOf('#/portal') === 0) {
++                        location.hash = target;
++                    } else {
++                        el.click();
++                    }
++                }
++            };
++            script.onerror = function () {
++                loading = false;
++            };
++            document.head.appendChild(script);
++        }
++
++        document.addEventListener('click', function (event) {
++            var target = event.target;
++            var link = target && target.closest ? target.closest('[data-portal]') : null;
++            if (!link || ready) return;
++            event.preventDefault();
++            event.stopPropagation();
++            pending = link;
++            loadPortal();
++        }, true);
++
++        function openFromUrl() {
++            if (location.hash.indexOf('#/portal') === 0 || /[?&]portal=/.test(location.search)) {
++                loadPortal();
++            }
++        }
++        if (document.readyState === 'loading') {
++            document.addEventListener('DOMContentLoaded', openFromUrl);
++        } else {
++            openFromUrl();
++        }
++    })();
++    </script>
++
+ {{ghost_foot}}
+ 
+ </body>
 diff -ruN casper/package.json kisium/package.json
 --- casper/package.json	1985-10-26 09:15:00.000000000 +0100
-+++ kisium/package.json	2026-11-17 12:58:23.282982970 +0100
++++ kisium/package.json	2026-11-17 13:49:42.899630682 +0100
 @@ -1,8 +1,8 @@
  {
 -    "name": "casper",
@@ -25,6 +109,33 @@ diff -ruN casper/package.json kisium/package.json
      "engines": {
          "ghost": ">=5.0.0",
          "node": ">=22.12.0"
+@@ -109,7 +109,7 @@
+                     "Modern sans-serif",
+                     "Elegant serif"
+                 ],
+-                "default": "Modern sans-serif"
++                "default": "Elegant serif"
+             },
+             "body_font": {
+                 "type": "select",
+@@ -121,7 +121,7 @@
+             },
+             "show_publication_cover": {
+                 "type": "boolean",
+-                "default": true,
++                "default": false,
+                 "group": "homepage"
+             },
+             "header_style": {
+@@ -131,7 +131,7 @@
+                     "Left aligned",
+                     "Hidden"
+                 ],
+-                "default": "Center aligned",
++                "default": "Left aligned",
+                 "group": "homepage"
+             },
+             "feed_layout": {
 diff -ruN casper/post.hbs kisium/post.hbs
 --- casper/post.hbs	1985-10-26 09:15:00.000000000 +0100
 +++ kisium/post.hbs	2026-11-17 12:58:23.282820455 +0100

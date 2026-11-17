@@ -39,6 +39,12 @@ Exit-Code 1 bei einem Fehler; Ausgabe `OK`/`FAIL` je Prüfung.
 - Wöchentlich Backup-Größen und Cert-Ablauf prüfen.
 - Rollback: `sudo rm /etc/cron.d/kisium-health-check`; optional `/opt/kisium/check-kisium.sh` entfernen.
 
+## Feld-Core-Web-Vitals
+
+- Abruf am 17.11.2026 über PageSpeed Insights/CrUX: **HTTP 429 Quota exceeded**, kein API-Key vorhanden.
+- Damit sind **keine Felddaten** verfügbar; der Status ist unverifiziert, nicht „gut“.
+- Lighthouse bleibt Labor. Für echte Feldwerte: `PSI_API_KEY`/CrUX-Key bereitstellen oder RUM ergänzen (nicht installiert).
+
 ## Grenzen
 
 - Keine Feld-Core-Web-Vitals; Lighthouse ist Labor.

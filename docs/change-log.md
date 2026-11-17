@@ -62,3 +62,12 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 - `/etc/cron.d/kisium-health-check` (alle 30 Minuten), Log `/var/log/kisium-health.log`, `logger` bei Fehler; Skript unter `/opt/kisium/check-kisium.sh`.
 - **Verifiziert:** manueller Lauf als root rc=0, 7/7 PASS.
 - Rollback: Cron-Datei und optional Skript entfernen.
+
+### W2.1c — TBT: Portal lazy, Theme-Settings zurückgesetzt
+- `default.hbs`: `{{ghost_head exclude="portal"}}` plus Lazy-Loader; Portal lädt erst bei Sign-in/Signup oder Direktlink `#/portal/...`; Suche bleibt initial (liefert den Content-Key).
+- Theme-Aktivierung hatte Custom-Settings auf Defaults gesetzt: Cover an (119-KB-Logo als LCP), Header zentriert, moderne Schrift. Auf Casper-Werte zurückgesetzt: `show_publication_cover=false`, `header_style=Left aligned`, `title_font=Elegant serif`; Defaults im Patch angepasst.
+- **Verifiziert:** initial kein Portal-Script-Tag, 0 Portal-Requests; Klick und Direktlink öffnen Portal; Suche funktioniert. Lighthouse mobil, 3 Läufe: TBT 0/119/140 ms (Median 119 ms) vs. Baseline 1.066 ms; CLS 0; Score 98–99; LCP 2.065–2.118 ms (Baseline 1.596 ms, noch darüber, im guten Bereich). Labor, keine Felddaten.
+- Rollback: `default.hbs` aus `/opt/backups/ghost/default.hbs.bak-*`, Theme-Settings zurücksetzen oder `active_theme=casper`.
+
+## Grenzen
+- **Feld-CWV:** PageSpeed Insights/CrUX am 17.11.2026 HTTP 429 (Quota), kein API-Key; keine Felddaten verfügbar. Dokumentiert in `docs/runbooks/monitoring.md`.

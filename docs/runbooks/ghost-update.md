@@ -78,6 +78,8 @@ Bei einem Image-Wechsel prüfen, ob `node` vorhanden ist; sonst Check anpassen.
 - Patch: `themes/kisium-casper.patch`.
 - Casper-Update: Patch gegen die neue Casper-Version prüfen/neu anwenden, dann Tag-H1 und Beitrags-Byline testen.
 - Bei größeren Casper-Änderungen: Fork neu aufbauen, nicht blind patchen.
+- **Portal-Lazy-Loader:** `default.hbs` nutzt `portal@~2.72` fest verdrahtet. Nach jedem Ghost-Update die Portal-Version in `core/shared/config/defaults.json` prüfen und den Loader anpassen.
+- **Theme-Settings:** nach einer Neuinstallation `show_publication_cover=false`, `header_style=Left aligned`, `title_font=Elegant serif` setzen; sonst wird das 119-KB-Cover zum LCP.
 
 ## Nicht Teil dieses Runbooks
 
