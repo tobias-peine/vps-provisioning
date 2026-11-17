@@ -222,5 +222,11 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 - Der zweite Post (SSH-Port/ed25519-Passphrase) war bereits beantwortet: https://mastodon.social/@kisium/117632215233419619 — kein Doppelpost.
 - Checklisten-Update weiterhin **nur lokal**; live noch nicht veröffentlicht.
 
+### W2.2e — VPS-Checkliste live aktualisiert
+- Freigabe 17.11.2026; Ghost-Post `vps-absichern-debian-checkliste` live aktualisiert: Key-Passphrase, SSH-Portwechsel als Loghygiene, Fail2ban inkl. Docker-/`FORWARD`-Hinweis.
+- Ghost Admin API: `PUT` 200, `updated_at` 17.11.2026 17:48:08 UTC; Live-Seite HTTP 200, Marker und interne Links geprüft.
+- Backup vor Update: `~/kisium-backups/kisium-post-vps-20261117-before-live-update.json` (600).
+- Mastodon: Fail2ban-Antwort gepostet; SSH-Port/Passphrase war bereits beantwortet; Auto-Poster-Dry-Run: keine neuen Artikel.
+
 ## Grenzen
 - **Feld-CWV:** PSI/CrUX am 17.11.2026 mit Key geprüft: PSI 200, aber 0 Metriken; CrUX 404 für URL/Origin, Phone/Desktop. Keine Felddaten verfügbar. Bericht: `docs/field-cwv-20261117.md`.
