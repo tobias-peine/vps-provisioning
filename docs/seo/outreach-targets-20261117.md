@@ -10,7 +10,7 @@ Gastbeitrags-/Artikel-Weg oder eine echte Community für Hilfe bietet.
 
 | Prio | Ziel | Typ | Warum | Kontakt | Status |
 |---|---|---|---|---|---|
-| **A** | **GNU/Linux.ch** | Community-Magazin (CH/DE) | Artikelformular, Markdown, CC-BY-SA; Linux/Open Source | [Mitschreiben](https://gnulinux.ch/mitschreiben#formular) | **eingereicht 17.11.2026** |
+| **A** | **GNU/Linux.ch** | Community-Magazin (CH/DE) | Artikelformular, Markdown, CC-BY-SA; Linux/Open Source | [Mitschreiben](https://gnulinux.ch/mitschreiben#formular) | **angenommen — erscheint 20.11.2026, 09:00; Link offen** |
 | **A** | **LinuxNews.de** | News/Tutorials | „Gastautoren willkommen“, Markdown-Formular, Autor wird genannt | [Mitschreiben](https://linuxnews.de/mitschreiben/) | **eingereicht 17.11.2026, bestätigt** |
 | **B** | **IT-Administrator** | Fachmagazin | Professionelle Admin-Zielgruppe, Kontaktformular; Gastbeitragsregeln nicht öffentlich | [Kontakt](https://www.it-administrator.de/contact) | Pitch **unverifiziert** |
 | **B** | **t3n** | Digital-Business | Gastautoren möglich, aber **keine Backlinks im Artikel** — nur Autorenbio | [Gastautor-Seite](https://t3n.de/news/gastautor-t3n-277791/) | verifiziert, **schwacher SEO-Wert** |

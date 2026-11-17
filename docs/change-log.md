@@ -235,5 +235,10 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 - Metadaten und Veröffentlichungsvorschlag **03.12.2026, 09:00** in `content/lunaria-local-first-gesundheits-pwa.meta.md`.
 - **Nicht veröffentlicht**; wartet auf „freigegeben“.
 
+### W2.2g — GNU/Linux.ch bestätigt
+- Mail vom 17.11.2026, 21:24: Artikel „Zwei Türen, ein Repository“ erscheint **Freitag, 20.11.2026, 09:00**.
+- Link noch nicht bekannt; Backlink wird erst nach Veröffentlichung gezählt.
+- Publikationstag-Checkliste: `docs/seo/publication-day-20261120.md`.
+
 ## Grenzen
 - **Feld-CWV:** PSI/CrUX am 17.11.2026 mit Key geprüft: PSI 200, aber 0 Metriken; CrUX 404 für URL/Origin, Phone/Desktop. Keine Felddaten verfügbar. Bericht: `docs/field-cwv-20261117.md`.
