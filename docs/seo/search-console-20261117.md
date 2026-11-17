@@ -72,5 +72,7 @@ Nur zwei Queries sichtbar; der Rest ist anonymisiert. Aus 4 Query-Impressionen k
 ## Umgesetzt
 
 - **17.11.2026:** `/zertifikate/` um „Lohnt sich 2026?“, Entscheidungsmatrix, Alternativen und drei FAQ erweitert; Meta-Description 140 Zeichen; H1 unverändert; SEO-Audit 30/30.
+- **17.11.2026:** Interne Links von Homelab, Patchday, Ansible/IaC und Backup-Ziel auf den VPS-Pillar; Backup-Ziel war vorher ein Orphan.
+- **17.11.2026:** `/bewerbung-quereinsteiger/` um Anschreiben-Vorlage, drei Fehler und 10-Punkte-Checkliste erweitert; SEO-Audit 30/30.
 
 Quellen: `docs/seo/search-console/2026-11-17/`

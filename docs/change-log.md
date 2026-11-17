@@ -119,5 +119,16 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 - **Verifiziert:** 13/13 neue Feature-URLs, 13/13 Alt-Texte, Startseite im 3er-Raster, SEO-Audit 30/30. Lighthouse mobil 3 Läufe: TBT 122/67/160 ms (Median 122), LCP 1.275/1.276/1.308 ms (Median 1.276), CLS 0,109/0/0.
 - Design: `docs/design/covers.md`; Kontaktbogen: `docs/seo/assets/covers-20261117-sheet.jpg`.
 
+### W2.1j — Interne Links zum VPS-Pillar
+- Vier technische Posts verlinken jetzt kontextuell auf `/vps-absichern-debian-checkliste/`: `mein-homelab`, `patchday`, `ansible-infrastruktur-als-code` und `ein-backup-ziel…`.
+- Das Backup-Ziel hatte vorher **null** interne Links; es verlinkt jetzt zusätzlich auf Patchday und Homelab.
+- **Verifiziert:** Marker in allen vier Posts, SEO-Audit 30/30; alte Post-Metadaten unter `/opt/backups/kisium-posts-internallinks-20261117.json`.
+
+### W2.1k — Bewerbung-Post vertieft
+- Neue Abschnitte: kopierbare **Anschreiben-Vorlage**, **drei häufigste Fehler**, **10-Punkte-Checkliste vor dem Absenden**.
+- Meta-Description auf 130 Zeichen aktualisiert; H1 unverändert; interne Links auf Homelab, Zertifikat und IT-Berufe.
+- **Verifiziert:** HTTP 200, H1=1, H2=13, H3=3, Codeblock=1, 35 Listeneinträge; SEO-Audit 30/30.
+- Ist-Post gesichert: `/opt/backups/kisium-post-bewerbung-20261117.json`.
+
 ## Grenzen
 - **Feld-CWV:** PSI/CrUX am 17.11.2026 mit Key geprüft: PSI 200, aber 0 Metriken; CrUX 404 für URL/Origin, Phone/Desktop. Keine Felddaten verfügbar. Bericht: `docs/field-cwv-20261117.md`.
