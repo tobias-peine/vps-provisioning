@@ -3,6 +3,8 @@
 Stand 17.11.2026. Search-Console-Links-Export: **0 Datenzeilen**. Das ist die
 Ausgangslage — nicht „keine Links möglich“, sondern „noch keine redaktionellen Links“.
 
+Konkrete, geprüfte Ziele: `docs/seo/outreach-targets-20261117.md`.
+
 ## Prinzipien
 
 - Keine gekauften Links, keine Link-Tausch-Netzwerke, keine Massenmails.

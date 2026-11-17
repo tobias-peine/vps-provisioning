@@ -3,6 +3,8 @@
 Stand 17.11.2026. Für den Versand von der **bestehenden** E-Mail-Adresse. Kein neues
 Postfach, kein SMTP-Setup, keine Kosten.
 
+Gefilterte Ziele: `docs/seo/outreach-targets-20261117.md`.
+
 ## Regeln
 
 - Eine Mail pro Ziel, persönlich. Kein BCC, keine Massenmail.

@@ -138,5 +138,10 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 - Fünf Vorlagen (Gastbeitrag, Podcast, Newsletter, Open-Source-Docs, Community-Antwort), Follow-up und Tracking-Rahmen: `docs/seo/outreach-kit-20261117.md`.
 - Versand von der bestehenden Adresse; `hallo@kisium.de` bleibt Weiterleitung. Kein neues Postfach, keine Kosten.
 
+### W2.1n — Outreach-Ziele gefiltert
+- Recherche und Filterung: nur zwei Ziele mit verifiziertem Gastbeitragsweg (**GNU/Linux.ch**, **LinuxNews.de**); zwei Community-Foren; IT-Administrator als Pitch mit unverifizierten Regeln; t3n ohne Backlinks im Artikel.
+- Ausgeschlossen: Pro-Linux (eingestellt), linuxforen.de (DNS), Linux-Magazin (kein Weg), Hetzner Community (unverifiziert).
+- Matrix und erste fünf Schritte: `docs/seo/outreach-targets-20261117.md`.
+
 ## Grenzen
 - **Feld-CWV:** PSI/CrUX am 17.11.2026 mit Key geprüft: PSI 200, aber 0 Metriken; CrUX 404 für URL/Origin, Phone/Desktop. Keine Felddaten verfügbar. Bericht: `docs/field-cwv-20261117.md`.
