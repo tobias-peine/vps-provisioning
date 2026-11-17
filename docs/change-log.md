@@ -134,5 +134,9 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 - Search-Console-Links-Export „More sample links“ (17.11.): nur Kopfzeile, 0 Datenzeilen. Keine externen Links in diesem Export sichtbar; außerhalb des Exports unverifiziert.
 - Backlink-Plan mit Prinzipien, Zielgruppen, Outreach-Vorlage und Tracking: `docs/seo/backlinks-20261117.md`; Export: `docs/seo/search-console/2026-11-17/Links-sample.csv`.
 
+### W2.1m — Outreach-Kit für 0 €
+- Fünf Vorlagen (Gastbeitrag, Podcast, Newsletter, Open-Source-Docs, Community-Antwort), Follow-up und Tracking-Rahmen: `docs/seo/outreach-kit-20261117.md`.
+- Versand von der bestehenden Adresse; `hallo@kisium.de` bleibt Weiterleitung. Kein neues Postfach, keine Kosten.
+
 ## Grenzen
 - **Feld-CWV:** PSI/CrUX am 17.11.2026 mit Key geprüft: PSI 200, aber 0 Metriken; CrUX 404 für URL/Origin, Phone/Desktop. Keine Felddaten verfügbar. Bericht: `docs/field-cwv-20261117.md`.
