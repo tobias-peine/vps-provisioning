@@ -162,5 +162,9 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 - Bestätigung im Formular: „Vielen Dank. Wir werden deinen Artikel in Kürze prüfen.“
 - Status in `docs/seo/outreach-targets-20261117.md`; Follow-up ab 24.11., falls keine Rückmeldung.
 
+### W2.1s — LinuxNews.de-Formularvorlage
+- Artikelbody mit Titel als erster Markdown-Zeile: `content/outreach/linuxnews-docker-ufw-body.md` (610 Wörter, ein Link).
+- Feldwerte, Kurzbeschreibung und Tags in `content/outreach/README.md`; noch nicht eingereicht.
+
 ## Grenzen
 - **Feld-CWV:** PSI/CrUX am 17.11.2026 mit Key geprüft: PSI 200, aber 0 Metriken; CrUX 404 für URL/Origin, Phone/Desktop. Keine Felddaten verfügbar. Bericht: `docs/field-cwv-20261117.md`.

@@ -28,10 +28,13 @@ Stand 17.11.2026. **Entwürfe, noch nicht eingereicht.** Jeweils genau ein Link.
 ## LinuxNews.de
 
 - Datei: `content/outreach/linuxnews-docker-ufw.md`
+- **Artikel für das Formular:** `content/outreach/linuxnews-docker-ufw-body.md` (Titel als erste Markdown-Zeile, 610 Wörter, ein Link)
 - Formular: https://linuxnews.de/mitschreiben/
-- Titel: „Docker umgeht ufw: Was auf einem VPS wirklich hilft“
-- Kurzbeschreibung, Tags und Autor stehen oben in der Datei.
-- Markdown; Autor wird genannt; „WordPress-Kenntnisse?“ kann mit „Nein, einmalig“ beantwortet werden.
+- **Name:** Tobias Peine
+- **Kurzbeschreibung:** `ufw` sagt „deny“, der Port ist trotzdem offen. Docker schreibt eigene Firewall-Regeln – drei Wege, das in den Griff zu bekommen.
+- **Tags:** docker, ufw, firewall, vps, sicherheit
+- **WordPress-Kenntnisse / regelmäßiger Autor:** „Nein bitte nicht, das ist einmalig“ (außer du willst dauerhaft schreiben).
+- Kein separates Titelfeld: Der Titel steht als `# Docker umgeht ufw: …` im Artikel.
 - Link: genau einer, am Ende auf die VPS-Checkliste.
 
 ## Nach dem Absenden
