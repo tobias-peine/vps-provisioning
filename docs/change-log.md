@@ -152,5 +152,10 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 - Formularfertig: Cover `content/outreach/gnulinux-restic-storagebox-cover.jpg` (800×440, ca. 30 KB), Body ohne Metadaten `content/outreach/gnulinux-restic-storagebox-body.md` (756 Wörter, ein Link).
 - Feldwerte in `content/outreach/README.md`; noch nicht eingereicht.
 
+### W2.1q — Zweites Bild für GNU/Linux.ch
+- Diagramm „Eine Storage Box, zwei Wurzeln“ als 800×450-JPEG (ca. 32 KB); Port 22 → `/`, Port 23 → `/home`.
+- Platzhalter `[Bild1]` im Body nach dem sftp-Codeblock; Body jetzt 757 Wörter, weiterhin genau ein Link.
+- Pfad: `content/outreach/gnulinux-restic-storagebox-bild1.jpg`.
+
 ## Grenzen
 - **Feld-CWV:** PSI/CrUX am 17.11.2026 mit Key geprüft: PSI 200, aber 0 Metriken; CrUX 404 für URL/Origin, Phone/Desktop. Keine Felddaten verfügbar. Bericht: `docs/field-cwv-20261117.md`.

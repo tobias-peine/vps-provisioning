@@ -7,6 +7,7 @@ Stand 17.11.2026. **Entwürfe, noch nicht eingereicht.** Jeweils genau ein Link.
 - Datei: `content/outreach/gnulinux-restic-storagebox.md`
 - **Haupt-Teil für das Formular:** `content/outreach/gnulinux-restic-storagebox-body.md` (nur Artikel, ohne Metadaten)
 - **Haupt-Bild:** `content/outreach/gnulinux-restic-storagebox-cover.jpg` (800 × 440, ca. 30 KB)
+- **Weiteres Bild im Text:** `content/outreach/gnulinux-restic-storagebox-bild1.jpg` (800 × 450, ca. 32 KB); Platzhalter `[Bild1]` steht im Body nach dem sftp-Codeblock.
 - Formular: https://gnulinux.ch/mitschreiben#formular
 - **Name:** Tobias Peine
 - **Titel:** Zwei Türen, ein Repository: restic auf einer Hetzner Storage Box

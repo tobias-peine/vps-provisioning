@@ -16,6 +16,8 @@ pwd
 ls -la
 ```
 
+[Bild1]
+
 Erst wenn `pwd` und der restic-Pfad zusammenpassen, ist der Rest sinnvoll.
 
 ## Ein Schlüssel für alles ist ein Schlüssel für nichts
