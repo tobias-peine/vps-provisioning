@@ -10,12 +10,15 @@ Stand: 17.11.2026.
 - `/etc/cron.d/kisium-tls-renew` — TLS-Erneuerung.
 - Die genaue Alarmkette ist nicht Teil dieses Dokuments; Details sind **unverifiziert**.
 
-## Check-Skript
+## Check-Skript und Cron
 
-`scripts/check-kisium.sh` läuft auf dem VPS (root oder mit `sudo -n` für Backup-Zugriff):
+Quelle im Repo: `scripts/check-kisium.sh`. Installiert auf dem VPS: `/opt/kisium/check-kisium.sh`.
+Cron: `/etc/cron.d/kisium-health-check`, alle 30 Minuten, Log `/var/log/kisium-health.log`; bei Exit 1 zusätzlich `logger -t kisium-health "check failed"`.
+
+Manuell:
 
 ```bash
-sudo bash scripts/check-kisium.sh
+sudo /opt/kisium/check-kisium.sh
 ```
 
 Geprüft wird:
@@ -29,11 +32,12 @@ Geprüft wird:
 
 Exit-Code 1 bei einem Fehler; Ausgabe `OK`/`FAIL` je Prüfung.
 
-## Empfohlene Kadenz
+## Kadenz, Alarmierung und Rollback
 
-- Nach jedem Deploy/Update.
-- Täglich per externem Cron oder bestehender Alarmkette.
-- Zusätzlich wöchentlich ein manueller Blick auf Backup-Größen und Cert-Ablauf.
+- Cron: alle 30 Minuten; nach jedem Deploy/Update zusätzlich manuell.
+- `logger`-Eintrag in die bestehende Alarmkette aufnehmen; Details der Kette sind **unverifiziert**.
+- Wöchentlich Backup-Größen und Cert-Ablauf prüfen.
+- Rollback: `sudo rm /etc/cron.d/kisium-health-check`; optional `/opt/kisium/check-kisium.sh` entfernen.
 
 ## Grenzen
 

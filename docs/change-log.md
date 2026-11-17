@@ -57,3 +57,8 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 ### W3.2/W3.3 — Runbooks und Check-Skript
 - `docs/runbooks/ghost-update.md`, `docs/runbooks/monitoring.md`, `scripts/check-kisium.sh`.
 - **Verifiziert:** Check-Skript auf dem VPS 7/7 PASS (HTTP/2, www-Redirect, TLS/SAN, Container, Backup-Alter, Disk).
+
+### W3.3 — Health-Check als Cron installiert
+- `/etc/cron.d/kisium-health-check` (alle 30 Minuten), Log `/var/log/kisium-health.log`, `logger` bei Fehler; Skript unter `/opt/kisium/check-kisium.sh`.
+- **Verifiziert:** manueller Lauf als root rc=0, 7/7 PASS.
+- Rollback: Cron-Datei und optional Skript entfernen.
