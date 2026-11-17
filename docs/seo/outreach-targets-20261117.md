@@ -47,6 +47,9 @@ Gastbeitrags-/Artikel-Weg oder eine echte Community für Hilfe bietet.
    einen Link auf die Checkliste. — **17.11.2026 eingereicht und bestätigt**;
    Follow-up ab 24.11.
 3. **Administrator.de**: drei bestehende Fragen zu Docker/ufw/Backup beantworten,
+   ohne Link. Profil ausfüllen. — **Antworten vorbereitet** in
+   `content/outreach/forum-answers-20261117.md`; noch nicht gepostet.
+3. **Administrator.de**: drei bestehende Fragen zu Docker/ufw/Backup beantworten,
    ohne Link. Profil ausfüllen.
 4. **Linux-nerds.org**: zwei Antworten, gleiche Regel.
 5. **IT-Administrator**: erst nach einer veröffentlichten Gaststrecke pitchen;

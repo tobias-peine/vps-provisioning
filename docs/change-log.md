@@ -175,5 +175,10 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 - Import aus der Search Console, Sitemap, URL-Meldung, URL Inspection und optional IndexNow: `docs/seo/bing-20261117.md`.
 - Keine Änderung an Website, DNS oder NPM; nur Dokumentation.
 
+### W2.1v — Foren-Antworten vorbereitet
+- Drei offene administrator.de-Threads zu Docker/ufw/NPM identifiziert und Antworten ohne Link formuliert: `content/outreach/forum-answers-20261117.md`.
+- linux-nerds.org hat aktuell keine passende offene Docker-/Backup-Frage; nicht erzwungen.
+- Noch nicht gepostet; Status in `docs/seo/outreach-targets-20261117.md`.
+
 ## Grenzen
 - **Feld-CWV:** PSI/CrUX am 17.11.2026 mit Key geprüft: PSI 200, aber 0 Metriken; CrUX 404 für URL/Origin, Phone/Desktop. Keine Felddaten verfügbar. Bericht: `docs/field-cwv-20261117.md`.
