@@ -57,7 +57,7 @@ Nur zwei Queries sichtbar; der Rest ist anonymisiert. Aus 4 Query-Impressionen k
 
 ## Nächste Schritte, priorisiert
 
-1. **`/zertifikate/` ausbauen:** Abschnitt „Lohnt sich das Google IT Support Zertifikat 2026?“, FAQ (Kosten, Dauer, Financial Aid, Alternativen), interne Links aus allen Career-Posts. Kein Title-Churn bei 3 Impressionen.
+1. **`/zertifikate/` ausbauen:** Abschnitt „Lohnt sich das Google IT Support Zertifikat 2026?“, FAQ (Kosten, Dauer, Financial Aid, Alternativen), interne Links aus allen Career-Posts. Kein Title-Churn bei 3 Impressionen. — **17.11. umgesetzt** (siehe unten).
 2. **`/bewerbung-quereinsteiger/` vertiefen:** konkretes Anschreiben-Beispiel, Checkliste, typische Fehler; Backlinks aus GitHub/LinkedIn/Communities.
 3. **Mobile prüfen:** Title/Description und ersten Absatz auf dem Handy ansehen; erst nach mehr Daten ändern.
 4. **Indexierung:** Sitemap-Index erneut senden; neuen VPS-Post per URL-Prüfung beantragen; Seiten-Report exportieren.
@@ -68,5 +68,9 @@ Nur zwei Queries sichtbar; der Rest ist anonymisiert. Aus 4 Query-Impressionen k
 - Indexierungsstatus (Seiten-Report) fehlt.
 - Query-Daten sind stark anonymisiert.
 - Feld-CWV bleibt ohne CrUX-Daten leer.
+
+## Umgesetzt
+
+- **17.11.2026:** `/zertifikate/` um „Lohnt sich 2026?“, Entscheidungsmatrix, Alternativen und drei FAQ erweitert; Meta-Description 140 Zeichen; H1 unverändert; SEO-Audit 30/30.
 
 Quellen: `docs/seo/search-console/2026-11-17/`

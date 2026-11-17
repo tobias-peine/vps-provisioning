@@ -107,5 +107,11 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 - **Verifiziert:** Baseline 13 Artikel ohne Post; Dry-Run danach „keine neuen Artikel“; Caption 310 Zeichen; Cron aktiv; Log leer.
 - Rollback: `/etc/cron.d/kisium-mastodon` entfernen; Details: `docs/runbooks/mastodon-autopost.md`.
 
+### W2.1h — Zertifikat-Post datengetrieben ausgebaut
+- Search-Console-Baseline: `/zertifikate/` Position 7,73 (Query „google it support zertifikat“ 9,33).
+- Ergänzt: „Lohnt sich das Google IT Support Zertifikat 2026?“, Entscheidungsmatrix, Alternativen (CompTIA A+/Network+, LPI, AWS/Azure), drei neue FAQ; interne Links zu IT-Berufen, Quereinstieg und Bewerbung.
+- Meta-Description auf 140 Zeichen aktualisiert; H1 unverändert. Ist-Post gesichert: `/opt/backups/kisium-post-zertifikate-20261117-1540.json`.
+- **Verifiziert:** HTTP 200, H1=1, H2=15, H3=12, 2 Tabellen; SEO-Audit 30/30; DB-Backup enthält den neuen Abschnitt.
+
 ## Grenzen
 - **Feld-CWV:** PSI/CrUX am 17.11.2026 mit Key geprüft: PSI 200, aber 0 Metriken; CrUX 404 für URL/Origin, Phone/Desktop. Keine Felddaten verfügbar. Bericht: `docs/field-cwv-20261117.md`.
