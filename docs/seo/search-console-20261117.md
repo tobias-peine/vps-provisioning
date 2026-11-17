@@ -63,6 +63,12 @@ Nur zwei Queries sichtbar; der Rest ist anonymisiert. Aus 4 Query-Impressionen k
 4. **Indexierung:** Sitemap-Index erneut senden; neuen VPS-Post per URL-Prüfung beantragen; Seiten-Report exportieren.
 5. **2–4 Wochen messen** — nicht auf 2 Klicks optimieren.
 
+## URL-Status (17.11.2026, Nutzerangabe)
+
+- **Indexiert:** `/vps-absichern-debian-checkliste/`, `/bewerbung-quereinsteiger/`, `/zertifikate/`
+- **Noch nicht indexiert:** `/ein-backup-ziel-das-einen-nachmittag-gebraucht-hat/`
+- Für den Backup-Post: URL-Prüfung → „Indexierung beantragen“, falls noch nicht geschehen; danach 2–4 Tage warten. Keine erneute Anfrage für die bereits indexierten URLs.
+
 ## Sitemap-Abgleich (17.11.2026)
 
 - Sitemap-Index enthält **4 Kind-Sitemaps**: `sitemap-pages.xml`, `sitemap-posts.xml`, `sitemap-authors.xml`, `sitemap-tags.xml`.

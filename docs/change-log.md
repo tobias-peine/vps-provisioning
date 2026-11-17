@@ -196,5 +196,10 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 - Search Console zeigt 25 erkannte Seiten; Kind-Sitemaps zuletzt 16.11.2026 gelesen, Index 17.11.2026 — Aktualisierungsstau, kein Sitemap-Fehler.
 - Aktion: URL-Prüfung für neue URLs; Index einmal neu senden; bei weiterhin 25 Kind-Sitemaps einmal separat senden.
 
+### W2.1z — URL-Status: nur Backup-Post offen
+- Nutzerangabe: VPS-Pillar, Bewerbung und Zertifikate sind indexiert; der Backup-Post noch nicht.
+- Nächster Schritt: für den Backup-Post „Indexierung beantragen“ (falls nicht bereits erfolgt), dann 2–4 Tage warten.
+- Keine erneute Anfrage für die bereits indexierten URLs.
+
 ## Grenzen
 - **Feld-CWV:** PSI/CrUX am 17.11.2026 mit Key geprüft: PSI 200, aber 0 Metriken; CrUX 404 für URL/Origin, Phone/Desktop. Keine Felddaten verfügbar. Bericht: `docs/field-cwv-20261117.md`.
