@@ -10,7 +10,7 @@ Gastbeitrags-/Artikel-Weg oder eine echte Community für Hilfe bietet.
 
 | Prio | Ziel | Typ | Warum | Kontakt | Status |
 |---|---|---|---|---|---|
-| **A** | **GNU/Linux.ch** | Community-Magazin (CH/DE) | Artikelformular, Markdown, CC-BY-SA; Linux/Open Source | [Mitschreiben](https://gnulinux.ch/mitschreiben#formular) | **verifiziert** |
+| **A** | **GNU/Linux.ch** | Community-Magazin (CH/DE) | Artikelformular, Markdown, CC-BY-SA; Linux/Open Source | [Mitschreiben](https://gnulinux.ch/mitschreiben#formular) | **eingereicht 17.11.2026** |
 | **A** | **LinuxNews.de** | News/Tutorials | „Gastautoren willkommen“, Markdown-Formular, Autor wird genannt | [Mitschreiben](https://linuxnews.de/mitschreiben/) | **verifiziert** |
 | **B** | **IT-Administrator** | Fachmagazin | Professionelle Admin-Zielgruppe, Kontaktformular; Gastbeitragsregeln nicht öffentlich | [Kontakt](https://www.it-administrator.de/contact) | Pitch **unverifiziert** |
 | **B** | **t3n** | Digital-Business | Gastautoren möglich, aber **keine Backlinks im Artikel** — nur Autorenbio | [Gastautor-Seite](https://t3n.de/news/gastautor-t3n-277791/) | verifiziert, **schwacher SEO-Wert** |
@@ -41,7 +41,8 @@ Gastbeitrags-/Artikel-Weg oder eine echte Community für Hilfe bietet.
 
 1. **GNU/Linux.ch**: Artikel aus dem Backup-Thema ableiten, **neu schreiben** (nicht
    einfach kopieren), im Formular einreichen. Ein Link auf den Originalartikel im
-   Text oder Autorenkontext.
+   Text oder Autorenkontext. — **17.11.2026 eingereicht**, Bestätigung „Vielen Dank.
+   Wir werden deinen Artikel in Kürze prüfen.“; Review läuft. Follow-up ab 24.11.
 2. **LinuxNews.de**: VPS-/Docker-Tutorial als Markdown einreichen; Autor nennen;
    einen Link auf die Checkliste.
 3. **Administrator.de**: drei bestehende Fragen zu Docker/ufw/Backup beantworten,

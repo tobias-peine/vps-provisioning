@@ -157,5 +157,10 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 - Platzhalter `[Bild1]` im Body nach dem sftp-Codeblock; Body jetzt 757 Wörter, weiterhin genau ein Link.
 - Pfad: `content/outreach/gnulinux-restic-storagebox-bild1.jpg`.
 
+### W2.1r — GNU/Linux.ch eingereicht
+- Artikel „Zwei Türen, ein Repository“ am 17.11.2026 über das GNU/Linux.ch-Formular eingereicht.
+- Bestätigung im Formular: „Vielen Dank. Wir werden deinen Artikel in Kürze prüfen.“
+- Status in `docs/seo/outreach-targets-20261117.md`; Follow-up ab 24.11., falls keine Rückmeldung.
+
 ## Grenzen
 - **Feld-CWV:** PSI/CrUX am 17.11.2026 mit Key geprüft: PSI 200, aber 0 Metriken; CrUX 404 für URL/Origin, Phone/Desktop. Keine Felddaten verfügbar. Bericht: `docs/field-cwv-20261117.md`.
