@@ -16,7 +16,7 @@
 - **`portal.min.js` / `sodo-search.min.js`:** werden von Ghost-Core bzw. CDN injiziert, nicht vom Theme. Eine Reduzierung braucht Ghost-Einstellungen oder Code-Injection, keinen Theme-Patch.
 - **Meta-Descriptions und Titel:** Ghost-Inhalte (W2.2b).
 
-## Anwenden (nur nach Freigabe)
+## Anwendung (erfolgt am 17.11.2026)
 
 ```bash
 cp -a casper kisium
@@ -24,12 +24,12 @@ cd kisium
 patch -p1 < ../kisium-casper.patch
 ```
 
-Danach als Theme installieren/aktivieren — **nicht** Teil dieses Pakets.
+Am 17.11.2026 als Theme installiert und aktiviert (ein Ghost-Restart).
 
 ## Rollback
 
-In Ghost zurück auf `casper` schalten; den `kisium`-Ordner entfernen. Das aktive Theme wurde nicht verändert.
+In Ghost zurück auf `casper` schalten; den `kisium`-Ordner entfernen. Wurde direkt über die DB umgeschaltet, zusätzlich `active_theme='casper'` setzen und `docker restart kisium-ghost`.
 
 ## Status
 
-**NICHT installiert, NICHT aktiviert.** Der Patch liegt nur im Repo-Working-Tree.
+**Installiert und aktiviert am 17.11.2026.** Aktives Theme: `kisium` (Ghost 6.77.0). Der Patch bleibt die Quelle; auf dem Server liegt der Ordner `kisium` im Content-Volume.

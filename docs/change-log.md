@@ -30,3 +30,15 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 
 ### Sicherung vor den Eingriffen
 - NPM-Datenbank, Let's-Encrypt-Verzeichnis, `8.conf` und Compose-Datei gesichert (Pfade im Arbeitsprotokoll vom 17.11.2026).
+- Vor W2: Ghost-Datenbank und Content-Volume gesichert (`/opt/backups/ghost/ghost-db-20261117-130910.sql.gz`, `content-20261117-130910.tar.gz`).
+
+### W2.2b — SEO-Metadaten ergänzt
+- 14 fehlende Meta-Descriptions ergänzt: 2 Beiträge, 2 Seiten, 9 Tags, 1 Autor.
+- 3 zu lange Meta-Titel gekürzt (Ansible-VPS, Bewerbung, Server-als-Code).
+- **Verifiziert:** erneuter Audit über 27 URLs — 27/27 Meta-Descriptions, 0 fehlende H1, 0 Heading-Order-Verletzungen, 0 Canonical-Abweichungen.
+- Rollback: Ghost-DB-Backup einspielen.
+
+### W2.1b — Theme `kisium` aktiviert
+- Casper 5.12.5 plus Patch als Theme `kisium` installiert; `active_theme=kisium`; ein Ghost-Restart.
+- **Verifiziert:** Tag-/Autor-Seiten mit H1, Beitrags-Byline als `<p>`, 27/27 H1, 0 Heading-Order-Verletzungen, HTTP/2 200, Ghost healthy.
+- Rollback: `active_theme=casper` setzen, Ghost neu starten, `kisium`-Ordner entfernen.
