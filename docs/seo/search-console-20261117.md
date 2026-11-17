@@ -63,6 +63,13 @@ Nur zwei Queries sichtbar; der Rest ist anonymisiert. Aus 4 Query-Impressionen k
 4. **Indexierung:** Sitemap-Index erneut senden; neuen VPS-Post per URL-Prüfung beantragen; Seiten-Report exportieren.
 5. **2–4 Wochen messen** — nicht auf 2 Klicks optimieren.
 
+## Links
+
+- Export „More sample links“ (17.11.2026): nur die Kopfzeile `Verweisende Seite`, **0 Datenzeilen**.
+- Im Export sind damit **keine externen Links sichtbar**; ob Google außerhalb dieses Exports weitere kennt, ist **unverifiziert**.
+- GitHub, LinkedIn und Mastodon erzeugen Traffic, sind aber keine redaktionellen Backlinks (meist `nofollow`).
+- Der nächste Hebel ist deshalb Backlink-Aufbau, nicht weitere Technik: `docs/seo/backlinks-20261117.md`.
+
 ## Datenlücken
 
 - Indexierungsstatus (Seiten-Report) fehlt.

@@ -130,5 +130,9 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 - **Verifiziert:** HTTP 200, H1=1, H2=13, H3=3, Codeblock=1, 35 Listeneinträge; SEO-Audit 30/30.
 - Ist-Post gesichert: `/opt/backups/kisium-post-bewerbung-20261117.json`.
 
+### W2.1l — Backlink-Baseline
+- Search-Console-Links-Export „More sample links“ (17.11.): nur Kopfzeile, 0 Datenzeilen. Keine externen Links in diesem Export sichtbar; außerhalb des Exports unverifiziert.
+- Backlink-Plan mit Prinzipien, Zielgruppen, Outreach-Vorlage und Tracking: `docs/seo/backlinks-20261117.md`; Export: `docs/seo/search-console/2026-11-17/Links-sample.csv`.
+
 ## Grenzen
 - **Feld-CWV:** PSI/CrUX am 17.11.2026 mit Key geprüft: PSI 200, aber 0 Metriken; CrUX 404 für URL/Origin, Phone/Desktop. Keine Felddaten verfügbar. Bericht: `docs/field-cwv-20261117.md`.
