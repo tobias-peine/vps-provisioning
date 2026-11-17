@@ -167,8 +167,8 @@ Geplante oder verworfene Maßnahmen werden hier nicht geführt.
 - Feldwerte, Kurzbeschreibung und Tags in `content/outreach/README.md`; noch nicht eingereicht.
 
 ### W2.1t — LinuxNews.de eingereicht
-- Laut Nutzer am 17.11.2026 über das Mitschreiben-Formular eingereicht.
-- Formularbestätigung nicht im Screenshot gesehen; Status daher **eingereicht, Bestätigung unverifiziert**.
+- Am 17.11.2026 über das Mitschreiben-Formular eingereicht.
+- Bestätigung vom Nutzer gesehen; Status **eingereicht und bestätigt**.
 - Follow-up ab 24.11., falls keine Rückmeldung.
 
 ## Grenzen

@@ -11,7 +11,7 @@ Gastbeitrags-/Artikel-Weg oder eine echte Community für Hilfe bietet.
 | Prio | Ziel | Typ | Warum | Kontakt | Status |
 |---|---|---|---|---|---|
 | **A** | **GNU/Linux.ch** | Community-Magazin (CH/DE) | Artikelformular, Markdown, CC-BY-SA; Linux/Open Source | [Mitschreiben](https://gnulinux.ch/mitschreiben#formular) | **eingereicht 17.11.2026** |
-| **A** | **LinuxNews.de** | News/Tutorials | „Gastautoren willkommen“, Markdown-Formular, Autor wird genannt | [Mitschreiben](https://linuxnews.de/mitschreiben/) | **eingereicht 17.11.2026; Bestätigung unverifiziert** |
+| **A** | **LinuxNews.de** | News/Tutorials | „Gastautoren willkommen“, Markdown-Formular, Autor wird genannt | [Mitschreiben](https://linuxnews.de/mitschreiben/) | **eingereicht 17.11.2026, bestätigt** |
 | **B** | **IT-Administrator** | Fachmagazin | Professionelle Admin-Zielgruppe, Kontaktformular; Gastbeitragsregeln nicht öffentlich | [Kontakt](https://www.it-administrator.de/contact) | Pitch **unverifiziert** |
 | **B** | **t3n** | Digital-Business | Gastautoren möglich, aber **keine Backlinks im Artikel** — nur Autorenbio | [Gastautor-Seite](https://t3n.de/news/gastautor-t3n-277791/) | verifiziert, **schwacher SEO-Wert** |
 | **C** | **Administrator.de** | Forum | 120.000+ Mitglieder; nur Antworten, keine Gastartikel | [Forum](https://administrator.de/forum/) | verifiziert |
@@ -44,8 +44,8 @@ Gastbeitrags-/Artikel-Weg oder eine echte Community für Hilfe bietet.
    Text oder Autorenkontext. — **17.11.2026 eingereicht**, Bestätigung „Vielen Dank.
    Wir werden deinen Artikel in Kürze prüfen.“; Review läuft. Follow-up ab 24.11.
 2. **LinuxNews.de**: VPS-/Docker-Tutorial als Markdown einreichen; Autor nennen;
-   einen Link auf die Checkliste. — **17.11.2026 laut Nutzer eingereicht**;
-   Formularbestätigung nicht gesehen, daher **unverifiziert**. Follow-up ab 24.11.
+   einen Link auf die Checkliste. — **17.11.2026 eingereicht und bestätigt**;
+   Follow-up ab 24.11.
 3. **Administrator.de**: drei bestehende Fragen zu Docker/ufw/Backup beantworten,
    ohne Link. Profil ausfüllen.
 4. **Linux-nerds.org**: zwei Antworten, gleiche Regel.
